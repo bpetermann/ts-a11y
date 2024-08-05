@@ -20,7 +20,7 @@ export function getHtmlDiagnostics(
         const hasAttribute = node.attribs && node.attribs[attributeName];
         if (!hasAttribute) {
           const loc =
-            node.startIndex !== undefined && node.endIndex !== undefined
+            node.startIndex && node.endIndex
               ? new vscode.Range(
                   document.positionAt(node.startIndex),
                   document.positionAt(node.endIndex)
@@ -41,7 +41,7 @@ export function getHtmlDiagnostics(
     };
 
     DomUtils.filter(
-      (node: any) => node.type === 'tag',
+      (node) => node.type === 'tag',
       parsedDocument.children
     ).forEach((node) => {
       checkElement(
