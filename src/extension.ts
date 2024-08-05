@@ -1,26 +1,26 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import { getHtmlDiagnostics } from './diagnostics/htmlDiagnostics';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+  const diagnosticCollection =
+    vscode.languages.createDiagnosticCollection('accessibility');
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "ts-refa11y" is now active!');
+  context.subscriptions.push(
+    vscode.commands.registerCommand('refa11y.helloWorld', () => {
+      vscode.window.showInformationMessage('Hello World!');
+    })
+  );
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('ts-refa11y.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from ts-refa11y!');
-	});
+  vscode.workspace.onDidChangeTextDocument((event) => {
+    const diagnostics: vscode.Diagnostic[] = [];
+    const text = event.document.getText();
 
-	context.subscriptions.push(disposable);
+    if (event.document.languageId === 'html') {
+      diagnostics.push(...getHtmlDiagnostics(text, event.document));
+    }
+
+    diagnosticCollection.set(event.document.uri, diagnostics);
+  });
 }
 
-// This method is called when your extension is deactivated
 export function deactivate() {}
