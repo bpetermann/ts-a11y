@@ -1,10 +1,62 @@
 import * as vscode from 'vscode';
 import * as parser from '@babel/parser';
 import traverse from '@babel/traverse';
+import * as jsx from '@babel/types';
+
+const warnings = {
+  button: {
+    'aria-label':
+      '[Refa11y] Button elements should have an aria-label for accessibility.',
+  },
+};
+
+function getElementNameString(
+  elementName:
+    | jsx.JSXIdentifier
+    | jsx.JSXMemberExpression
+    | jsx.JSXNamespacedName
+) {
+  switch (elementName.type) {
+    case 'JSXIdentifier':
+      return elementName.name;
+    case 'JSXMemberExpression':
+      const objectName = elementName.object;
+      const propertyName = elementName.property;
+      if (
+        objectName.type !== 'JSXIdentifier' ||
+        propertyName.type !== 'JSXIdentifier'
+      ) {
+        return;
+      }
+      return `${objectName.name}.${propertyName.name}`;
+    default:
+      return `${elementName.namespace.name}:${elementName.name.name}`;
+  }
+}
+
+function hasAttribute(
+  attribute: string | jsx.JSXIdentifier,
+  element: (jsx.JSXAttribute | jsx.JSXSpreadAttribute)[]
+) {
+  return element.some(
+    (attr) => attr.type === 'JSXAttribute' && attr.name.name === attribute
+  );
+}
+
+function getDiagnostic(location: jsx.SourceLocation, message: string) {
+  return new vscode.Diagnostic(
+    new vscode.Range(
+      new vscode.Position(location.start.line - 1, location.start.column),
+      new vscode.Position(location.end.line - 1, location.end.column)
+    ),
+    message,
+    vscode.DiagnosticSeverity.Warning
+  );
+}
 
 export function getTsxDiagnostics(
   text: string,
-  document: vscode.TextDocument
+  _document: vscode.TextDocument
 ): vscode.Diagnostic[] {
   const diagnostics: vscode.Diagnostic[] = [];
 
@@ -16,49 +68,17 @@ export function getTsxDiagnostics(
 
     traverse(ast, {
       JSXOpeningElement(path) {
-        const elementName = path.node.name;
-        let elementNameString = '';
+        const { name, loc, attributes } = path.node;
+        const elementNameString = getElementNameString(name);
 
-        if (elementName.type === 'JSXIdentifier') {
-          elementNameString = elementName.name;
-        } else if (elementName.type === 'JSXMemberExpression') {
-          let objectName = elementName.object;
-          let propertyName = elementName.property;
-
-          if (
-            objectName.type === 'JSXIdentifier' &&
-            propertyName.type === 'JSXIdentifier'
-          ) {
-            elementNameString = `${objectName.name}.${propertyName.name}`;
-          }
-        } else if (elementName.type === 'JSXNamespacedName') {
-          elementNameString = `${elementName.namespace.name}:${elementName.name.name}`;
-        }
-
-        if (elementNameString === 'button') {
-          const hasAriaLabel = path.node.attributes.some((attr) => {
-            return (
-              attr.type === 'JSXAttribute' && attr.name.name === 'aria-label'
-            );
-          });
-
-          if (!hasAriaLabel && path.node.loc) {
-            const diagnostic = new vscode.Diagnostic(
-              new vscode.Range(
-                new vscode.Position(
-                  path.node.loc.start.line - 1,
-                  path.node.loc.start.column
-                ),
-                new vscode.Position(
-                  path.node.loc.end.line - 1,
-                  path.node.loc.end.column
-                )
-              ),
-              '[Refa11y] Button elements should have an aria-label for accessibility.',
-              vscode.DiagnosticSeverity.Warning
-            );
-            diagnostics.push(diagnostic);
-          }
+        switch (elementNameString) {
+          case 'button':
+            if (!hasAttribute('aria-label', attributes) && loc) {
+              diagnostics.push(
+                getDiagnostic(loc, warnings.button['aria-label'])
+              );
+            }
+            break;
         }
       },
     });
