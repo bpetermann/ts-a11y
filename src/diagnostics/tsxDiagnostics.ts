@@ -2,13 +2,7 @@ import * as vscode from 'vscode';
 import * as parser from '@babel/parser';
 import traverse from '@babel/traverse';
 import * as jsx from '@babel/types';
-
-const warnings = {
-  button: {
-    'aria-label':
-      '[Refa11y] Button elements should have an aria-label for accessibility.',
-  },
-};
+import { warnings } from './warnings';
 
 function getElementNameString(
   elementName:

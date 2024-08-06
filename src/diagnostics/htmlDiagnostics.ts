@@ -1,5 +1,22 @@
 import * as vscode from 'vscode';
 import { DomUtils, parseDocument } from 'htmlparser2';
+import { warnings } from './warnings';
+
+function getDiagnostic(
+  node: any,
+  document: vscode.TextDocument,
+  message: string
+) {
+  const loc =
+    node.startIndex && node.endIndex
+      ? new vscode.Range(
+          document.positionAt(node.startIndex),
+          document.positionAt(node.endIndex)
+        )
+      : new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 0));
+
+  return new vscode.Diagnostic(loc, message, vscode.DiagnosticSeverity.Warning);
+}
 
 export function getHtmlDiagnostics(
   text: string,
@@ -16,41 +33,19 @@ export function getHtmlDiagnostics(
       attributeName: string,
       message: string
     ) => {
-      if (node.name === elementName) {
-        const hasAttribute = node.attribs && node.attribs[attributeName];
-        if (!hasAttribute) {
-          const loc =
-            node.startIndex && node.endIndex
-              ? new vscode.Range(
-                  document.positionAt(node.startIndex),
-                  document.positionAt(node.endIndex)
-                )
-              : new vscode.Range(
-                  new vscode.Position(0, 0),
-                  new vscode.Position(0, 0)
-                );
-
-          const diagnostic = new vscode.Diagnostic(
-            loc,
-            message,
-            vscode.DiagnosticSeverity.Warning
-          );
-          diagnostics.push(diagnostic);
-        }
+      if (
+        node.name === elementName &&
+        node.attribs &&
+        !node.attribs[attributeName]
+      ) {
+        diagnostics.push(getDiagnostic(node, document, message));
       }
     };
 
     DomUtils.filter(
       (node) => node.type === 'tag',
       parsedDocument.children
-    ).forEach((node) => {
-      checkElement(
-        node,
-        'html',
-        'lang',
-        '[Refa11y] Define the natual language of your page by using the lang attribute on the <html> element'
-      );
-    });
+    ).forEach((node) => checkElement(node, 'html', 'lang', warnings.html.lang));
   } catch (error) {
     console.error('Error parsing HTML: ', error);
   }
