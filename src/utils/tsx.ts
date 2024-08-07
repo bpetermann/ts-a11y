@@ -34,12 +34,16 @@ export function hasAttribute(
   );
 }
 
+function getRange(location: jsx.SourceLocation) {
+  return new vscode.Range(
+    new vscode.Position(location.start.line - 1, location.start.column),
+    new vscode.Position(location.end.line - 1, location.end.column)
+  );
+}
+
 export function getDiagnostic(location: jsx.SourceLocation, message: string) {
   return new vscode.Diagnostic(
-    new vscode.Range(
-      new vscode.Position(location.start.line - 1, location.start.column),
-      new vscode.Position(location.end.line - 1, location.end.column)
-    ),
+    getRange(location),
     message,
     vscode.DiagnosticSeverity.Warning
   );

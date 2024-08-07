@@ -1,20 +1,25 @@
 import * as vscode from 'vscode';
 import { AnyNode } from 'domhandler';
 
-export function getDiagnostic(
-  node: any,
-  document: vscode.TextDocument,
-  message: string
-) {
-  const loc =
-    node.startIndex && node.endIndex
-      ? new vscode.Range(
-          document.positionAt(node.startIndex),
-          document.positionAt(node.endIndex)
-        )
-      : new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 0));
+function getRange(document: vscode.TextDocument, node?: AnyNode) {
+  return node && node.startIndex && node.endIndex
+    ? new vscode.Range(
+        document.positionAt(node.startIndex),
+        document.positionAt(node.endIndex)
+      )
+    : new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 0));
+}
 
-  return new vscode.Diagnostic(loc, message, vscode.DiagnosticSeverity.Warning);
+export function getDiagnostic(
+  document: vscode.TextDocument,
+  message: string,
+  node?: AnyNode
+) {
+  return new vscode.Diagnostic(
+    getRange(document, node),
+    message,
+    vscode.DiagnosticSeverity.Warning
+  );
 }
 
 function findDomElement(name: string, nodes: AnyNode[]) {
@@ -29,7 +34,7 @@ export function checkElementsExists(
   return elements
     .map(([name, warning]) => {
       return !findDomElement(name, domNodes)
-        ? getDiagnostic({}, document, warning)
+        ? getDiagnostic(document, warning)
         : null;
     })
     .filter((item) => item !== null);
@@ -46,7 +51,7 @@ export function checkElementTags(
         'attribs' in node &&
         node.name in elements &&
         !node.attribs[elements[node.name][0]]
-        ? getDiagnostic(node, document, elements[node.name][1])
+        ? getDiagnostic(document, elements[node.name][1], node)
         : null;
     })
     .filter((item) => item !== null);
