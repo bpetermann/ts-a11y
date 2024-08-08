@@ -10,7 +10,7 @@ const getDocument = (html: string) =>
   });
 
 suite('HTML Test Suite', () => {
-  test('html tag with missing lang attribute', async () => {
+  test('html element with missing lang attribute', async () => {
     const html = `<html></html>`;
 
     const document = await getDocument(html);
@@ -20,7 +20,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics[0].message, warnings.html.lang);
   });
 
-  test('html tag with empty lang attribute', async () => {
+  test('html element with empty lang attribute', async () => {
     const html = `<html lang=""></html>`;
 
     const document = await getDocument(html);
@@ -30,10 +30,10 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics[0].message, warnings.html.lang);
   });
 
-  test('missing title element', async () => {
+  test('missing title tag', async () => {
     const html = `
     <html lang="en">
-    <head></head>
+    <head><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head>
     <body></body>
     </html>`;
 
@@ -44,7 +44,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics[0].message, warnings.title.shouldExist);
   });
 
-  test('valid html', async () => {
+  test('missing viewport attribute on meta element', async () => {
     const html = `
     <html lang="en">
     <head>
@@ -57,6 +57,6 @@ suite('HTML Test Suite', () => {
 
     const diagnostics = getHtmlDiagnostics(document.getText(), document);
 
-    assert.strictEqual(diagnostics[0], undefined);
+    assert.strictEqual(diagnostics[0].message, warnings.meta.shouldExist);
   });
 });

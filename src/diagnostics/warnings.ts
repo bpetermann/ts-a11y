@@ -10,4 +10,7 @@ export const warnings = {
     shouldExist:
       "[Refa11y] Name your page using the <title> element to help screen reader users tell which page they're on",
   },
+  meta: {
+    shouldExist: '[Refa11y] Set the viewport meta tag to not prohibit zooming',
+  },
 } as const;

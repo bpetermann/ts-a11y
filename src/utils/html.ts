@@ -22,25 +22,39 @@ export function getDiagnostic(
   );
 }
 
-function findDomElement(name: string, nodes: AnyNode[]) {
-  return nodes.find((node) => node && 'name' in node && node.name === name);
+function findTag(name: string, domNodes: AnyNode[]): AnyNode[] {
+  return domNodes.filter(
+    (node) => node && 'name' in node && node.name === name
+  );
+}
+
+function findAttributeOnElement(
+  name: string,
+  domNodes: AnyNode[],
+  attr: string
+): AnyNode | undefined {
+  return findTag(name, domNodes)?.find(
+    (node) => 'attribs' in node && node.attribs[attr]
+  );
 }
 
 export function checkElementsExists(
   document: vscode.TextDocument,
   domNodes: AnyNode[],
-  elements: [name: string, warning: string][]
+  elements: [tag: string, attr: string | null, warning: string][]
 ): vscode.Diagnostic[] {
   return elements
-    .map(([name, warning]) => {
-      return !findDomElement(name, domNodes)
-        ? getDiagnostic(document, warning)
-        : null;
+    .map(([tag, attr, warning]) => {
+      const validElement =
+        findTag(tag, domNodes).length &&
+        (!attr || (attr && findAttributeOnElement(tag, domNodes, attr)));
+
+      return !validElement ? getDiagnostic(document, warning) : null;
     })
     .filter((item) => item !== null);
 }
 
-export function checkElementTags(
+export function checkElementAttributes(
   document: vscode.TextDocument,
   domNodes: AnyNode[],
   elements: { [element: string]: [attribute: string, warning: string] }

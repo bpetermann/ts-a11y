@@ -1,16 +1,21 @@
 import * as vscode from 'vscode';
 import { DomUtils, parseDocument } from 'htmlparser2';
 import { warnings } from './warnings';
-import { checkElementTags, checkElementsExists } from '../utils/html';
+import { checkElementAttributes, checkElementsExists } from '../utils/html';
 
-const requiredTags: {
+const requiredAttributes: {
   [element: string]: [attribute: string, warning: string];
 } = {
   html: ['lang', warnings.html.lang],
 };
 
-const requiredElements: [string, string][] = [
-  ['title', warnings.title.shouldExist],
+const requiredElements: [
+  element: string,
+  attr: string | null,
+  warning: string
+][] = [
+  ['title', null, warnings.title.shouldExist],
+  ['meta', 'name', warnings.meta.shouldExist],
 ];
 
 export function getHtmlDiagnostics(
@@ -27,7 +32,11 @@ export function getHtmlDiagnostics(
       parsedDocument.children
     );
 
-    const missingTags = checkElementTags(document, nodes, requiredTags);
+    const missingTags = checkElementAttributes(
+      document,
+      nodes,
+      requiredAttributes
+    );
 
     const missingElements = checkElementsExists(
       document,
