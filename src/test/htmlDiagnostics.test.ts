@@ -3,36 +3,60 @@ import * as vscode from 'vscode';
 import { getHtmlDiagnostics } from '../diagnostics/htmlDiagnostics';
 import { warnings } from '../diagnostics/warnings';
 
-suite('HTML Test Suite', () => {
-  test('Html tag without a lang attribute', async () => {
-    const htmlSample = `<html></html>`;
+const getDocument = (html: string) =>
+  vscode.workspace.openTextDocument({
+    content: html,
+    language: 'html',
+  });
 
-    const document = await vscode.workspace.openTextDocument({
-      content: htmlSample,
-      language: 'html',
-    });
+suite('HTML Test Suite', () => {
+  test('html tag with missing lang attribute', async () => {
+    const html = `<html></html>`;
+
+    const document = await getDocument(html);
 
     const diagnostics = getHtmlDiagnostics(document.getText(), document);
 
     assert.strictEqual(diagnostics[0].message, warnings.html.lang);
   });
 
-  test('Missing title element', async () => {
-    const htmlSample = `
-    <!DOCTYPE html>
+  test('html tag with empty lang attribute', async () => {
+    const html = `<html lang=""></html>`;
+
+    const document = await getDocument(html);
+
+    const diagnostics = getHtmlDiagnostics(document.getText(), document);
+
+    assert.strictEqual(diagnostics[0].message, warnings.html.lang);
+  });
+
+  test('missing title element', async () => {
+    const html = `
     <html lang="en">
     <head></head>
     <body></body>
-    </html>
     </html>`;
 
-    const document = await vscode.workspace.openTextDocument({
-      content: htmlSample,
-      language: 'html',
-    });
+    const document = await getDocument(html);
 
     const diagnostics = getHtmlDiagnostics(document.getText(), document);
 
     assert.strictEqual(diagnostics[0].message, warnings.title.shouldExist);
+  });
+
+  test('valid html', async () => {
+    const html = `
+    <html lang="en">
+    <head>
+    <title>Document</title>
+    </head>
+    <body></body>
+    </html>`;
+
+    const document = await getDocument(html);
+
+    const diagnostics = getHtmlDiagnostics(document.getText(), document);
+
+    assert.strictEqual(diagnostics[0], undefined);
   });
 });
