@@ -1,19 +1,10 @@
 import * as vscode from 'vscode';
 import { DomUtils, parseDocument } from 'htmlparser2';
 import { warnings } from './warnings';
-import { checkElementAttributes, checkElementsExists } from '../utils/html';
+import { checkElementsValid } from '../utils/html';
 
-const requiredAttributes: {
-  [element: string]: [attribute: string, warning: string];
-} = {
-  html: ['lang', warnings.html.lang],
-};
-
-const requiredElements: [
-  element: string,
-  attr: string | null,
-  warning: string
-][] = [
+const elements: [tag: string, attr: string | null, warning: string][] = [
+  ['html', 'lang', warnings.html.lang],
   ['title', null, warnings.title.shouldExist],
   ['meta', 'name', warnings.meta.shouldExist],
 ];
@@ -32,19 +23,7 @@ export function getHtmlDiagnostics(
       parsedDocument.children
     );
 
-    const missingTags = checkElementAttributes(
-      document,
-      nodes,
-      requiredAttributes
-    );
-
-    const missingElements = checkElementsExists(
-      document,
-      nodes,
-      requiredElements
-    );
-
-    [...missingTags, ...missingElements].forEach((diagnostic) =>
+    checkElementsValid(document, nodes, elements).forEach((diagnostic) =>
       diagnostics.push(diagnostic)
     );
   } catch (error) {

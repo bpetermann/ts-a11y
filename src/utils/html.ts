@@ -22,51 +22,32 @@ export function getDiagnostic(
   );
 }
 
-function findTag(name: string, domNodes: AnyNode[]): AnyNode[] {
-  return domNodes.filter(
-    (node) => node && 'name' in node && node.name === name
-  );
+function findElementsByName(tag: string, domNodes: AnyNode[]): AnyNode[] {
+  return domNodes.filter((node) => node && 'name' in node && node.name === tag);
 }
 
-function findAttributeOnElement(
-  name: string,
-  domNodes: AnyNode[],
-  attr: string
-): AnyNode | undefined {
-  return findTag(name, domNodes)?.find(
-    (node) => 'attribs' in node && node.attribs[attr]
-  );
+function hasAttribute(nodes: AnyNode[], attr: string): boolean {
+  return nodes.some((node) => 'attribs' in node && node.attribs[attr]);
 }
 
-export function checkElementsExists(
+export function checkElementsValid(
   document: vscode.TextDocument,
   domNodes: AnyNode[],
   elements: [tag: string, attr: string | null, warning: string][]
 ): vscode.Diagnostic[] {
-  return elements
-    .map(([tag, attr, warning]) => {
-      const validElement =
-        findTag(tag, domNodes).length &&
-        (!attr || (attr && findAttributeOnElement(tag, domNodes, attr)));
+  return elements.reduce<vscode.Diagnostic[]>(
+    (diagnostics, [tag, attr, warning]) => {
+      const matchingElements = findElementsByName(tag, domNodes);
+      const attributeExists = attr
+        ? hasAttribute(matchingElements, attr)
+        : true;
 
-      return !validElement ? getDiagnostic(document, warning) : null;
-    })
-    .filter((item) => item !== null);
-}
+      if (!matchingElements.length || !attributeExists) {
+        diagnostics.push(getDiagnostic(document, warning));
+      }
 
-export function checkElementAttributes(
-  document: vscode.TextDocument,
-  domNodes: AnyNode[],
-  elements: { [element: string]: [attribute: string, warning: string] }
-) {
-  return domNodes
-    .map((node) => {
-      return 'name' in node &&
-        'attribs' in node &&
-        node.name in elements &&
-        !node.attribs[elements[node.name][0]]
-        ? getDiagnostic(document, elements[node.name][1], node)
-        : null;
-    })
-    .filter((item) => item !== null);
+      return diagnostics;
+    },
+    []
+  );
 }
