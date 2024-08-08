@@ -25,6 +25,13 @@ const elements: Element[] = [
     unique: false,
     warning: warnings.meta.shouldExist,
   },
+  {
+    tag: 'main',
+    required: false,
+    attributes: [],
+    unique: true,
+    warning: 'Should be unique',
+  },
 ];
 
 export function getHtmlDiagnostics(

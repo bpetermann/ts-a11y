@@ -44,13 +44,24 @@ export function checkElementsValid(
   elements: Element[]
 ): vscode.Diagnostic[] {
   return elements.reduce<vscode.Diagnostic[]>(
-    (diagnostics, { attributes, tag, warning }) => {
+    (diagnostics, { attributes, tag, warning, required, unique }) => {
       const matchingElements = findElementsByTag(tag, domNodes);
+
+      if (required && !matchingElements.length) {
+        diagnostics.push(getDiagnostic(document, warning));
+      }
+
+      const multipleElements = matchingElements.length > 1;
+
+      if (unique && multipleElements) {
+        diagnostics.push(getDiagnostic(document, warning));
+      }
+
       const attributeExists = attributes.length
         ? attributes.every((attr) => hasAttribute(matchingElements, attr))
         : true;
 
-      if (!matchingElements.length || !attributeExists) {
+      if (!attributeExists) {
         diagnostics.push(getDiagnostic(document, warning));
       }
 
