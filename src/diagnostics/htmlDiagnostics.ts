@@ -1,12 +1,30 @@
 import * as vscode from 'vscode';
 import { DomUtils, parseDocument } from 'htmlparser2';
 import { warnings } from './warnings';
-import { checkElementsValid } from '../utils/html';
+import { Element, checkElementsValid } from '../utils/html';
 
-const elements: [tag: string, attr: string | null, warning: string][] = [
-  ['html', 'lang', warnings.html.lang],
-  ['title', null, warnings.title.shouldExist],
-  ['meta', 'name', warnings.meta.shouldExist],
+const elements: Element[] = [
+  {
+    tag: 'html',
+    required: true,
+    attributes: ['lang'],
+    unique: false,
+    warning: warnings.html.lang,
+  },
+  {
+    tag: 'title',
+    required: true,
+    attributes: [],
+    unique: true,
+    warning: warnings.title.shouldExist,
+  },
+  {
+    tag: 'meta',
+    required: true,
+    attributes: ['name'],
+    unique: false,
+    warning: warnings.meta.shouldExist,
+  },
 ];
 
 export function getHtmlDiagnostics(
