@@ -1,12 +1,12 @@
 import * as vscode from 'vscode';
 import * as parser from '@babel/parser';
 import traverse from '@babel/traverse';
-import { tsxWarning } from './warnings';
+import { tsxWarning } from './Warnings';
 import {
   getElementNameString,
   hasAttribute,
   getDiagnostic,
-} from '../utils/tsx';
+} from '../utils/Tsx';
 
 export function getTsxDiagnostics(
   text: string,

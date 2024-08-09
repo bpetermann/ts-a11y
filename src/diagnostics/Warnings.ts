@@ -25,7 +25,7 @@ export const warnings = {
   },
 } as const;
 
-export const defaultWarnings = {
+export const defaultMessages = {
   [Warning.shouldExist]: '[Refa11y] The element should exist: ',
   [Warning.shouldBeUnique]: '[Refa11y] The element should be unique: ',
   [Warning.hasMissingAttribute]:

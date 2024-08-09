@@ -1,7 +1,8 @@
 import { AnyNode } from 'domhandler';
-import { warnings, Warning, defaultWarnings } from './warnings';
+import { warnings, Warning, defaultMessages } from './Warnings';
+import HTMLElementValidator from './HtmlValidator';
 
-export default class Element {
+export default class HtmlElement {
   constructor(
     private readonly tag: keyof typeof warnings,
     public readonly required: boolean,
@@ -15,11 +16,9 @@ export default class Element {
   validate(domNodes: AnyNode[]): void {
     this.clearErrors();
     this.findElements(domNodes);
-    this.checkExistence();
-    this.checkUniqueness();
-    this.checkAttributes();
+    const validator = new HTMLElementValidator(this);
+    validator.validate();
   }
-
   get warning(): string {
     return this._warning;
   }
@@ -36,32 +35,10 @@ export default class Element {
   set error(constraint: Warning) {
     this.err = true;
     const key = this.tag as keyof typeof warnings;
-    this._warning =
-      constraint in warnings[key]
-        ? (warnings[key] as any)[constraint]
-        : `${defaultWarnings[constraint]}${this.tag}`;
-  }
-
-  private checkExistence(): void {
-    if (this.required && !this.nodes.length) {
-      this.error = Warning.shouldExist;
-    }
-  }
-
-  private checkUniqueness(): void {
-    if (!this.err && this.unique && this.nodes.length > 1) {
-      this.error = Warning.shouldBeUnique;
-    }
-  }
-
-  private checkAttributes(): void {
-    if (
-      !this.err &&
-      this.attributes.length &&
-      !this.attributes.every((attr) => this.hasAttribute(attr))
-    ) {
-      this.error = Warning.hasMissingAttribute;
-    }
+    const message =
+      (warnings[key] as any)?.[constraint] ||
+      `${defaultMessages[constraint]}${this.tag}`;
+    this._warning = message;
   }
 
   private findElements(nodes: AnyNode[]): void {
@@ -70,7 +47,7 @@ export default class Element {
     );
   }
 
-  private hasAttribute(attr: string): boolean {
+  hasAttribute(attr: string): boolean {
     return this.nodes.some((node) => 'attribs' in node && node.attribs[attr]);
   }
 }

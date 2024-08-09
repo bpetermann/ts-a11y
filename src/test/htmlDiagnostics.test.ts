@@ -1,8 +1,9 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { getHtmlDiagnostics } from '../diagnostics/htmlDiagnostics';
-import { defaultWarnings, warnings } from '../diagnostics/warnings';
+
 import { meta, html, head, body, title } from './helper';
+import { HTMLDiagnostic } from '../diagnostics/HtmlDiagnostics';
+import { defaultMessages, warnings } from '../diagnostics/Warnings';
 
 const getDocument = (html: string) =>
   vscode.workspace.openTextDocument({
@@ -16,7 +17,8 @@ suite('HTML Test Suite', () => {
 
     const document = await getDocument(html);
 
-    const diagnostics = getHtmlDiagnostics(document.getText(), document);
+    const diagnostics = new HTMLDiagnostic(document.getText(), document)
+      .diagnostics;
 
     assert.strictEqual(
       diagnostics[0].message,
@@ -29,7 +31,8 @@ suite('HTML Test Suite', () => {
 
     const document = await getDocument(html);
 
-    const diagnostics = getHtmlDiagnostics(document.getText(), document);
+    const diagnostics = new HTMLDiagnostic(document.getText(), document)
+      .diagnostics;
 
     assert.strictEqual(diagnostics.length, 3);
   });
@@ -39,7 +42,8 @@ suite('HTML Test Suite', () => {
 
     const document = await getDocument(html);
 
-    const diagnostics = getHtmlDiagnostics(document.getText(), document);
+    const diagnostics = new HTMLDiagnostic(document.getText(), document)
+      .diagnostics;
 
     assert.strictEqual(
       diagnostics[0].message,
@@ -52,7 +56,8 @@ suite('HTML Test Suite', () => {
 
     const document = await getDocument(content);
 
-    const diagnostics = getHtmlDiagnostics(document.getText(), document);
+    const diagnostics = new HTMLDiagnostic(document.getText(), document)
+      .diagnostics;
 
     assert.strictEqual(diagnostics[0].message, warnings.title.shouldExist);
   });
@@ -62,7 +67,8 @@ suite('HTML Test Suite', () => {
 
     const document = await getDocument(content);
 
-    const diagnostics = getHtmlDiagnostics(document.getText(), document);
+    const diagnostics = new HTMLDiagnostic(document.getText(), document)
+      .diagnostics;
 
     assert.strictEqual(diagnostics[0].message, warnings.meta.shouldExist);
   });
@@ -72,11 +78,12 @@ suite('HTML Test Suite', () => {
 
     const document = await getDocument(content);
 
-    const diagnostics = getHtmlDiagnostics(document.getText(), document);
+    const diagnostics = new HTMLDiagnostic(document.getText(), document)
+      .diagnostics;
 
     assert.strictEqual(
       diagnostics[0].message,
-      defaultWarnings.shouldBeUnique + 'title'
+      defaultMessages.shouldBeUnique + 'title'
     );
   });
 
@@ -87,7 +94,8 @@ suite('HTML Test Suite', () => {
 
     const document = await getDocument(content);
 
-    const diagnostics = getHtmlDiagnostics(document.getText(), document);
+    const diagnostics = new HTMLDiagnostic(document.getText(), document)
+      .diagnostics;
 
     assert.strictEqual(diagnostics[0].message, warnings.main.shouldBeUnique);
   });
@@ -97,7 +105,8 @@ suite('HTML Test Suite', () => {
 
     const document = await getDocument(content);
 
-    const diagnostics = getHtmlDiagnostics(document.getText(), document);
+    const diagnostics = new HTMLDiagnostic(document.getText(), document)
+      .diagnostics;
 
     assert.strictEqual(diagnostics[0], undefined);
   });
