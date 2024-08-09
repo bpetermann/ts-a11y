@@ -14,40 +14,43 @@ export default class HtmlElementValidator {
   }
 
   private initializeValidators(): Array<() => void> {
-    if (this.element.specialCase) {
+    const { specialCase, attributes, required, unique } = this.element;
+    const validators = [];
+
+    if (specialCase) {
       return [this.handleSpecialCases.bind(this)];
     }
-    return [
-      this.checkExistence.bind(this),
-      this.checkUniqueness.bind(this),
-      this.checkAttributes.bind(this),
-    ];
+    if (attributes.length) {
+      validators.push(this.checkAttributes.bind(this));
+    }
+    if (required) {
+      validators.push(this.checkExistence.bind(this));
+    }
+    if (unique) {
+      validators.push(this.checkUniqueness.bind(this));
+    }
+    return validators;
   }
 
   private checkExistence(): void {
-    if (this.element.required && !this.element.nodes.length) {
+    if (!this.element.error && !this.element.nodes.length) {
       this.element.error = Warning.shouldExist;
     }
   }
 
   private checkUniqueness(): void {
-    if (
-      !this.element.error &&
-      this.element.unique &&
-      this.element.nodes.length > 1
-    ) {
+    if (!this.element.error && this.element.nodes.length > 1) {
       this.element.error = Warning.shouldBeUnique;
     }
   }
 
   private checkAttributes(): void {
-    if (!this.element.error && this.element.attributes.length) {
-      const missingAttributes = this.element.attributes.filter(
-        (attr) => !this.element.hasAttribute(attr)
-      );
-      if (missingAttributes.length > 0) {
-        this.element.error = Warning.hasMissingAttribute;
-      }
+    const missingAttributes = this.element.attributes.filter(
+      (attr) => !this.element.hasAttribute(attr)
+    );
+
+    if (!this.element.error && missingAttributes.length) {
+      this.element.error = Warning.hasMissingAttribute;
     }
   }
 
@@ -62,9 +65,10 @@ export default class HtmlElementValidator {
   }
 
   private checkNavElements() {
-    const hasAttributes = this.element.allNodesHaveRequiredAttributes();
-
-    if (this.element.nodes.length > 1 && !hasAttributes) {
+    if (
+      this.element.nodes.length > 1 &&
+      !this.element.allNodesHaveRequiredAttributes()
+    ) {
       this.element.error = Warning.hasMissingAttribute;
     }
   }

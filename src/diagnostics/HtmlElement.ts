@@ -14,7 +14,7 @@ export default class HtmlElement {
 
   constructor(
     tag: keyof typeof warnings,
-    options: {
+    constraint: {
       specialCase?: boolean;
       attributes?: string[];
       required?: boolean;
@@ -22,18 +22,10 @@ export default class HtmlElement {
     } = {}
   ) {
     this.tag = tag;
-    this.specialCase = options.specialCase ?? false;
-    this.attributes = options.attributes ?? [];
-    this.required = options.required ?? false;
-    this.unique = options.unique ?? false;
-  }
-
-  validate(domNodes: AnyNode[]): void {
-    this.clearErrors();
-    this.findElements(domNodes);
-
-    const validator = new HtmlElementValidator(this);
-    validator.validate();
+    this.specialCase = constraint.specialCase ?? false;
+    this.attributes = constraint.attributes ?? [];
+    this.required = constraint.required ?? false;
+    this.unique = constraint.unique ?? false;
   }
 
   get warning(): string {
@@ -42,6 +34,14 @@ export default class HtmlElement {
 
   get error(): boolean {
     return this._error;
+  }
+
+  validate(domNodes: AnyNode[]): void {
+    this.clearErrors();
+    this.findElements(domNodes);
+
+    const validator = new HtmlElementValidator(this);
+    validator.validate();
   }
 
   clearErrors() {
@@ -64,7 +64,7 @@ export default class HtmlElement {
     );
   }
 
-  hasAttribute(attr: string): boolean {
+  public hasAttribute(attr: string): boolean {
     return this.nodes.some((node) => 'attribs' in node && node.attribs[attr]);
   }
 
