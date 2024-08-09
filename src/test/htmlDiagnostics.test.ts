@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { getHtmlDiagnostics } from '../diagnostics/htmlDiagnostics';
-import { warnings } from '../diagnostics/warnings';
+import { defaultWarnings, warnings } from '../diagnostics/warnings';
 import { meta, html, head, body, title } from './helper';
 
 const getDocument = (html: string) =>
@@ -18,7 +18,20 @@ suite('HTML Test Suite', () => {
 
     const diagnostics = getHtmlDiagnostics(document.getText(), document);
 
-    assert.strictEqual(diagnostics[0].message, warnings.html.lang);
+    assert.strictEqual(
+      diagnostics[0].message,
+      warnings.html.hasMissingAttribute
+    );
+  });
+
+  test('empty html should return three diagnostics', async () => {
+    const html = '';
+
+    const document = await getDocument(html);
+
+    const diagnostics = getHtmlDiagnostics(document.getText(), document);
+
+    assert.strictEqual(diagnostics.length, 3);
   });
 
   test('html element with empty lang attribute', async () => {
@@ -28,11 +41,14 @@ suite('HTML Test Suite', () => {
 
     const diagnostics = getHtmlDiagnostics(document.getText(), document);
 
-    assert.strictEqual(diagnostics[0].message, warnings.html.lang);
+    assert.strictEqual(
+      diagnostics[0].message,
+      warnings.html.hasMissingAttribute
+    );
   });
 
   test('missing title tag', async () => {
-    const content = html(head(meta) + body);
+    const content = html(head(meta) + body());
 
     const document = await getDocument(content);
 
@@ -42,7 +58,7 @@ suite('HTML Test Suite', () => {
   });
 
   test('missing viewport attribute on meta element', async () => {
-    const content = html(head(title) + body);
+    const content = html(head(title) + body());
 
     const document = await getDocument(content);
 
@@ -51,8 +67,33 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics[0].message, warnings.meta.shouldExist);
   });
 
+  test('two occurrences of <title>', async () => {
+    const content = html(head(meta + title + title) + body());
+
+    const document = await getDocument(content);
+
+    const diagnostics = getHtmlDiagnostics(document.getText(), document);
+
+    assert.strictEqual(
+      diagnostics[0].message,
+      defaultWarnings.shouldBeUnique + 'title'
+    );
+  });
+
+  test('two occurrences of <main>', async () => {
+    const content = html(
+      head(meta + title) + body('<main></main><main></main>')
+    );
+
+    const document = await getDocument(content);
+
+    const diagnostics = getHtmlDiagnostics(document.getText(), document);
+
+    assert.strictEqual(diagnostics[0].message, warnings.main.shouldBeUnique);
+  });
+
   test('valid html', async () => {
-    const content = html(head(meta + title) + body);
+    const content = html(head(meta + title) + body());
 
     const document = await getDocument(content);
 
