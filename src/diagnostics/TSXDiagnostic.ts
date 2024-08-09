@@ -4,11 +4,14 @@ import traverse from '@babel/traverse';
 import { tsxWarning } from './Warnings';
 import * as jsx from '@babel/types';
 
-export class TSXDiagnosticGenerator {
+export class TSXDiagnostic {
   private diagnostics: vscode.Diagnostic[] = [];
 
   constructor(private text: string, private document: vscode.TextDocument) {}
 
+  /**
+   * Generates diagnostics for the TSX code.
+   */
   public generateDiagnostics(): vscode.Diagnostic[] {
     try {
       const ast = parser.parse(this.text, {
@@ -26,6 +29,9 @@ export class TSXDiagnosticGenerator {
     return this.diagnostics;
   }
 
+  /**
+   * Checks a JSX element and adds diagnostics if issues are found.
+   */
   private checkElement(node: jsx.JSXOpeningElement): void {
     const { name, loc, attributes } = node;
     const elementNameString = this.getElementNameString(name);
@@ -45,6 +51,9 @@ export class TSXDiagnosticGenerator {
     }
   }
 
+  /**
+   * Retrieves the string name of a JSX element.
+   */
   private getElementNameString(
     elementName:
       | jsx.JSXIdentifier
@@ -69,6 +78,9 @@ export class TSXDiagnosticGenerator {
     }
   }
 
+  /**
+   * Checks if the JSX element has a specified attribute.
+   */
   private hasAttribute(
     attribute: string | jsx.JSXIdentifier,
     element: (jsx.JSXAttribute | jsx.JSXSpreadAttribute)[]
@@ -78,21 +90,21 @@ export class TSXDiagnosticGenerator {
     );
   }
 
+  /**
+   * Creates a diagnostic message for a given source location.
+   */
   private createDiagnostic(
     location: jsx.SourceLocation,
     message: string
   ): vscode.Diagnostic {
-    return new vscode.Diagnostic(
-      this.getRange(location),
-      message,
-      vscode.DiagnosticSeverity.Warning
-    );
-  }
-
-  private getRange(location: jsx.SourceLocation): vscode.Range {
-    return new vscode.Range(
+    const range = new vscode.Range(
       new vscode.Position(location.start.line - 1, location.start.column),
       new vscode.Position(location.end.line - 1, location.end.column)
+    );
+    return new vscode.Diagnostic(
+      range,
+      message,
+      vscode.DiagnosticSeverity.Warning
     );
   }
 }

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { TSXDiagnosticGenerator } from './diagnostics/TSXDiagnosticGenerator';
-import { HTMLDiagnosticGenerator } from './diagnostics/HTMLDiagnosticGenerator';
+import { TSXDiagnostic } from './diagnostics/TSXDiagnostic';
+import { HTMLDiagnostic } from './diagnostics/HTMLDiagnostic';
 
 class DiagnosticManager {
   private diagnosticCollection: vscode.DiagnosticCollection;
@@ -27,13 +27,13 @@ export function activate(context: vscode.ExtensionContext) {
     const text = event.document.getText();
 
     if (event.document.languageId === 'html') {
-      const htmlDiagnostic = new HTMLDiagnosticGenerator(text, event.document);
+      const htmlDiagnostic = new HTMLDiagnostic(text, event.document);
       diagnostics.push(...htmlDiagnostic.generateDiagnostics());
     } else if (
       event.document.languageId === 'javascript' ||
       event.document.languageId === 'typescriptreact'
     ) {
-      const generator = new TSXDiagnosticGenerator(text, event.document);
+      const generator = new TSXDiagnostic(text, event.document);
       diagnostics.push(...generator.generateDiagnostics());
     }
 

@@ -3,7 +3,7 @@ import { DomUtils, parseDocument } from 'htmlparser2';
 import HtmlElement from './HtmlElement';
 import { AnyNode } from 'domhandler';
 
-export class HTMLDiagnosticGenerator {
+export class HTMLDiagnostic {
   private diagnostics: vscode.Diagnostic[] = [];
 
   constructor(
