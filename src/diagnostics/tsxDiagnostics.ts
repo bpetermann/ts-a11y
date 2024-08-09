@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as parser from '@babel/parser';
 import traverse from '@babel/traverse';
-import { warnings } from './warnings';
+import { tsxWarning } from './warnings';
 import {
   getElementNameString,
   hasAttribute,
@@ -29,7 +29,7 @@ export function getTsxDiagnostics(
           case 'button':
             if (!hasAttribute('aria-label', attributes) && loc) {
               diagnostics.push(
-                getDiagnostic(loc, warnings.button['aria-label'])
+                getDiagnostic(loc, tsxWarning.button['aria-label'])
               );
             }
             break;

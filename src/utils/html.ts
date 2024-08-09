@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { AnyNode } from 'domhandler';
+import HTMLElement from '../diagnostics/element';
 
 export interface Element {
   tag: string;
@@ -30,43 +31,18 @@ export function getDiagnostic(
   );
 }
 
-function findElementsByTag(tag: string, domNodes: AnyNode[]): AnyNode[] {
-  return domNodes.filter((node) => node && 'name' in node && node.name === tag);
-}
-
-function hasAttribute(nodes: AnyNode[], attr: string): boolean {
-  return nodes.some((node) => 'attribs' in node && node.attribs[attr]);
-}
-
-export function checkElementsValid(
+export function checkElements(
   document: vscode.TextDocument,
   domNodes: AnyNode[],
-  elements: Element[]
+  elements: HTMLElement[]
 ): vscode.Diagnostic[] {
-  return elements.reduce<vscode.Diagnostic[]>(
-    (diagnostics, { attributes, tag, warning, required, unique }) => {
-      const matchingElements = findElementsByTag(tag, domNodes);
+  return elements.reduce<vscode.Diagnostic[]>((diagnostics, element) => {
+    element.validate(domNodes);
 
-      if (required && !matchingElements.length) {
-        diagnostics.push(getDiagnostic(document, warning));
-      }
+    if (element.error) {
+      diagnostics.push(getDiagnostic(document, element.warning));
+    }
 
-      const multipleElements = matchingElements.length > 1;
-
-      if (unique && multipleElements) {
-        diagnostics.push(getDiagnostic(document, warning));
-      }
-
-      const attributeExists = attributes.length
-        ? attributes.every((attr) => hasAttribute(matchingElements, attr))
-        : true;
-
-      if (!attributeExists) {
-        diagnostics.push(getDiagnostic(document, warning));
-      }
-
-      return diagnostics;
-    },
-    []
-  );
+    return diagnostics;
+  }, []);
 }

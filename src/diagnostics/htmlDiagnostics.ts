@@ -1,37 +1,13 @@
 import * as vscode from 'vscode';
 import { DomUtils, parseDocument } from 'htmlparser2';
-import { warnings } from './warnings';
-import { Element, checkElementsValid } from '../utils/html';
+import { checkElements } from '../utils/html';
+import Element from './element';
 
-const elements: Element[] = [
-  {
-    tag: 'html',
-    required: true,
-    attributes: ['lang'],
-    unique: false,
-    warning: warnings.html.lang,
-  },
-  {
-    tag: 'title',
-    required: true,
-    attributes: [],
-    unique: true,
-    warning: warnings.title.shouldExist,
-  },
-  {
-    tag: 'meta',
-    required: true,
-    attributes: ['name'],
-    unique: false,
-    warning: warnings.meta.shouldExist,
-  },
-  {
-    tag: 'main',
-    required: false,
-    attributes: [],
-    unique: true,
-    warning: 'Should be unique',
-  },
+const elements = [
+  new Element('html', true, ['lang'], false),
+  new Element('title', true, [], true),
+  new Element('meta', true, ['name'], false),
+  new Element('main', false, [], true),
 ];
 
 export function getHtmlDiagnostics(
@@ -48,7 +24,7 @@ export function getHtmlDiagnostics(
       parsedDocument.children
     );
 
-    checkElementsValid(document, nodes, elements).forEach((diagnostic) =>
+    checkElements(document, nodes, elements).forEach((diagnostic) =>
       diagnostics.push(diagnostic)
     );
   } catch (error) {

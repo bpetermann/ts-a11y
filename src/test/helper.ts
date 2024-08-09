@@ -5,6 +5,6 @@ export const html = (el: string) => `<html lang="en">${el}</html>`;
 
 export const head = (el: string) => `<head>${el}</head>`;
 
-export const body = '<body></body>';
+export const body = (el?: string) => `<body>${el}</body>`;
 
 export const title = '<title>Document</title>';
