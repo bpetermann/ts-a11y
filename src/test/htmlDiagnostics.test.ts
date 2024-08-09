@@ -1,24 +1,33 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-
 import { meta, html, head, body, title } from './helper';
-import { HTMLDiagnostic } from '../diagnostics/HtmlDiagnostics';
+import { HTMLDiagnosticGenerator } from '../diagnostics/HTMLDiagnosticGenerator';
 import { defaultMessages, warnings } from '../diagnostics/Warnings';
 
+/**
+ * Creates an html document based on a string.
+ */
 const getDocument = (html: string) =>
   vscode.workspace.openTextDocument({
     content: html,
     language: 'html',
   });
 
+/**
+ * Generates diagnostics for an html document.
+ */
+const generateDiagnostics = (document: vscode.TextDocument) =>
+  new HTMLDiagnosticGenerator(
+    document.getText(),
+    document
+  ).generateDiagnostics();
+
 suite('HTML Test Suite', () => {
   test('html element with missing lang attribute', async () => {
     const html = `<html></html>`;
 
     const document = await getDocument(html);
-
-    const diagnostics = new HTMLDiagnostic(document.getText(), document)
-      .diagnostics;
+    const diagnostics = generateDiagnostics(document);
 
     assert.strictEqual(
       diagnostics[0].message,
@@ -30,9 +39,7 @@ suite('HTML Test Suite', () => {
     const html = '';
 
     const document = await getDocument(html);
-
-    const diagnostics = new HTMLDiagnostic(document.getText(), document)
-      .diagnostics;
+    const diagnostics = generateDiagnostics(document);
 
     assert.strictEqual(diagnostics.length, 3);
   });
@@ -41,9 +48,7 @@ suite('HTML Test Suite', () => {
     const html = `<html lang=""></html>`;
 
     const document = await getDocument(html);
-
-    const diagnostics = new HTMLDiagnostic(document.getText(), document)
-      .diagnostics;
+    const diagnostics = generateDiagnostics(document);
 
     assert.strictEqual(
       diagnostics[0].message,
@@ -55,9 +60,7 @@ suite('HTML Test Suite', () => {
     const content = html(head(meta) + body());
 
     const document = await getDocument(content);
-
-    const diagnostics = new HTMLDiagnostic(document.getText(), document)
-      .diagnostics;
+    const diagnostics = generateDiagnostics(document);
 
     assert.strictEqual(diagnostics[0].message, warnings.title.shouldExist);
   });
@@ -66,9 +69,7 @@ suite('HTML Test Suite', () => {
     const content = html(head(title) + body());
 
     const document = await getDocument(content);
-
-    const diagnostics = new HTMLDiagnostic(document.getText(), document)
-      .diagnostics;
+    const diagnostics = generateDiagnostics(document);
 
     assert.strictEqual(diagnostics[0].message, warnings.meta.shouldExist);
   });
@@ -77,9 +78,7 @@ suite('HTML Test Suite', () => {
     const content = html(head(meta + title + title) + body());
 
     const document = await getDocument(content);
-
-    const diagnostics = new HTMLDiagnostic(document.getText(), document)
-      .diagnostics;
+    const diagnostics = generateDiagnostics(document);
 
     assert.strictEqual(
       diagnostics[0].message,
@@ -93,9 +92,7 @@ suite('HTML Test Suite', () => {
     );
 
     const document = await getDocument(content);
-
-    const diagnostics = new HTMLDiagnostic(document.getText(), document)
-      .diagnostics;
+    const diagnostics = generateDiagnostics(document);
 
     assert.strictEqual(diagnostics[0].message, warnings.main.shouldBeUnique);
   });
@@ -104,9 +101,7 @@ suite('HTML Test Suite', () => {
     const content = html(head(meta + title) + body());
 
     const document = await getDocument(content);
-
-    const diagnostics = new HTMLDiagnostic(document.getText(), document)
-      .diagnostics;
+    const diagnostics = generateDiagnostics(document);
 
     assert.strictEqual(diagnostics[0], undefined);
   });

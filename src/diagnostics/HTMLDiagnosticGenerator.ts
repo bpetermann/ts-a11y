@@ -3,8 +3,8 @@ import { DomUtils, parseDocument } from 'htmlparser2';
 import HtmlElement from './HtmlElement';
 import { AnyNode } from 'domhandler';
 
-export class HTMLDiagnostic {
-  private _diagnostics: vscode.Diagnostic[] = [];
+export class HTMLDiagnosticGenerator {
+  private diagnostics: vscode.Diagnostic[] = [];
 
   constructor(
     private text: string,
@@ -15,15 +15,9 @@ export class HTMLDiagnostic {
       new HtmlElement('meta', true, ['name'], false),
       new HtmlElement('main', false, [], true),
     ]
-  ) {
-    this.checkElements();
-  }
+  ) {}
 
-  get diagnostics() {
-    return this._diagnostics;
-  }
-
-  checkElements() {
+  generateDiagnostics() {
     try {
       const parsedDocument = parseDocument(this.text);
 
@@ -36,7 +30,7 @@ export class HTMLDiagnostic {
         element.validate(nodes);
 
         if (element.error) {
-          this._diagnostics.push(
+          this.diagnostics.push(
             this.getDiagnostic(element.warning, element.nodes[0])
           );
         }
@@ -44,6 +38,8 @@ export class HTMLDiagnostic {
     } catch (error) {
       console.error('Error parsing HTML: ', error);
     }
+
+    return this.diagnostics;
   }
 
   private getDiagnostic(message: string, node?: AnyNode): vscode.Diagnostic {
