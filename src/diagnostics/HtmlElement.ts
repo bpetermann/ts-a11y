@@ -1,39 +1,42 @@
 import { AnyNode } from 'domhandler';
 import { warnings, Warning, defaultMessages } from './Warnings';
-import HTMLElementValidator from './HtmlValidator';
+import HtmlElementValidator from './HtmlValidator';
 
 export default class HtmlElement {
   constructor(
-    private readonly tag: keyof typeof warnings,
-    public readonly required: boolean,
+    public readonly tag: keyof typeof warnings,
+    public readonly specialCase: boolean,
     public readonly attributes: string[],
-    public readonly unique: boolean,
+    public readonly required: boolean = false,
+    public readonly unique: boolean = false,
     public nodes: AnyNode[] = [],
     private _warning: string = '',
-    private err: boolean = false
+    private _error: boolean = false
   ) {}
 
   validate(domNodes: AnyNode[]): void {
     this.clearErrors();
     this.findElements(domNodes);
-    const validator = new HTMLElementValidator(this);
+
+    const validator = new HtmlElementValidator(this);
     validator.validate();
   }
+
   get warning(): string {
     return this._warning;
   }
 
   get error(): boolean {
-    return this.err;
+    return this._error;
   }
 
   clearErrors() {
-    this.err = false;
+    this._error = false;
     this._warning = '';
   }
 
   set error(constraint: Warning) {
-    this.err = true;
+    this._error = true;
     const key = this.tag as keyof typeof warnings;
     const message =
       (warnings[key] as any)?.[constraint] ||
@@ -49,5 +52,17 @@ export default class HtmlElement {
 
   hasAttribute(attr: string): boolean {
     return this.nodes.some((node) => 'attribs' in node && node.attribs[attr]);
+  }
+
+  private hasAnyRequiredAttribute(node: AnyNode): boolean {
+    if (!('attribs' in node)) {
+      return false;
+    }
+    const { attribs } = node;
+    return Object.keys(attribs).some((key) => this.attributes.includes(key));
+  }
+
+  public allNodesHaveRequiredAttributes(): boolean {
+    return this.nodes.every((node) => this.hasAnyRequiredAttribute(node));
   }
 }

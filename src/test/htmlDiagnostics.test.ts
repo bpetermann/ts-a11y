@@ -20,7 +20,7 @@ const generateDiagnostics = (document: vscode.TextDocument) =>
   new HTMLDiagnostic(document.getText(), document).generateDiagnostics();
 
 suite('HTML Test Suite', () => {
-  test('html element with missing lang attribute', async () => {
+  test('Missing lang attribute in <html> tag', async () => {
     const html = `<html></html>`;
 
     const document = await getDocument(html);
@@ -32,7 +32,7 @@ suite('HTML Test Suite', () => {
     );
   });
 
-  test('empty html should return three diagnostics', async () => {
+  test('Empty HTML should return three diagnostics', async () => {
     const html = '';
 
     const document = await getDocument(html);
@@ -41,7 +41,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 3);
   });
 
-  test('html element with empty lang attribute', async () => {
+  test('Empty lang attribute in <html> tag', async () => {
     const html = `<html lang=""></html>`;
 
     const document = await getDocument(html);
@@ -53,7 +53,7 @@ suite('HTML Test Suite', () => {
     );
   });
 
-  test('missing title tag', async () => {
+  test('Missing <title> tag', async () => {
     const content = html(head(meta) + body());
 
     const document = await getDocument(content);
@@ -62,7 +62,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics[0].message, warnings.title.shouldExist);
   });
 
-  test('missing viewport attribute on meta element', async () => {
+  test('Missing viewport attribute on <meta> element', async () => {
     const content = html(head(title) + body());
 
     const document = await getDocument(content);
@@ -71,7 +71,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics[0].message, warnings.meta.shouldExist);
   });
 
-  test('two occurrences of <title>', async () => {
+  test('Two occurrences of <title> tag', async () => {
     const content = html(head(meta + title + title) + body());
 
     const document = await getDocument(content);
@@ -83,7 +83,7 @@ suite('HTML Test Suite', () => {
     );
   });
 
-  test('two occurrences of <main>', async () => {
+  test('Two occurrences of <main> tag', async () => {
     const content = html(
       head(meta + title) + body('<main></main><main></main>')
     );
@@ -94,12 +94,36 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics[0].message, warnings.main.shouldBeUnique);
   });
 
-  test('valid html', async () => {
+  test('Two occurrences of <nav> without attributes', async () => {
+    const content = html(head(meta + title) + body('<nav></nav><nav></nav>'));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(
+      diagnostics[0].message,
+      warnings.nav.hasMissingAttribute
+    );
+  });
+
+  test('Two occurrences of <nav> with attributes', async () => {
+    const content = html(
+      head(meta + title) +
+        body('<nav aria-label="main"></nav><nav aria-label="content"></nav>')
+    );
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('Valid HTML should return no diagnostics', async () => {
     const content = html(head(meta + title) + body());
 
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
 
-    assert.strictEqual(diagnostics[0], undefined);
+    assert.strictEqual(diagnostics.length, 0);
   });
 });

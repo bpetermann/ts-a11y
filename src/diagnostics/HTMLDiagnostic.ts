@@ -10,10 +10,11 @@ export class HTMLDiagnostic {
     private text: string,
     private document: vscode.TextDocument,
     private elements: HtmlElement[] = [
-      new HtmlElement('html', true, ['lang'], false),
-      new HtmlElement('title', true, [], true),
-      new HtmlElement('meta', true, ['name'], false),
-      new HtmlElement('main', false, [], true),
+      new HtmlElement('html', false, ['lang'], true),
+      new HtmlElement('title', false, [], true, true),
+      new HtmlElement('meta', false, ['name']),
+      new HtmlElement('main', false, [], false, true),
+      new HtmlElement('nav', true, ['aria-labelledby', 'aria-label']),
     ]
   ) {}
 

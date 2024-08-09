@@ -23,6 +23,10 @@ export const warnings = {
     [Warning.shouldBeUnique]:
       '[Refa11y] There should only be one visible <main> element on the page',
   },
+  nav: {
+    [Warning.hasMissingAttribute]:
+      '[Refa11y] If you have more than one <nav> element on a page, you should label them with either aria-labelledby or aria-label to make them distinguishable.',
+  },
 } as const;
 
 export const defaultMessages = {
