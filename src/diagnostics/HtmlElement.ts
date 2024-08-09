@@ -3,16 +3,30 @@ import { warnings, Warning, defaultMessages } from './Warnings';
 import HtmlElementValidator from './HtmlValidator';
 
 export default class HtmlElement {
+  public readonly tag: keyof typeof warnings;
+  public readonly specialCase: boolean;
+  public readonly attributes: string[];
+  public readonly required: boolean;
+  public readonly unique: boolean;
+  public nodes: AnyNode[] = [];
+  private _warning: string = '';
+  private _error: boolean = false;
+
   constructor(
-    public readonly tag: keyof typeof warnings,
-    public readonly specialCase: boolean,
-    public readonly attributes: string[],
-    public readonly required: boolean = false,
-    public readonly unique: boolean = false,
-    public nodes: AnyNode[] = [],
-    private _warning: string = '',
-    private _error: boolean = false
-  ) {}
+    tag: keyof typeof warnings,
+    options: {
+      specialCase?: boolean;
+      attributes?: string[];
+      required?: boolean;
+      unique?: boolean;
+    } = {}
+  ) {
+    this.tag = tag;
+    this.specialCase = options.specialCase ?? false;
+    this.attributes = options.attributes ?? [];
+    this.required = options.required ?? false;
+    this.unique = options.unique ?? false;
+  }
 
   validate(domNodes: AnyNode[]): void {
     this.clearErrors();
