@@ -1,12 +1,7 @@
-export type WarningKey = keyof typeof defaultMessages;
-
-type PartialRecord<K extends string | number | symbol, T> = { [P in K]?: T };
+import { Tag, PartialRecord, WarningKey } from './Types';
 
 export const warnings: {
-  [key in 'html' | 'title' | 'meta' | 'main' | 'nav']: PartialRecord<
-    WarningKey,
-    string
-  >;
+  [key in Tag]: PartialRecord<WarningKey, string>;
 } = {
   html: {
     hasMissingAttribute:
