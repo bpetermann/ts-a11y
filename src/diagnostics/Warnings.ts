@@ -1,40 +1,42 @@
-export const enum Warning {
-  shouldExist = 'shouldExist',
-  shouldBeUnique = 'shouldBeUnique',
-  hasMissingAttribute = 'hasMissingAttribute',
-}
+export type WarningKey = keyof typeof defaultMessages;
 
-export const warnings = {
+type PartialRecord<K extends string | number | symbol, T> = { [P in K]?: T };
+
+export const warnings: {
+  [key in 'html' | 'title' | 'meta' | 'main' | 'nav']: PartialRecord<
+    WarningKey,
+    string
+  >;
+} = {
   html: {
-    [Warning.hasMissingAttribute]:
+    hasMissingAttribute:
       '[Refa11y] Define the natual language of your page by using the lang attribute on the <html> element',
   },
   title: {
-    [Warning.shouldExist]:
+    shouldExist:
       "[Refa11y] Name your page using the <title> element to help screen reader users tell which page they're on",
   },
   meta: {
-    [Warning.shouldExist]:
-      '[Refa11y] Set the viewport meta tag to not prohibit zooming',
-    [Warning.hasMissingAttribute]:
+    shouldExist: '[Refa11y] Set the viewport meta tag to not prohibit zooming',
+    hasMissingAttribute:
       '[Refa11y] Set the viewport meta tag to not prohibit zooming',
   },
   main: {
-    [Warning.shouldBeUnique]:
+    shouldBeUnique:
       '[Refa11y] There should only be one visible <main> element on the page',
   },
   nav: {
-    [Warning.hasMissingAttribute]:
+    hasMissingAttribute:
       '[Refa11y] If you have more than one <nav> element on a page, you should label them with either aria-labelledby or aria-label to make them distinguishable.',
   },
 } as const;
 
 export const defaultMessages = {
-  [Warning.shouldExist]: '[Refa11y] The element should exist: ',
-  [Warning.shouldBeUnique]: '[Refa11y] The element should be unique: ',
-  [Warning.hasMissingAttribute]:
+  shouldExist: '[Refa11y] The element should exist: ',
+  shouldBeUnique: '[Refa11y] The element should be unique: ',
+  hasMissingAttribute:
     '[Refa11y] The element has one or more missing attributes: ',
-};
+} as const;
 
 export const tsxWarning = {
   button: {
