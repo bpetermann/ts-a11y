@@ -12,7 +12,7 @@ export class HTMLDiagnostic {
     private elements: HtmlElement[] = [
       new HtmlElement('html', { attributes: ['lang'], unique: true }),
       new HtmlElement('title', { required: true, unique: true }),
-      new HtmlElement('meta', { attributes: ['name'] }),
+      new HtmlElement('meta', { attributes: ['name'], required: true }),
       new HtmlElement('main', { unique: true }),
       new HtmlElement('nav', {
         specialCase: true,
