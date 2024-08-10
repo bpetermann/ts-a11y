@@ -1,5 +1,4 @@
 import HtmlElement from './HtmlElement';
-import { Warning } from './Warnings';
 
 export default class HtmlElementValidator {
   constructor(
@@ -20,11 +19,11 @@ export default class HtmlElementValidator {
     if (specialCase) {
       return [this.handleSpecialCases.bind(this)];
     }
-    if (attributes.length) {
-      validators.push(this.checkAttributes.bind(this));
-    }
     if (required) {
       validators.push(this.checkExistence.bind(this));
+    }
+    if (attributes.length) {
+      validators.push(this.checkAttributes.bind(this));
     }
     if (unique) {
       validators.push(this.checkUniqueness.bind(this));
@@ -33,24 +32,20 @@ export default class HtmlElementValidator {
   }
 
   private checkExistence(): void {
-    if (!this.element.error && !this.element.nodes.length) {
-      this.element.error = Warning.shouldExist;
+    if (!this.element.nodes.length) {
+      this.element.error = 'shouldExist';
     }
   }
 
   private checkUniqueness(): void {
-    if (!this.element.error && this.element.nodes.length > 1) {
-      this.element.error = Warning.shouldBeUnique;
+    if (this.element.nodes.length > 1) {
+      this.element.error = 'shouldBeUnique';
     }
   }
 
   private checkAttributes(): void {
-    const missingAttributes = this.element.attributes.filter(
-      (attr) => !this.element.hasAttribute(attr)
-    );
-
-    if (!this.element.error && missingAttributes.length) {
-      this.element.error = Warning.hasMissingAttribute;
+    if (!this.element.anyNodeHasRequiredAttribute()) {
+      this.element.error = 'hasMissingAttribute';
     }
   }
 
@@ -69,7 +64,7 @@ export default class HtmlElementValidator {
       this.element.nodes.length > 1 &&
       !this.element.allNodesHaveRequiredAttributes()
     ) {
-      this.element.error = Warning.hasMissingAttribute;
+      this.element.error = 'hasMissingAttribute';
     }
   }
 }

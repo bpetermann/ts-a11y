@@ -1,5 +1,5 @@
 import { AnyNode } from 'domhandler';
-import { warnings, Warning, defaultMessages } from './Warnings';
+import { warnings, WarningKey, defaultMessages } from './Warnings';
 import HtmlElementValidator from './HtmlValidator';
 
 export default class HtmlElement {
@@ -9,8 +9,8 @@ export default class HtmlElement {
   public readonly required: boolean;
   public readonly unique: boolean;
   public nodes: AnyNode[] = [];
-  private _warning: string = '';
-  private _error: boolean = false;
+  #warning: string = '';
+  #error: boolean = false;
 
   constructor(
     tag: keyof typeof warnings,
@@ -29,11 +29,11 @@ export default class HtmlElement {
   }
 
   get warning(): string {
-    return this._warning;
+    return this.#warning;
   }
 
   get error(): boolean {
-    return this._error;
+    return this.#error;
   }
 
   validate(domNodes: AnyNode[]): void {
@@ -45,23 +45,27 @@ export default class HtmlElement {
   }
 
   clearErrors() {
-    this._error = false;
-    this._warning = '';
-  }
-
-  set error(constraint: Warning) {
-    this._error = true;
-    const key = this.tag as keyof typeof warnings;
-    const message =
-      (warnings[key] as any)?.[constraint] ||
-      `${defaultMessages[constraint]}${this.tag}`;
-    this._warning = message;
+    this.#error = false;
+    this.#warning = '';
   }
 
   private findElements(nodes: AnyNode[]): void {
     this.nodes = nodes.filter(
       (node) => node && 'name' in node && node.name === this.tag
     );
+  }
+
+  set error(constraint: WarningKey) {
+    if (this.#error) {
+      return;
+    }
+    this.#error = true;
+    this.setMessage(constraint);
+  }
+
+  private setMessage(constraint: WarningKey) {
+    this.#warning =
+      warnings[this.tag][constraint] || defaultMessages[constraint] + this.tag;
   }
 
   public hasAttribute(attr: string): boolean {
@@ -78,5 +82,9 @@ export default class HtmlElement {
 
   public allNodesHaveRequiredAttributes(): boolean {
     return this.nodes.every((node) => this.hasAnyRequiredAttribute(node));
+  }
+
+  public anyNodeHasRequiredAttribute(): boolean {
+    return this.attributes.every((attr) => this.hasAttribute(attr));
   }
 }
