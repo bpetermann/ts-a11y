@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { DomUtils, parseDocument } from 'htmlparser2';
 import HtmlElement from './HtmlElement';
 import { AnyNode } from 'domhandler';
-import { Constraint as C, Tag } from './Types';
+import { Constraint as C, Tag } from '../types';
 
 export class HTMLDiagnostic {
   private diagnostics: vscode.Diagnostic[] = [];

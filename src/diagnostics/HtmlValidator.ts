@@ -1,4 +1,4 @@
-import { Constraint, WarningKey } from './Types';
+import { Constraint, WarningKey } from '../types';
 import HtmlElement from './HtmlElement';
 
 export default class HtmlElementValidator {

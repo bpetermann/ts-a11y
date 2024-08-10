@@ -1,7 +1,7 @@
 import { AnyNode } from 'domhandler';
 import { warnings, defaultMessages } from './Warnings';
 import HtmlElementValidator from './HtmlValidator';
-import { Constraint, Tag, WarningKey } from './Types';
+import { Constraint, Tag, WarningKey } from '../types';
 
 export default class HtmlElement {
   public nodes: AnyNode[] = [];

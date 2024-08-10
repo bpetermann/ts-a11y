@@ -1,4 +1,4 @@
-import { Tag, PartialRecord, WarningKey } from './Types';
+import { Tag, PartialRecord, WarningKey } from '../types';
 
 export const warnings: {
   [key in Tag]: PartialRecord<WarningKey, string>;
