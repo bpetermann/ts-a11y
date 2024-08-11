@@ -24,6 +24,10 @@ export const warnings: {
     hasMissingAttribute:
       '[Refa11y] If you have more than one <nav> element on a page, you should label them with either aria-labelledby or aria-label to make them distinguishable.',
   },
+  h1: {
+    shouldBeUnique:
+      "[Refa11y] A page should generally have a single <h1> element that describes the content of the page (similar to the document's <title> element).",
+  },
 } as const;
 
 export const defaultMessages = {

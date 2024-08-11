@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { DomUtils, parseDocument } from 'htmlparser2';
 import HtmlElement from './Element';
 import { AnyNode } from 'domhandler';
-import { Constraint as C, Tag } from '../../types/html';
+import { Constraint, Tag } from '../../types/html';
 
 export class Diagnostic {
   private diagnostics: vscode.Diagnostic[] = [];
@@ -11,13 +11,22 @@ export class Diagnostic {
     private text: string,
     private document: vscode.TextDocument,
     private elements: HtmlElement[] = [
-      new HtmlElement(Tag.Html, [C.Uniqueness, C.Attributes], ['lang']),
-      new HtmlElement(Tag.Title, [C.Uniqueness, C.Required]),
-      new HtmlElement(Tag.Meta, [C.Required, C.Attributes], ['name']),
-      new HtmlElement(Tag.Main, [C.Uniqueness]),
+      new HtmlElement(
+        Tag.Html,
+        [Constraint.Uniqueness, Constraint.Attributes],
+        ['lang']
+      ),
+      new HtmlElement(Tag.Title, [Constraint.Uniqueness, Constraint.Required]),
+      new HtmlElement(
+        Tag.Meta,
+        [Constraint.Required, Constraint.Attributes],
+        ['name']
+      ),
+      new HtmlElement(Tag.Main, [Constraint.Uniqueness]),
+      new HtmlElement(Tag.H1, [Constraint.Uniqueness]),
       new HtmlElement(
         Tag.Nav,
-        [C.Navigation],
+        [Constraint.Navigation],
         ['aria-labelledby', 'aria-label']
       ),
     ]

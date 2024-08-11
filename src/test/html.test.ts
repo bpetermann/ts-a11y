@@ -118,6 +118,15 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
+  test('Two occurrences of <h1> tag', async () => {
+    const content = html(head(meta + title) + body('<h1></h1><h1></h1>'));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics[0].message, warnings.h1.shouldBeUnique);
+  });
+
   test('Valid HTML should return no diagnostics', async () => {
     const content = html(head(meta + title) + body());
 
