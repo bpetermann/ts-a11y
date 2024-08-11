@@ -32,13 +32,13 @@ suite('HTML Test Suite', () => {
     );
   });
 
-  test('Empty HTML should return three diagnostics', async () => {
+  test('Empty HTML should return two diagnostics', async () => {
     const html = '';
 
     const document = await getDocument(html);
     const diagnostics = generateDiagnostics(document);
 
-    assert.strictEqual(diagnostics.length, 3);
+    assert.strictEqual(diagnostics.length, 2);
   });
 
   test('Empty lang attribute in <html> tag', async () => {
@@ -125,6 +125,39 @@ suite('HTML Test Suite', () => {
     const diagnostics = generateDiagnostics(document);
 
     assert.strictEqual(diagnostics[0].message, warnings.h1.shouldBeUnique);
+  });
+
+  test('Heading <h4> tag with missing <h3>', async () => {
+    const content = html(head(meta + title) + body('<h4></h4>'));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(
+      diagnostics[0].message,
+      warnings.h4.hasMissingDependency
+    );
+  });
+
+  test('Heading <h4> and <h3> tag with missing <h2>', async () => {
+    const content = html(head(meta + title) + body('<h3> h3</h3><h4></h4>'));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(
+      diagnostics[0].message,
+      warnings.h4.hasMissingDependency
+    );
+  });
+
+  test('Heading <h2> tag with exisiting <h1> tag', async () => {
+    const content = html(head(meta + title) + body('<h1></h1><h2></h2>'));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
   });
 
   test('Valid HTML should return no diagnostics', async () => {

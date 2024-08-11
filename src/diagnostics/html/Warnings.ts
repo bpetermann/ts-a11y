@@ -28,6 +28,26 @@ export const warnings: {
     shouldBeUnique:
       "[Refa11y] A page should generally have a single <h1> element that describes the content of the page (similar to the document's <title> element).",
   },
+  h2: {
+    hasMissingDependency:
+      '[Refa11y] Do not skip heading levels: always start from <h1>, followed by <h2> and so on.',
+  },
+  h3: {
+    hasMissingDependency:
+      '[Refa11y] Do not skip heading levels: always start from <h1>, followed by <h2> and so on.',
+  },
+  h4: {
+    hasMissingDependency:
+      '[Refa11y] Do not skip heading levels: always start from <h1>, followed by <h2> and so on.',
+  },
+  h5: {
+    hasMissingDependency:
+      '[Refa11y] Do not skip heading levels: always start from <h1>, followed by <h2> and so on.',
+  },
+  h6: {
+    hasMissingDependency:
+      '[Refa11y] Do not skip heading levels: always start from <h1>, followed by <h2> and so on.',
+  },
 } as const;
 
 export const defaultMessages = {
@@ -35,4 +55,6 @@ export const defaultMessages = {
   shouldBeUnique: '[Refa11y] The element should be unique: ',
   hasMissingAttribute:
     '[Refa11y] The element has one or more missing attributes: ',
+  hasMissingDependency:
+    '[Refa11y] The element has one or more missing dependencies',
 } as const;
