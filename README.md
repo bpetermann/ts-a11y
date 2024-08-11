@@ -1,67 +1,38 @@
 # Refa11y
 
-This is the README for your extension "refa11y". After writing up a brief description, we recommend including the following sections.
+**Refa11y** is a VS Code extension designed to help you improve the accessibility of your code. By providing refactoring suggestions, it guides you towards meeting accessibility standards, inspired by Manuel Matuzovic's excellent book, ["Web Accessibility Cookbook"](https://www.oreilly.com/library/view/web-accessibility-cookbook/9781098145590/)
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+Currently, refa11y focuses on HTML, offering warnings when your code lacks essential elements, tags, or attributes necessary for accessibility. Future updates will expand support to more (.jsx, .tsx) files.
 
-For example if there is an image subfolder under your extension project workspace:
+## Installation
 
-\!\[feature X\]\(images/feature-x.png\)
+The extension is not yet available on the VS Code Marketplace, but you can install and use it locally by following these steps:
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+1. Clone the repository
 
-## Requirements
+```
+git clone https://github.com/bpetermann/ts-a11y.git
+cd ts-a11y
+```
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+2. Install the dependencies:
 
-## Extension Settings
+```
+npm install
+```
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+3. Start the extension in watch mode:
 
-For example:
+```
+npm run watch
+```
 
-This extension contributes the following settings:
+To use the extension locally:
 
-- `myExtension.enable`: Enable/disable this extension.
-- `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-- [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-- Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-- Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-- Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+- In VS Code, select Run and Debug from the Debug start view or press F5.
+- VS Code will open a new window where you can select the application you want to work on.
 
 ## For more information
 

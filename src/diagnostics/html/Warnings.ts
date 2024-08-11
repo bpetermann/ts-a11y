@@ -1,4 +1,4 @@
-import { Tag, PartialRecord, WarningKey } from '../types';
+import { Tag, PartialRecord, WarningKey } from '../../types/html';
 
 export const warnings: {
   [key in Tag]: PartialRecord<WarningKey, string>;
@@ -31,11 +31,4 @@ export const defaultMessages = {
   shouldBeUnique: '[Refa11y] The element should be unique: ',
   hasMissingAttribute:
     '[Refa11y] The element has one or more missing attributes: ',
-} as const;
-
-export const tsxWarning = {
-  button: {
-    'aria-label':
-      '[Refa11y] Button elements should have an aria-label for accessibility.',
-  },
 } as const;

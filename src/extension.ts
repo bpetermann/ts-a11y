@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { TSXDiagnostic } from './diagnostics/TSXDiagnostic';
-import { HTMLDiagnostic } from './diagnostics/HTMLDiagnostic';
+import { TSXDiagnostic } from './diagnostics/tsx/TSXDiagnostic';
+import { Diagnostic as HTMLDiagnostic } from './diagnostics/html/Diagnostic';
 
 class DiagnosticManager {
   private diagnosticCollection: vscode.DiagnosticCollection;

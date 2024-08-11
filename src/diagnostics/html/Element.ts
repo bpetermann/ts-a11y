@@ -1,9 +1,9 @@
 import { AnyNode } from 'domhandler';
 import { warnings, defaultMessages } from './Warnings';
-import HtmlElementValidator from './HtmlValidator';
-import { Constraint, Tag, WarningKey } from '../types';
+import Validator from './Validator';
+import { Constraint, Tag, WarningKey } from '../../types/html';
 
-export default class HtmlElement {
+export default class Element {
   public nodes: AnyNode[] = [];
   #warning: string = '';
   #error: boolean = false;
@@ -38,7 +38,7 @@ export default class HtmlElement {
     this.clearErrors();
     this.findElements(domNodes);
 
-    new HtmlElementValidator(this, this.constraints).validate();
+    new Validator(this, this.constraints).validate();
   }
 
   clearErrors() {

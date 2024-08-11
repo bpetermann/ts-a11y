@@ -1,8 +1,8 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { meta, html, head, body, title } from './helper';
-import { HTMLDiagnostic } from '../diagnostics/HTMLDiagnostic';
-import { defaultMessages, warnings } from '../diagnostics/Warnings';
+import { Diagnostic as HTMLDiagnostic } from '../diagnostics/html/Diagnostic';
+import { defaultMessages, warnings } from '../diagnostics/html/Warnings';
 
 /**
  * Creates an html document based on a string.

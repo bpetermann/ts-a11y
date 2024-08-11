@@ -1,9 +1,9 @@
-import { Constraint, WarningKey } from '../types';
-import HtmlElement from './HtmlElement';
+import { Constraint, WarningKey } from '../../types/html';
+import Element from './Element';
 
-export default class HtmlElementValidator {
+export default class Validator {
   constructor(
-    private readonly element: HtmlElement,
+    private readonly element: Element,
     private readonly constraints: Constraint[]
   ) {}
 
