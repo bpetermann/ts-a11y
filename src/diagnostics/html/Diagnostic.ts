@@ -37,7 +37,7 @@ export class Diagnostic {
 
         if (element.error) {
           this.diagnostics.push(
-            this.getDiagnostic(element.warning, element.nodes[0])
+            this.getDiagnostic(element.warning, element.getFirstNode())
           );
         }
       });

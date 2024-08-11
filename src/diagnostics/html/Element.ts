@@ -2,10 +2,11 @@ import { AnyNode } from 'domhandler';
 import { warnings, defaultMessages } from './Warnings';
 import Validator from './Validator';
 import { Constraint, Tag, WarningKey } from '../../types/html';
+import NodeList from './NodeList';
 
 export default class Element {
-  public nodes: AnyNode[] = [];
-  #warning: string = '';
+  public nodes: NodeList = new NodeList();
+  #warning: string | null = null;
   #error: boolean = false;
 
   constructor(
@@ -15,59 +16,36 @@ export default class Element {
   ) {}
 
   get warning(): string {
-    return this.#warning;
+    return this.#warning ?? '';
   }
 
-  set warning(constraint: WarningKey) {
-    this.#warning =
-      warnings[this.tag][constraint] || defaultMessages[constraint] + this.tag;
+  set warning(msg: WarningKey | null) {
+    this.#warning = msg
+      ? warnings[this.tag][msg] || defaultMessages[msg] + this.tag
+      : null;
   }
 
   get error(): boolean {
     return this.#error;
   }
 
-  set error(constraint: WarningKey) {
-    if (!this.#error) {
-      this.#error = true;
-      this.warning = constraint;
-    }
+  set error(hasError: boolean) {
+    this.#error = hasError;
   }
 
   validate(domNodes: AnyNode[]): void {
     this.clearErrors();
-    this.findElements(domNodes);
+    this.nodes.set(domNodes, this.tag);
 
-    new Validator(this, this.constraints).validate();
+    new Validator(this).validate();
   }
 
-  clearErrors() {
-    this.#error = false;
-    this.#warning = '';
+  clearErrors(): void {
+    this.error = false;
+    this.warning = null;
   }
 
-  private findElements(nodes: AnyNode[]): void {
-    this.nodes = nodes.filter(
-      (node) => 'name' in node && node.name === this.tag
-    );
-  }
-
-  public hasAttribute(attr: string): boolean {
-    return this.nodes.some((node) => 'attribs' in node && node.attribs[attr]);
-  }
-
-  private hasAnyRequiredAttribute(node: AnyNode): boolean {
-    return (
-      'attribs' in node &&
-      Object.keys(node.attribs).some((key) => this.attributes.includes(key))
-    );
-  }
-
-  public allNodesHaveAttribs(): boolean {
-    return this.nodes.every((node) => this.hasAnyRequiredAttribute(node));
-  }
-
-  public anyNodeHasAttribs(): boolean {
-    return this.attributes.every((attr) => this.hasAttribute(attr));
+  getFirstNode(): AnyNode | undefined {
+    return this.nodes.first;
   }
 }
