@@ -48,4 +48,12 @@ export default class Element {
   getFirstNode(): AnyNode | undefined {
     return this.nodes.first;
   }
+
+  isOptional() {
+    return !this.constraints.includes(Constraint.Required);
+  }
+
+  hasNodes() {
+    return !!this.nodes.length;
+  }
 }

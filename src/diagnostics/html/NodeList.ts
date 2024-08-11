@@ -3,6 +3,7 @@ import { Tag } from '../../types/html';
 
 export default class NodeList {
   private nodes: AnyNode[] = [];
+  private domNodes: AnyNode[] = [];
 
   get length() {
     return this.nodes.length;
@@ -13,6 +14,7 @@ export default class NodeList {
   }
 
   set(nodes: AnyNode[], tag: Tag) {
+    this.domNodes = nodes;
     this.nodes = nodes.filter((node) => 'name' in node && node.name === tag);
   }
 
@@ -35,5 +37,10 @@ export default class NodeList {
 
   public hasAttribute(attr: string): boolean {
     return this.nodes.some((node) => 'attribs' in node && node.attribs[attr]);
+  }
+
+  public domNodeExists(tag: Tag): boolean{
+    return !!this.domNodes.find((node) => 'name' in node && node.name === tag);
+
   }
 }

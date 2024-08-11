@@ -1,10 +1,14 @@
-import { Constraint, WarningKey } from '../../types/html';
+import { Constraint, Tag, WarningKey } from '../../types/html';
 import Element from './Element';
 
 export default class Validator {
   constructor(private readonly element: Element) {}
 
   validate(): void {
+    if (this.element.isOptional() && !this.element.hasNodes()) {
+      return;
+    }
+
     this.element.constraints.forEach((check) => this[check].bind(this)());
   }
 
@@ -37,6 +41,14 @@ export default class Validator {
       !this.element.nodes.allNodesHaveAttribs(this.element.attributes)
     ) {
       this.report(WarningKey.Attributes);
+    }
+  }
+
+  private checkHeadingElements() {
+    const lastHeading = ('h' + (+this.element.tag[1] - 1)) as Tag;
+
+    if (!this.element.nodes.domNodeExists(lastHeading)) {
+      this.report(WarningKey.Dependency);
     }
   }
 }

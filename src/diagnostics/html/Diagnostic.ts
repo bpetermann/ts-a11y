@@ -10,26 +10,19 @@ export class Diagnostic {
   constructor(
     private text: string,
     private document: vscode.TextDocument,
+    // prettier-ignore
     private elements: HtmlElement[] = [
-      new HtmlElement(
-        Tag.Html,
-        [Constraint.Uniqueness, Constraint.Attributes],
-        ['lang']
-      ),
+      new HtmlElement(Tag.Html, [Constraint.Uniqueness, Constraint.Attributes], ['lang']),
       new HtmlElement(Tag.Title, [Constraint.Uniqueness, Constraint.Required]),
-      new HtmlElement(
-        Tag.Meta,
-        [Constraint.Required, Constraint.Attributes],
-        ['name']
-      ),
+      new HtmlElement(Tag.Meta, [Constraint.Required, Constraint.Attributes], ['name']),
       new HtmlElement(Tag.Main, [Constraint.Uniqueness]),
       new HtmlElement(Tag.H1, [Constraint.Uniqueness]),
-      new HtmlElement(
-        Tag.Nav,
-        [Constraint.Navigation],
-        ['aria-labelledby', 'aria-label']
-      ),
-    ]
+      new HtmlElement(Tag.H2, [Constraint.Heading]),
+      new HtmlElement(Tag.H3, [Constraint.Heading]),
+      new HtmlElement(Tag.H4, [Constraint.Heading]),
+      new HtmlElement(Tag.H5, [Constraint.Heading]),
+      new HtmlElement(Tag.H6, [Constraint.Heading]),
+      new HtmlElement(Tag.Nav, [Constraint.Navigation], ['aria-labelledby', 'aria-label'])]
   ) {}
 
   generateDiagnostics() {
