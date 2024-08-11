@@ -13,8 +13,8 @@ The extension is not yet available on the VS Code Marketplace, but you can insta
 1. Clone the repository
 
 ```
-git clone https://github.com/bpetermann/ts-a11y.git
-cd ts-a11y
+git clone https://github.com/bpetermann/ts-refa11y.git
+cd ts-refa11y
 ```
 
 2. Install the dependencies:
