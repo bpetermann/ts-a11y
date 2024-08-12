@@ -1,14 +1,15 @@
-import { AnyNode } from 'domhandler';
+import { AnyNode, Document } from 'domhandler';
 import { DomUtils, parseDocument } from 'htmlparser2';
 import * as vscode from 'vscode';
 import {
   AttributesValidator,
+  LinkValidator,
   HeadingValidator,
   NavigationValidator,
   RequiredValidator,
   UniquenessValidator,
-  Validator,
 } from './validator';
+import { Validator } from './types';
 
 export class Diagnostic {
   private diagnostics: vscode.Diagnostic[] = [];
@@ -23,17 +24,14 @@ export class Diagnostic {
       new UniquenessValidator(),
       new NavigationValidator(),
       new HeadingValidator(),
+      new LinkValidator(),
     ]
   ) {}
 
   generateDiagnostics() {
     try {
       const parsedDocument = parseDocument(this.text);
-
-      const nodes = DomUtils.filter(
-        (node) => node.type === 'tag',
-        parsedDocument.children
-      );
+      const nodes = this.getNodes(parsedDocument);
 
       this.validators.forEach((validator) => {
         validator
@@ -45,6 +43,13 @@ export class Diagnostic {
     }
 
     return this.diagnostics;
+  }
+
+  private getNodes(parsedDocument: Document) {
+    return DomUtils.filter(
+      (node) => node.type === 'tag',
+      parsedDocument.children
+    );
   }
 
   private getDiagnostic(message: string, node?: AnyNode): vscode.Diagnostic {

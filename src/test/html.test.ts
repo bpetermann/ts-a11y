@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { meta, html, head, body, title } from './helper';
+import { meta, html, head, body, title, link } from './helper';
 import { Diagnostic as HTMLDiagnostic } from '../diagnostics/html/diagnostic';
 import { warnings } from '../diagnostics/html/warnings';
 
@@ -104,10 +104,7 @@ suite('HTML Test Suite', () => {
   });
 
   test('Two occurrences of <nav> with attributes', async () => {
-    const content = html(
-      head(meta + title) +
-        body('<nav aria-label="main"></nav><nav aria-label="content"></nav>')
-    );
+    const content = html(head(meta + title) + body());
 
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
@@ -134,7 +131,7 @@ suite('HTML Test Suite', () => {
   });
 
   test('Heading <h4> and <h3> tag with missing <h2>', async () => {
-    const content = html(head(meta + title) + body('<h3> h3</h3><h4></h4>'));
+    const content = html(head(meta + title) + body('<h3>h3</h3><h4></h4>'));
 
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
@@ -144,6 +141,26 @@ suite('HTML Test Suite', () => {
 
   test('Heading <h2> tag with exisiting <h1> tag', async () => {
     const content = html(head(meta + title) + body('<h1></h1><h2></h2>'));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('Link with a generic description', async () => {
+    const linktext = 'Click';
+    const content = html(head(meta + title) + body(link(linktext)));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics[0].message, warnings.link + linktext);
+  });
+
+  test('Link with a good description', async () => {
+    const linktext = 'Learn how to create meaningful content';
+    const content = html(head(meta + title) + body(link(linktext)));
 
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);

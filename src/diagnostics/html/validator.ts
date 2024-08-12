@@ -1,17 +1,14 @@
 import { AnyNode } from 'domhandler';
 import { warnings } from './warnings';
-import { Elements } from '../../types/html';
+import { Elements, Validator } from './types';
 import {
   findNode,
   findNodes,
   allNodesHaveAttribute,
   hasAttribute,
-} from './nodeUtils';
-
-export interface Validator {
-  elements: Elements;
-  validate(nodes: AnyNode[]): string[];
-}
+  getNodeData,
+} from './utils';
+import { text } from 'stream/consumers';
 
 export class HeadingValidator implements Validator {
   readonly elements: Elements = {
@@ -126,5 +123,33 @@ export class AttributesValidator implements Validator {
       }
     });
     return errors;
+  }
+}
+
+export class LinkValidator implements Validator {
+  readonly elements: Elements = {
+    a: warnings.link,
+  };
+
+  readonly genericText = [
+    'click me',
+    'download',
+    'here',
+    'read more',
+    'learn more',
+    'click',
+  ].map((text) => text.toLowerCase().trim());
+
+  isGeneric(text: string | undefined) {
+    return text && this.genericText.includes(text.toLowerCase().trim());
+  }
+
+  validate(domNodes: AnyNode[]): string[] {
+    const links = findNodes(domNodes, 'a');
+
+    return links
+      .map(getNodeData)
+      .filter((text) => this.isGeneric(text))
+      .map((text) => this.elements.a + text);
   }
 }

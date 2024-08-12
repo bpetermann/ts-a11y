@@ -7,4 +7,6 @@ export const head = (el: string) => `<head>${el}</head>`;
 
 export const body = (el?: string) => `<body>${el}</body>`;
 
+export const link = (el?: string) => `<a href="/blog">${el}</a>`;
+
 export const title = '<title>Document</title>';
