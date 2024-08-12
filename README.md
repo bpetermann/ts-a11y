@@ -34,9 +34,4 @@ To use the extension locally:
 - In VS Code, select Run and Debug from the Debug start view or press F5
 - VS Code will open a new window where you can select the application you want to wa11york on
 
-## For more information
-
-- [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-- [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
 **Enjoy!**
