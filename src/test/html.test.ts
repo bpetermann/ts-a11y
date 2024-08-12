@@ -1,8 +1,8 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { meta, html, head, body, title } from './helper';
-import { Diagnostic as HTMLDiagnostic } from '../diagnostics/html/Diagnostic';
-import { defaultMessages, warnings } from '../diagnostics/html/Warnings';
+import { Diagnostic as HTMLDiagnostic } from '../diagnostics/html/diagnostic';
+import { warnings } from '../diagnostics/html/warnings';
 
 /**
  * Creates an html document based on a string.
@@ -59,7 +59,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
 
-    assert.strictEqual(diagnostics[0].message, warnings.title.shouldExist);
+    assert.strictEqual(diagnostics[0].message, warnings.title);
   });
 
   test('Missing viewport attribute on <meta> element', async () => {
@@ -79,7 +79,7 @@ suite('HTML Test Suite', () => {
 
     assert.strictEqual(
       diagnostics[0].message,
-      defaultMessages.shouldBeUnique + 'title'
+      '[Refa11y] The element should be unique: title'
     );
   });
 
@@ -91,7 +91,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
 
-    assert.strictEqual(diagnostics[0].message, warnings.main.shouldBeUnique);
+    assert.strictEqual(diagnostics[0].message, warnings.main);
   });
 
   test('Two occurrences of <nav> without attributes', async () => {
@@ -100,10 +100,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
 
-    assert.strictEqual(
-      diagnostics[0].message,
-      warnings.nav.hasMissingAttribute
-    );
+    assert.strictEqual(diagnostics[0].message, warnings.nav);
   });
 
   test('Two occurrences of <nav> with attributes', async () => {
@@ -124,7 +121,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
 
-    assert.strictEqual(diagnostics[0].message, warnings.h1.shouldBeUnique);
+    assert.strictEqual(diagnostics[0].message, warnings.h1);
   });
 
   test('Heading <h4> tag with missing <h3>', async () => {
@@ -133,10 +130,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
 
-    assert.strictEqual(
-      diagnostics[0].message,
-      warnings.h4.hasMissingDependency
-    );
+    assert.strictEqual(diagnostics[0].message, warnings.heading.shouldExist);
   });
 
   test('Heading <h4> and <h3> tag with missing <h2>', async () => {
@@ -145,10 +139,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
 
-    assert.strictEqual(
-      diagnostics[0].message,
-      warnings.h4.hasMissingDependency
-    );
+    assert.strictEqual(diagnostics[0].message, warnings.heading.shouldExist);
   });
 
   test('Heading <h2> tag with exisiting <h1> tag', async () => {

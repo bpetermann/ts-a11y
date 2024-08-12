@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as parser from '@babel/parser';
 import traverse from '@babel/traverse';
-import { tsxWarning } from './Warnings';
+import { tsxWarning } from './warnings';
 import * as jsx from '@babel/types';
 
 export class TSXDiagnostic {
