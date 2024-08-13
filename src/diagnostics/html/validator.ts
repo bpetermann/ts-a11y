@@ -8,41 +8,29 @@ import {
   hasAttribute,
   getNodeData,
 } from './utils';
-import { text } from 'stream/consumers';
 
 export class HeadingValidator implements Validator {
   readonly elements: Elements = {
-    h6: warnings.heading.shouldExist,
-    h5: warnings.heading.shouldExist,
-    h4: warnings.heading.shouldExist,
-    h3: warnings.heading.shouldExist,
-    h2: warnings.heading.shouldExist,
+    heading: warnings.heading.shouldExist,
   };
 
+  hasValidLevels(domNodes: AnyNode[], level: number) {
+    const heading = findNode(domNodes, 'h' + level);
+    return !heading || (heading && findNode(domNodes, `h${level - 1}`));
+  }
+
   validate(domNodes: AnyNode[]): string[] {
-    const errors: string[] = [];
-
-    Object.keys(this.elements).forEach((tag, i, self) => {
-      const headingExists = findNode(domNodes, tag);
-
-      if (headingExists) {
-        const lastHeading = tag === 'h2' ? 'h1' : self[i + 1];
-        const lastHeadingExists = findNode(domNodes, lastHeading);
-
-        if (!lastHeadingExists) {
-          errors.push(this.elements[tag]);
-        }
-      }
-    });
-
-    return errors;
+    return Array(5)
+      .fill(null)
+      .filter((_, i) => !this.hasValidLevels(domNodes, i + 2))
+      .map((_) => this.elements.heading);
   }
 }
 
 export class RequiredValidator implements Validator {
   readonly elements: Elements = {
     meta: warnings.meta.shouldExist,
-    title: warnings.title,
+    title: warnings.title.shouldExist,
   };
 
   validate(domNodes: AnyNode[]): string[] {
@@ -60,10 +48,10 @@ export class RequiredValidator implements Validator {
 
 export class UniquenessValidator implements Validator {
   readonly elements: Elements = {
-    html: '[Refa11y] The element should be unique: html',
+    html: warnings.heading.shouldBeUnique,
     h1: warnings.h1,
     main: warnings.main,
-    title: '[Refa11y] The element should be unique: title',
+    title: warnings.title.shouldBeUnique,
   };
 
   validate(domNodes: AnyNode[]): string[] {

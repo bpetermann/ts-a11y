@@ -59,7 +59,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
 
-    assert.strictEqual(diagnostics[0].message, warnings.title);
+    assert.strictEqual(diagnostics[0].message, warnings.title.shouldExist);
   });
 
   test('Missing viewport attribute on <meta> element', async () => {
