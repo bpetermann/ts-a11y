@@ -17,14 +17,28 @@ const nodeUtils = {
     );
   },
   hasAttribute: (domNodes: AnyNode[], attr: string) => {
-    return domNodes.some((node) => 'attribs' in node && node.attribs[attr]);
+    return domNodes.some(
+      (node) => node && 'attribs' in node && node.attribs[attr]
+    );
   },
   getNodeData: (node: AnyNode) => {
-    return 'children' in node && 'data' in node?.children[0]
+    return 'children' in node && node.children[0] && 'data' in node.children[0]
       ? node.children[0].data
       : undefined;
   },
 };
 
-const { findNode, findNodes, allNodesHaveAttribute, hasAttribute, getNodeData } = nodeUtils;
-export { findNode, findNodes, allNodesHaveAttribute, hasAttribute, getNodeData };
+const {
+  findNode,
+  findNodes,
+  allNodesHaveAttribute,
+  hasAttribute,
+  getNodeData,
+} = nodeUtils;
+export {
+  findNode,
+  findNodes,
+  allNodesHaveAttribute,
+  hasAttribute,
+  getNodeData,
+};

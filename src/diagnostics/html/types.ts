@@ -1,10 +1,10 @@
 import { AnyNode } from 'domhandler';
 
-export interface Elements {
+export interface Warnings {
   [tag: string]: string;
 }
 
 export interface Validator {
-  elements: Elements;
+  warnings: Warnings;
   validate(nodes: AnyNode[]): string[];
 }

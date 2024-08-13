@@ -1,6 +1,6 @@
 import { AnyNode } from 'domhandler';
 import { warnings } from './warnings';
-import { Elements, Validator } from './types';
+import { Warnings, Validator } from './types';
 import {
   findNode,
   findNodes,
@@ -10,7 +10,7 @@ import {
 } from './utils';
 
 export class HeadingValidator implements Validator {
-  readonly elements: Elements = {
+  readonly warnings: Warnings = {
     heading: warnings.heading.shouldExist,
   };
 
@@ -23,12 +23,12 @@ export class HeadingValidator implements Validator {
     return Array(5)
       .fill(null)
       .filter((_, i) => !this.hasValidLevels(domNodes, i + 2))
-      .map((_) => this.elements.heading);
+      .map((_) => this.warnings.heading);
   }
 }
 
 export class RequiredValidator implements Validator {
-  readonly elements: Elements = {
+  readonly warnings: Warnings = {
     meta: warnings.meta.shouldExist,
     title: warnings.title.shouldExist,
   };
@@ -36,9 +36,9 @@ export class RequiredValidator implements Validator {
   validate(domNodes: AnyNode[]): string[] {
     const errors: string[] = [];
 
-    Object.keys(this.elements).forEach((tag) => {
+    Object.keys(this.warnings).forEach((tag) => {
       if (!findNode(domNodes, tag)) {
-        errors.push(this.elements[tag]);
+        errors.push(this.warnings[tag]);
       }
     });
 
@@ -47,7 +47,7 @@ export class RequiredValidator implements Validator {
 }
 
 export class UniquenessValidator implements Validator {
-  readonly elements: Elements = {
+  readonly warnings: Warnings = {
     html: warnings.heading.shouldBeUnique,
     h1: warnings.h1,
     main: warnings.main,
@@ -57,9 +57,9 @@ export class UniquenessValidator implements Validator {
   validate(domNodes: AnyNode[]): string[] {
     const errors: string[] = [];
 
-    Object.keys(this.elements).forEach((tag) => {
+    Object.keys(this.warnings).forEach((tag) => {
       if (findNodes(domNodes, tag).length > 1) {
-        errors.push(this.elements[tag]);
+        errors.push(this.warnings[tag]);
       }
     });
     return errors;
@@ -67,7 +67,7 @@ export class UniquenessValidator implements Validator {
 }
 
 export class NavigationValidator implements Validator {
-  readonly elements: Elements = {
+  readonly warnings: Warnings = {
     nav: warnings.nav,
   };
 
@@ -79,13 +79,13 @@ export class NavigationValidator implements Validator {
     ]);
 
     return navElements.length > 1 && !allNodesHaveAttribs
-      ? [this.elements['nav']]
+      ? [this.warnings['nav']]
       : [];
   }
 }
 
 export class AttributesValidator implements Validator {
-  readonly elements: Elements = {
+  readonly warnings: Warnings = {
     html: warnings.html.hasMissingAttribute,
     meta: warnings.meta.hasMissingAttribute,
   };
@@ -97,7 +97,7 @@ export class AttributesValidator implements Validator {
   validate(domNodes: AnyNode[]): string[] {
     const errors: string[] = [];
 
-    Object.keys(this.elements).forEach((tag) => {
+    Object.keys(this.warnings).forEach((tag) => {
       const elements = findNodes(domNodes, tag);
 
       if (elements.length) {
@@ -106,7 +106,7 @@ export class AttributesValidator implements Validator {
         ].every((attr) => hasAttribute(elements, attr));
 
         if (!anyNodeHasAttribs) {
-          errors.push(this.elements[tag]);
+          errors.push(this.warnings[tag]);
         }
       }
     });
@@ -115,29 +115,56 @@ export class AttributesValidator implements Validator {
 }
 
 export class LinkValidator implements Validator {
-  readonly elements: Elements = {
-    a: warnings.link,
+  readonly warnings: Warnings = {
+    generic: warnings.link.avoid,
+    attribute: warnings.link.wrongAttribute,
   };
 
-  readonly genericText = [
+  private readonly genericTexts = new Set([
     'click me',
     'download',
     'here',
     'read more',
     'learn more',
     'click',
-  ].map((text) => text.toLowerCase().trim());
+    'more',
+  ]);
 
-  isGeneric(text: string | undefined) {
-    return text && this.genericText.includes(text.toLowerCase().trim());
+  private readonly prohibitedAttributes = new Set(['onclick']);
+
+  private isGeneric(text?: string): boolean {
+    return !!text && this.genericTexts.has(text.toLowerCase().trim());
+  }
+
+  private checkGenericTexts(links: AnyNode[]): string[] {
+    return links
+      .map(getNodeData)
+      .filter(this.isGeneric.bind(this))
+      .map((text) => this.warnings.generic + text);
+  }
+
+  private checkAttributes(links: AnyNode[]): string[] {
+    const warnings: string[] = [];
+
+    this.prohibitedAttributes.forEach((attr) => {
+      if (hasAttribute(links, attr)) {
+        warnings.push(this.warnings.attribute);
+      }
+    });
+
+    return warnings;
   }
 
   validate(domNodes: AnyNode[]): string[] {
     const links = findNodes(domNodes, 'a');
 
-    return links
-      .map(getNodeData)
-      .filter((text) => this.isGeneric(text))
-      .map((text) => this.elements.a + text);
+    if (!links.length) {
+      return [];
+    }
+
+    const genericTextWarnings = this.checkGenericTexts(links);
+    const attributeWarnings = this.checkAttributes(links);
+
+    return [...genericTextWarnings, ...attributeWarnings];
   }
 }

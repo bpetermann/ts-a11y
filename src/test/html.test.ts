@@ -155,7 +155,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
 
-    assert.strictEqual(diagnostics[0].message, warnings.link + linktext);
+    assert.strictEqual(diagnostics[0].message, warnings.link.avoid + linktext);
   });
 
   test('Link with a good description', async () => {
@@ -166,6 +166,17 @@ suite('HTML Test Suite', () => {
     const diagnostics = generateDiagnostics(document);
 
     assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('Link with a an "onclick" event', async () => {
+    const content = html(
+      head(meta + title) + body(`<a onclick="click()"></a>`)
+    );
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics[0].message, warnings.link.wrongAttribute);
   });
 
   test('Valid HTML should return no diagnostics', async () => {
