@@ -3,6 +3,12 @@
   "displayName": "Refa11y",
   "description": "Accessibility Refactoring Assistant",
   "version": "0.0.1",
+  "publisher": "bpetermann",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bpetermann/ts-refa11y"
+  },
+  "license": "MIT",
   "engines": {
     "vscode": "^1.92.0"
   },
