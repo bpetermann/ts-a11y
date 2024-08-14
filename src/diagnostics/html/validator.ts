@@ -1,91 +1,121 @@
 import { AnyNode } from 'domhandler';
 import { warnings } from './warnings';
-import { Warnings, Validator } from './types';
 import {
   findNode,
   findNodes,
   allNodesHaveAttribute,
   hasAttribute,
   getNodeData,
+  getNodeAttributes,
 } from './utils';
 
+export class ValidatorError {
+  constructor(public message: string, public node?: AnyNode) {}
+}
+
+export interface Validator {
+  warnings: {
+    [tag: string]: string;
+  };
+  validate(nodes: AnyNode[]): ValidatorError[];
+}
+
 export class HeadingValidator implements Validator {
-  readonly warnings: Warnings = {
+  readonly warnings: {
+    [tag: string]: string;
+  } = {
     heading: warnings.heading.shouldExist,
   };
 
-  hasValidLevels(domNodes: AnyNode[], level: number) {
-    const heading = findNode(domNodes, 'h' + level);
-    return !heading || (heading && findNode(domNodes, `h${level - 1}`));
-  }
+  validate(domNodes: AnyNode[]): ValidatorError[] {
+    const errors: ValidatorError[] = [];
 
-  validate(domNodes: AnyNode[]): string[] {
-    return Array(5)
+    Array(5)
       .fill(null)
-      .filter((_, i) => !this.hasValidLevels(domNodes, i + 2))
-      .map((_) => this.warnings.heading);
-  }
-}
-
-export class RequiredValidator implements Validator {
-  readonly warnings: Warnings = {
-    meta: warnings.meta.shouldExist,
-    title: warnings.title.shouldExist,
-  };
-
-  validate(domNodes: AnyNode[]): string[] {
-    const errors: string[] = [];
-
-    Object.keys(this.warnings).forEach((tag) => {
-      if (!findNode(domNodes, tag)) {
-        errors.push(this.warnings[tag]);
-      }
-    });
+      .forEach((_, i) => {
+        const heading = findNode(domNodes, 'h' + (i + 2));
+        if (heading) {
+          const ancestor = findNode(domNodes, 'h' + (i + 1));
+          if (!ancestor) {
+            errors.push(new ValidatorError(this.warnings.heading, heading));
+          }
+        }
+      });
 
     return errors;
   }
 }
 
+export class RequiredValidator implements Validator {
+  readonly warnings: {
+    [tag: string]: string;
+  } = {
+    meta: warnings.meta.shouldExist,
+    title: warnings.title.shouldExist,
+  };
+
+  validate(domNodes: AnyNode[]): ValidatorError[] {
+    const warnings: ValidatorError[] = [];
+
+    Object.keys(this.warnings).forEach((tag) => {
+      if (!findNode(domNodes, tag)) {
+        warnings.push(new ValidatorError(this.warnings[tag]));
+      }
+    });
+
+    return warnings;
+  }
+}
+
 export class UniquenessValidator implements Validator {
-  readonly warnings: Warnings = {
+  readonly warnings: {
+    [tag: string]: string;
+  } = {
     html: warnings.heading.shouldBeUnique,
     h1: warnings.h1,
     main: warnings.main,
     title: warnings.title.shouldBeUnique,
   };
 
-  validate(domNodes: AnyNode[]): string[] {
-    const errors: string[] = [];
+  validate(domNodes: AnyNode[]): ValidatorError[] {
+    const warnings: ValidatorError[] = [];
 
     Object.keys(this.warnings).forEach((tag) => {
-      if (findNodes(domNodes, tag).length > 1) {
-        errors.push(this.warnings[tag]);
+      const nodes = findNodes(domNodes, tag);
+      if (nodes.length > 1) {
+        warnings.push(new ValidatorError(this.warnings[tag], nodes[0]));
       }
     });
-    return errors;
+    return warnings;
   }
 }
 
 export class NavigationValidator implements Validator {
-  readonly warnings: Warnings = {
+  readonly warnings: {
+    [tag: string]: string;
+  } = {
     nav: warnings.nav,
   };
 
-  validate(domNodes: AnyNode[]): string[] {
+  validate(domNodes: AnyNode[]): ValidatorError[] {
     const navElements = findNodes(domNodes, 'nav');
     const allNodesHaveAttribs = allNodesHaveAttribute(navElements, [
       'aria-labelledby',
       'aria-label',
     ]);
 
-    return navElements.length > 1 && !allNodesHaveAttribs
-      ? [this.warnings['nav']]
-      : [];
+    if (navElements.length > 1 && !allNodesHaveAttribs) {
+      return [new ValidatorError(this.warnings.nav, navElements[0])];
+    }
+
+    return [];
   }
 }
 
 export class AttributesValidator implements Validator {
-  readonly warnings: Warnings = {
+  readonly warnings: {
+    [tag: string]: string;
+  } = {
     html: warnings.html.hasMissingAttribute,
     meta: warnings.meta.hasMissingAttribute,
   };
@@ -94,8 +124,8 @@ export class AttributesValidator implements Validator {
     meta: ['name'],
   };
 
-  validate(domNodes: AnyNode[]): string[] {
-    const errors: string[] = [];
+  validate(domNodes: AnyNode[]): ValidatorError[] {
+    const errors: ValidatorError[] = [];
 
     Object.keys(this.warnings).forEach((tag) => {
       const elements = findNodes(domNodes, tag);
@@ -106,18 +136,22 @@ export class AttributesValidator implements Validator {
         ].every((attr) => hasAttribute(elements, attr));
 
         if (!anyNodeHasAttribs) {
-          errors.push(this.warnings[tag]);
+          errors.push(new ValidatorError(this.warnings[tag], elements[0]));
         }
       }
     });
+
     return errors;
   }
 }
 
 export class LinkValidator implements Validator {
-  readonly warnings: Warnings = {
+  readonly warnings: {
+    [tag: string]: string;
+  } = {
     generic: warnings.link.avoid,
-    attribute: warnings.link.wrongAttribute,
+    onclick: warnings.link.wrongAttribute,
+    tabindex: warnings.link.tabindex,
   };
 
   private readonly genericTexts = new Set([
@@ -129,42 +163,67 @@ export class LinkValidator implements Validator {
     'click',
     'more',
   ]);
+  private readonly faultyAttributes: Record<
+    'onclick' | 'tabindex',
+    string | null
+  > = {
+    onclick: null,
+    tabindex: '-1',
+  };
 
-  private readonly prohibitedAttributes = new Set(['onclick']);
-
-  private isGeneric(text?: string): boolean {
-    return !!text && this.genericTexts.has(text.toLowerCase().trim());
-  }
-
-  private checkGenericTexts(links: AnyNode[]): string[] {
-    return links
-      .map(getNodeData)
-      .filter(this.isGeneric.bind(this))
-      .map((text) => this.warnings.generic + text);
-  }
-
-  private checkAttributes(links: AnyNode[]): string[] {
-    const warnings: string[] = [];
-
-    this.prohibitedAttributes.forEach((attr) => {
-      if (hasAttribute(links, attr)) {
-        warnings.push(this.warnings.attribute);
-      }
-    });
-
-    return warnings;
-  }
-
-  validate(domNodes: AnyNode[]): string[] {
+  validate(domNodes: AnyNode[]): ValidatorError[] {
     const links = findNodes(domNodes, 'a');
 
     if (!links.length) {
       return [];
     }
 
-    const genericTextWarnings = this.checkGenericTexts(links);
-    const attributeWarnings = this.checkAttributes(links);
+    return [
+      ...this.checkGenericTexts(links),
+      ...this.checkFaultyAttributes(links),
+    ];
+  }
 
-    return [...genericTextWarnings, ...attributeWarnings];
+  private checkGenericTexts(links: AnyNode[]): ValidatorError[] {
+    const errors: ValidatorError[] = [];
+
+    links.forEach((link) => {
+      const linkText = getNodeData(link);
+      const hasGenericText = this.isGeneric(linkText);
+      if (hasGenericText) {
+        errors.push(new ValidatorError(this.warnings.generic + linkText, link));
+      }
+    });
+
+    return errors;
+  }
+
+  private isGeneric(text?: string): boolean {
+    return !!text && this.genericTexts.has(text.toLowerCase().trim());
+  }
+
+  private checkFaultyAttributes(links: AnyNode[]): ValidatorError[] {
+    const errors: ValidatorError[] = [];
+
+    links.forEach((link) => {
+      const attributes = getNodeAttributes(link);
+      if (attributes) {
+        Object.entries(this.faultyAttributes).forEach(([attrib, value]) => {
+          if (this.isFaulty(attributes, attrib, value)) {
+            errors.push(new ValidatorError(this.warnings[attrib], link));
+          }
+        });
+      }
+    });
+
+    return errors;
+  }
+
+  private isFaulty(
+    attributes: { [name: string]: string },
+    attrib: string,
+    value: string | null
+  ): boolean {
+    return attrib in attributes && (!value || attributes[attrib] === value);
   }
 }

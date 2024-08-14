@@ -26,15 +26,15 @@ export function activate(context: vscode.ExtensionContext) {
     const diagnostics: vscode.Diagnostic[] = [];
     const text = event.document.getText();
 
-    if (event.document.languageId === 'html') {
-      const htmlDiagnostic = new HTMLDiagnostic(text, event.document);
-      diagnostics.push(...htmlDiagnostic.generateDiagnostics());
-    } else if (
-      event.document.languageId === 'javascript' ||
-      event.document.languageId === 'typescriptreact'
-    ) {
-      const generator = new TSXDiagnostic(text, event.document);
-      diagnostics.push(...generator.generateDiagnostics());
+    switch (event.document.languageId) {
+      case 'html':
+        const htmlDiagnostic = new HTMLDiagnostic(text, event.document);
+        diagnostics.push(...htmlDiagnostic.generateDiagnostics());
+        break;
+      case 'javascript' || 'typescriptreact':
+        const generator = new TSXDiagnostic(text, event.document);
+        diagnostics.push(...generator.generateDiagnostics());
+        break;
     }
 
     diagnosticManager.updateDiagnostics(event.document, diagnostics);

@@ -3,13 +3,13 @@ import { DomUtils, parseDocument } from 'htmlparser2';
 import * as vscode from 'vscode';
 import {
   AttributesValidator,
-  LinkValidator,
   HeadingValidator,
+  LinkValidator,
   NavigationValidator,
   RequiredValidator,
   UniquenessValidator,
+  Validator,
 } from './validator';
-import { Validator } from './types';
 
 export class Diagnostic {
   private diagnostics: vscode.Diagnostic[] = [];
@@ -30,19 +30,28 @@ export class Diagnostic {
 
   generateDiagnostics() {
     try {
-      const parsedDocument = parseDocument(this.text);
+      const parsedDocument = this.getDocument();
       const nodes = this.getNodes(parsedDocument);
 
       this.validators.forEach((validator) => {
-        validator
-          .validate(nodes)
-          .forEach((error) => this.diagnostics.push(this.getDiagnostic(error)));
+        const errors = validator.validate(nodes);
+
+        errors.forEach(({ message, node }) =>
+          this.diagnostics.push(this.getDiagnostic(message, node ?? undefined))
+        );
       });
     } catch (error) {
       console.error('Error parsing HTML: ', error);
     }
 
     return this.diagnostics;
+  }
+
+  private getDocument() {
+    return parseDocument(this.text, {
+      withStartIndices: true,
+      withEndIndices: true,
+    });
   }
 
   private getNodes(parsedDocument: Document) {

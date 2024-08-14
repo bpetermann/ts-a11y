@@ -21,6 +21,18 @@ const nodeUtils = {
       (node) => node && 'attribs' in node && node.attribs[attr]
     );
   },
+  getNodeAttributes: (node: AnyNode) => {
+    if (!('attribs' in node)) {
+      return;
+    }
+    return node.attribs;
+  },
+  getNodeAttribute: (node: AnyNode, attr: string) => {
+    if (!('attribs' in node) || !(attr in node.attribs)) {
+      return;
+    }
+    return node.attribs[attr];
+  },
   getNodeData: (node: AnyNode) => {
     return 'children' in node && node.children[0] && 'data' in node.children[0]
       ? node.children[0].data
@@ -33,12 +45,16 @@ const {
   findNodes,
   allNodesHaveAttribute,
   hasAttribute,
+  getNodeAttributes,
+  getNodeAttribute,
   getNodeData,
 } = nodeUtils;
 export {
+  allNodesHaveAttribute,
   findNode,
   findNodes,
-  allNodesHaveAttribute,
-  hasAttribute,
+  getNodeAttribute,
+  getNodeAttributes,
   getNodeData,
+  hasAttribute,
 };

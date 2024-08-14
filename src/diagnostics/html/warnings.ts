@@ -25,5 +25,7 @@ export const warnings = {
     avoid:
       '[Refa11y] Avoid generic link text, because it makes it difficult for users to anticipate what these links lead to. Link text: ',
     wrongAttribute: '[Refa11y] A Link should not have a click event.',
+    tabindex:
+      'Negative tabindex values should not be used on elements that require direct keyboard navigation, like links or buttons.',
   },
 };
