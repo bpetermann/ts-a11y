@@ -27,5 +27,6 @@ export const warnings = {
     wrongAttribute: '[Refa11y] A Link should not have a click event.',
     tabindex:
       'Negative tabindex values should not be used on elements that require direct keyboard navigation, like links or buttons.',
+    mail: '[Refa11y] Include the email address in the link text to help users who find it tedious to switch between applications',
   },
 };

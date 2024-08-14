@@ -31,8 +31,8 @@ npm run watch
 
 To use the extension locally:
 
-- In VS Code, select Run and Debug from the Debug start view or press F5
-- VS Code will open a new window where you can select the application you want to wa11york on
+- In VS Code, select `Run` and `Start Debugging` from the start view or press `F5`
+- VS Code will open a new window where you can select the application you want to work on
 
 ## 📋 Usage Examples
 
@@ -45,6 +45,5 @@ The following command will run all test suites:
 ```
 npm run test
 ```
-
 
 **Enjoy!**

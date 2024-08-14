@@ -148,7 +148,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
-  test('Link with a generic description', async () => {
+  test('Anchor with a generic description', async () => {
     const linktext = 'Click';
     const content = html(head(meta + title) + body(link(linktext)));
 
@@ -161,7 +161,7 @@ suite('HTML Test Suite', () => {
     );
   });
 
-  test('Link with a good description', async () => {
+  test('Anchor with a good description', async () => {
     const linktext = 'Learn how to create meaningful content';
     const content = html(head(meta + title) + body(link(linktext)));
 
@@ -171,7 +171,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
-  test('Link with a an "onclick" event', async () => {
+  test('Anchor with a an "onclick" event', async () => {
     const content = html(
       head(meta + title) + body(`<a onclick="click()"></a>`)
     );
@@ -182,13 +182,26 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics[0].message, warnings.link.wrongAttribute);
   });
 
-  test('Link with a an tabindex of "-1"', async () => {
+  test('Anchor with an tabindex of "-1"', async () => {
     const content = html(head(meta + title) + body(`<a tabindex="-1"></a>`));
 
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
 
     assert.strictEqual(diagnostics[0].message, warnings.link.tabindex);
+  });
+
+  test('Anchor with "mailto" in "href"', async () => {
+    const linktext = 'If you want to learn more about our products, contact us';
+    const content = html(
+      head(meta + title) +
+        body(`<a href="mailto:support@office.com">${linktext}</a>`)
+    );
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics[0].message, warnings.link.mail);
   });
 
   test('Valid HTML should return no diagnostics', async () => {

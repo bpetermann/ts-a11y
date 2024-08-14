@@ -6,6 +6,7 @@ import {
   hasAttribute,
   getNodeData,
   getNodeAttributes,
+  getNodeAttribute,
 } from './utils';
 
 export class ValidatorError {
@@ -181,7 +182,23 @@ export class LinkValidator implements Validator {
     return [
       ...this.checkGenericTexts(links),
       ...this.checkFaultyAttributes(links),
+      ...this.checkEmailLinks(links),
     ];
+  }
+
+  private checkEmailLinks(links: AnyNode[]): ValidatorError[] {
+    const errors: ValidatorError[] = [];
+
+    links.forEach((link) => {
+      if (getNodeAttribute(link, 'href')?.startsWith('mailto:')) {
+        const linkText = getNodeData(link);
+        if (linkText && !linkText.includes('@')) {
+          errors.push(new ValidatorError(warnings.link.mail, link));
+        }
+      }
+    });
+
+    return errors;
   }
 
   private checkGenericTexts(links: AnyNode[]): ValidatorError[] {
