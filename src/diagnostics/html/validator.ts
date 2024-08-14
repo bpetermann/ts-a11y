@@ -98,17 +98,25 @@ export class NavigationValidator implements Validator {
   };
 
   validate(domNodes: AnyNode[]): ValidatorError[] {
-    const navElements = findNodes(domNodes, 'nav');
-    const allNodesHaveAttribs = allNodesHaveAttribute(navElements, [
-      'aria-labelledby',
-      'aria-label',
-    ]);
+    const errors: ValidatorError[] = [];
 
-    if (navElements.length > 1 && !allNodesHaveAttribs) {
-      return [new ValidatorError(this.warnings.nav, navElements[0])];
+    const navElements = findNodes(domNodes, 'nav');
+    if (navElements.length < 2) {
+      return [];
     }
 
-    return [];
+    navElements.forEach((nav) => {
+      const navAttributes = getNodeAttributes(nav) || {};
+      const hasAriaAttribute = ['aria-labelledby', 'aria-label'].some(
+        (attribute) => Object.keys(navAttributes).includes(attribute)
+      );
+
+      if (!hasAriaAttribute) {
+        errors.push(new ValidatorError(this.warnings.nav, nav));
+      }
+    });
+
+    return errors;
   }
 }
 
