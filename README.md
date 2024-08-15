@@ -6,9 +6,9 @@ Zugang is a VS Code extension designed to help you improve the accessibility of 
 
 Currently, Zugang offers warnings when your HTML lacks essential elements, tags, or attributes that are necessary for proper accessibility. The extension focuses on common mistakes such as:
 
-- Missing or incorrect accessibility-related attributes (e.g., `alt` text on images, `aria-label` on interactive elements).
+- Missing or incorrect accessibility-related attributes (e.g., `lang` on html, `aria-label` when multiple `nav` elements are present).
 - Ignoring proper heading hierarchy (e.g., `h1 -> h2 -> h3`...).
-- Omitting essential meta elements (e.g., `meta charset`, viewport settings).
+- Omitting essential meta elements (e.g., viewport settings).
 
 Each warning is accompanied by specific suggestions for improvement, helping you to understand the issue and make the necessary corrections.
 
@@ -30,7 +30,7 @@ The current version is a **pre-release** version. Expect frequent updates as new
 
 ## Usage Examples
 
-![simplescreenrecorder-2024-08-14_23 41 31-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/9f113596-6dca-4d66-874f-3551d0569033)
+![simplescreenrecorder-2024-08-15_23 16 27-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/8be37fc9-c96a-45ef-aaf4-bb4e93ea1b1a)
 
 ## Contributing
 
