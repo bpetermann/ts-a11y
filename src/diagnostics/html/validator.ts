@@ -1,13 +1,6 @@
 import { AnyNode } from 'domhandler';
 import { warnings } from './warnings';
-import {
-  findNode,
-  findNodes,
-  hasAttribute,
-  getNodeData,
-  getNodeAttributes,
-  getNodeAttribute,
-} from './utils';
+import NodeList from './nodelist';
 
 export class ValidatorError {
   constructor(public message: string, public node?: AnyNode) {}
@@ -22,17 +15,18 @@ export class HeadingValidator implements Validator {
 
   validate(domNodes: AnyNode[]): ValidatorError[] {
     const errors: ValidatorError[] = [];
+    const { findNodeByTag } = NodeList;
 
     for (let i = 2; i <= 6; i++) {
       const tag = `h${i}`;
-      const heading = findNode(domNodes, tag);
+      const heading = findNodeByTag(domNodes, tag);
 
       if (heading) {
         const prevTag = `h${i - 1}`;
         this.cache.add(tag);
 
         const prevHeadingExists =
-          this.cache.has(prevTag) || findNode(domNodes, prevTag);
+          this.cache.has(prevTag) || findNodeByTag(domNodes, prevTag);
 
         if (!prevHeadingExists) {
           errors.push(
@@ -56,9 +50,10 @@ export class RequiredValidator implements Validator {
 
   validate(domNodes: AnyNode[]): ValidatorError[] {
     const errors: ValidatorError[] = [];
+    const { findNodeByTag } = NodeList;
 
     Object.keys(this.warnings).forEach((tag) => {
-      if (!findNode(domNodes, tag)) {
+      if (!findNodeByTag(domNodes, tag)) {
         errors.push(new ValidatorError(this.warnings[tag]));
       }
     });
@@ -81,7 +76,7 @@ export class UniquenessValidator implements Validator {
     const warnings: ValidatorError[] = [];
 
     Object.keys(this.warnings).forEach((tag) => {
-      const nodes = findNodes(domNodes, tag);
+      const { nodes } = new NodeList(domNodes, tag);
       if (nodes.length > 1) {
         warnings.push(new ValidatorError(this.warnings[tag], nodes[0]));
       }
@@ -94,11 +89,12 @@ export class NavigationValidator implements Validator {
   validate(domNodes: AnyNode[]): ValidatorError[] {
     const errors: ValidatorError[] = [];
 
-    const navElements = findNodes(domNodes, 'nav');
+    const nodeList = new NodeList(domNodes, 'nav');
+    const { nodes: navElements } = nodeList;
 
     if (navElements.length > 1) {
       navElements.forEach((nav) => {
-        const navAttributes = getNodeAttributes(nav);
+        const navAttributes = nodeList.getNodeAttributes(nav);
         const hasAriaAttribute =
           navAttributes &&
           ('aria-labelledby' in navAttributes || 'aria-label' in navAttributes);
@@ -129,12 +125,13 @@ export class AttributesValidator implements Validator {
     const errors: ValidatorError[] = [];
 
     Object.keys(this.warnings).forEach((tag) => {
-      const elements = findNodes(domNodes, tag);
+      const nodeList = new NodeList(domNodes, tag);
+      const { nodes: elements } = nodeList;
 
       if (elements.length) {
         const anyNodeHasAttribs = this.attributes[
           tag as keyof typeof this.attributes
-        ].every((attr) => hasAttribute(elements, attr));
+        ].every((attr) => nodeList.anyNodeHasAttribute(attr));
 
         if (!anyNodeHasAttribs) {
           errors.push(new ValidatorError(this.warnings[tag], elements[0]));
@@ -147,6 +144,8 @@ export class AttributesValidator implements Validator {
 }
 
 export class LinkValidator implements Validator {
+  private nodeList: NodeList | null = null;
+
   readonly warnings: {
     [tag: string]: string;
   } = {
@@ -173,7 +172,8 @@ export class LinkValidator implements Validator {
   };
 
   validate(domNodes: AnyNode[]): ValidatorError[] {
-    const links = findNodes(domNodes, 'a');
+    this.nodeList = new NodeList(domNodes, 'a');
+    const { nodes: links } = this.nodeList;
 
     if (!links.length) {
       return [];
@@ -186,26 +186,11 @@ export class LinkValidator implements Validator {
     ];
   }
 
-  private checkEmailLinks(links: AnyNode[]): ValidatorError[] {
-    const errors: ValidatorError[] = [];
-
-    links.forEach((link) => {
-      if (getNodeAttribute(link, 'href')?.startsWith('mailto:')) {
-        const linkText = getNodeData(link);
-        if (linkText && !linkText.includes('@')) {
-          errors.push(new ValidatorError(warnings.link.mail, link));
-        }
-      }
-    });
-
-    return errors;
-  }
-
   private checkGenericTexts(links: AnyNode[]): ValidatorError[] {
     const errors: ValidatorError[] = [];
 
     links.forEach((link) => {
-      const linkText = getNodeData(link);
+      const linkText = this.nodeList?.getNodeData(link);
       if (this.isGeneric(linkText)) {
         errors.push(
           new ValidatorError(`${warnings.link.avoid}"${linkText}"`, link)
@@ -216,15 +201,11 @@ export class LinkValidator implements Validator {
     return errors;
   }
 
-  private isGeneric(text?: string): boolean {
-    return !!text && this.genericTexts.has(text.toLowerCase().trim());
-  }
-
   private checkFaultyAttributes(links: AnyNode[]): ValidatorError[] {
     const errors: ValidatorError[] = [];
 
     links.forEach((link) => {
-      const attributes = getNodeAttributes(link);
+      const attributes = this.nodeList?.getNodeAttributes(link);
       if (attributes) {
         Object.entries(this.faultyAttributes).forEach(([attrib, value]) => {
           if (
@@ -237,6 +218,27 @@ export class LinkValidator implements Validator {
     });
 
     return errors;
+  }
+
+  private checkEmailLinks(links: AnyNode[]): ValidatorError[] {
+    const errors: ValidatorError[] = [];
+
+    links.forEach((link) => {
+      if (
+        this.nodeList?.getNodeAttribute(link, 'href')?.startsWith('mailto:')
+      ) {
+        const linkText = this.nodeList?.getNodeData(link);
+        if (linkText && !linkText.includes('@')) {
+          errors.push(new ValidatorError(warnings.link.mail, link));
+        }
+      }
+    });
+
+    return errors;
+  }
+
+  private isGeneric(text?: string): boolean {
+    return !!text && this.genericTexts.has(text.toLowerCase().trim());
   }
 
   private isFaulty(
