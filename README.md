@@ -1,51 +1,47 @@
 # Zugang
 
-Zugang is a VS Code extension designed to help you improve the accessibility of your code. By providing refactoring suggestions, it guides you towards meeting accessibility standards, inspired by Manuel Matuzovic's excellent book, ["Web Accessibility Cookbook"](https://www.oreilly.com/library/view/web-accessibility-cookbook/9781098145590/)
+Zugang is a VS Code extension designed to help you improve the accessibility of your HTML code. By providing warnings and suggestions, it guides you towards meeting accessibility standards in a more structured and intuitive way. The extension draws inspiration from Manuel Matuzović's excellent ["Web Accessibility Cookbook"](https://www.oreilly.com/library/view/web-accessibility-cookbook/9781098145590/).
 
-## 🚀 Features
+## Overview of the Extension Features
 
-Currently, zugang focuses on HTML, offering warnings when your code lacks essential elements, tags, or attributes necessary for accessibility. Future updates will expand support to more (.jsx, .tsx) files.
+Currently, Zugang offers warnings when your HTML lacks essential elements, tags, or attributes that are necessary for proper accessibility. The extension focuses on common mistakes such as:
 
-## ⚙️ Installation
+- Missing or incorrect accessibility-related attributes (e.g., `alt` text on images, `aria-label` on interactive elements).
+- Ignoring proper heading hierarchy (e.g., `h1 -> h2 -> h3`...).
+- Omitting essential meta elements (e.g., `meta charset`, viewport settings).
 
-The extension is not yet available on the VS Code Marketplace, but you can install and use it locally by following these steps:
+Each warning is accompanied by specific suggestions for improvement, helping you to understand the issue and make the necessary corrections.
 
-1. Clone the repository
+## Future Features
 
-```
-git clone https://github.com/bpetermann/ts-zugang.git
-cd ts-zugang
-```
+Expansion to support `.tsx` files, ensuring accessibility best practices are maintained in React/TypeScript projects as well.
 
-2. Install the dependencies:
+## Installation
 
-```
-npm install
-```
+To install the extension:
 
-3. Start the extension in watch mode:
+1. Open the Extensions view in VS Code.
+2. Search for `Zugang` in the marketplace.
+3. Install the extension from the search results.
 
-```
-npm run watch
-```
+## Version
 
-To use the extension locally:
+The current version is a **pre-release** version. Expect frequent updates as new features and improvements are implemented.
 
-- In VS Code, select `Run` and `Start Debugging` from the start view or press `F5`
-- VS Code will open a new window where you can select the application you want to work on
+## Usage Examples
 
-## 📋 Usage Examples
+![simplescreenrecorder-2024-08-14_23 41 31-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/9f113596-6dca-4d66-874f-3551d0569033)
 
-<img src="https://github.com/user-attachments/assets/89afbe26-93de-452d-94f9-d3f305125260" alt="html code snippet with zugang extension" height="250">
+## Contributing
 
-## 🧪 Tests
+Create a branch on your fork, add commits to your fork, and open a pull request from your fork to this repository.
 
-The following command will run all test suites:
+## Changelog
 
-```
-npm run test
-```
+To check full changelog click [here](https://github.com/bpetermann/ts-zugang/blob/main/CHANGELOG.md)
 
 ## License
 
 [MIT](https://github.com/bpetermann/ts-zugang/blob/main/LICENSE)
+
+
