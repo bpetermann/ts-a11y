@@ -1,4 +1,4 @@
-# Zugang
+# Zugang ![Version](https://img.shields.io/visual-studio-marketplace/v/bpetermann.zugang)
 
 Zugang is a VS Code extension designed to help you improve the accessibility of your HTML code. By providing warnings and suggestions, it guides you towards meeting accessibility standards in a more structured and intuitive way. The extension draws inspiration from Manuel Matuzović's excellent ["Web Accessibility Cookbook"](https://www.oreilly.com/library/view/web-accessibility-cookbook/9781098145590/).
 
@@ -43,5 +43,3 @@ To check full changelog click [here](https://github.com/bpetermann/ts-zugang/blo
 ## License
 
 [MIT](https://github.com/bpetermann/ts-zugang/blob/main/LICENSE)
-
-
