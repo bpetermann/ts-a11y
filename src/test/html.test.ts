@@ -79,7 +79,7 @@ suite('HTML Test Suite', () => {
 
     assert.strictEqual(
       diagnostics[0].message,
-      '[Refa11y] The element should be unique: title'
+      '[Zugang] The element should be unique: title'
     );
   });
 

@@ -1,10 +1,10 @@
-# Refa11y
+# Zugang
 
-**Refa11y** is a VS Code extension designed to help you improve the accessibility of your code. By providing refactoring suggestions, it guides you towards meeting accessibility standards, inspired by Manuel Matuzovic's excellent book, ["Web Accessibility Cookbook"](https://www.oreilly.com/library/view/web-accessibility-cookbook/9781098145590/)
+Zugang is a VS Code extension designed to help you improve the accessibility of your code. By providing refactoring suggestions, it guides you towards meeting accessibility standards, inspired by Manuel Matuzovic's excellent book, ["Web Accessibility Cookbook"](https://www.oreilly.com/library/view/web-accessibility-cookbook/9781098145590/)
 
 ## 🚀 Features
 
-Currently, refa11y focuses on HTML, offering warnings when your code lacks essential elements, tags, or attributes necessary for accessibility. Future updates will expand support to more (.jsx, .tsx) files.
+Currently, zugang focuses on HTML, offering warnings when your code lacks essential elements, tags, or attributes necessary for accessibility. Future updates will expand support to more (.jsx, .tsx) files.
 
 ## ⚙️ Installation
 
@@ -13,8 +13,8 @@ The extension is not yet available on the VS Code Marketplace, but you can insta
 1. Clone the repository
 
 ```
-git clone https://github.com/bpetermann/ts-refa11y.git
-cd ts-refa11y
+git clone https://github.com/bpetermann/ts-zugang.git
+cd ts-zugang
 ```
 
 2. Install the dependencies:
@@ -36,7 +36,7 @@ To use the extension locally:
 
 ## 📋 Usage Examples
 
-<img src="https://github.com/user-attachments/assets/89afbe26-93de-452d-94f9-d3f305125260" alt="html code snippet with refa11y extension" height="250">
+<img src="https://github.com/user-attachments/assets/89afbe26-93de-452d-94f9-d3f305125260" alt="html code snippet with zugang extension" height="250">
 
 ## 🧪 Tests
 
@@ -46,4 +46,6 @@ The following command will run all test suites:
 npm run test
 ```
 
-**Enjoy!**
+## License
+
+[MIT](https://github.com/bpetermann/ts-zugang/blob/main/LICENSE)
