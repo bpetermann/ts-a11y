@@ -29,12 +29,11 @@ export class HeadingValidator implements Validator {
 
     const { findNodeByTag } = NodeList;
 
-    for (let i = 2; i <= 6; i++) {
-      const tag = this.#nodeTags[i];
+    this.nodeTags.slice(1).forEach((tag, i) => {
       const heading = findNodeByTag(domNodes, tag);
 
       if (heading) {
-        const prevTag = this.#nodeTags[i - 1];
+        const prevTag = this.nodeTags[i];
         cache.add(tag);
 
         const prevHeadingExists =
@@ -46,7 +45,7 @@ export class HeadingValidator implements Validator {
           );
         }
       }
-    }
+    });
 
     return errors;
   }

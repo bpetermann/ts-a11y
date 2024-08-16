@@ -2,16 +2,16 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { Diagnostic as HTMLDiagnostic } from '../diagnostics/html/diagnostic';
 import { messages } from '../diagnostics/html/messages';
-import { body, div, head, html, link, meta, title } from './helper';
-
-/**
- * Creates an html document based on a string.
- */
-const getDocument = (html: string) =>
-  vscode.workspace.openTextDocument({
-    content: html,
-    language: 'html',
-  });
+import {
+  body,
+  div,
+  getDocument,
+  head,
+  html,
+  link,
+  meta,
+  title,
+} from './helper';
 
 /**
  * Generates diagnostics for an html document.
@@ -32,7 +32,25 @@ suite('HTML Test Suite', () => {
     );
   });
 
-  test('Empty HTML should return two diagnostics', async () => {
+  test('Missing viewport attribute on <meta> element', async () => {
+    const content = html(head(title) + body());
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.meta.shouldExist);
+  });
+
+  test('Missing <title> tag', async () => {
+    const content = html(head(meta) + body());
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.title.shouldExist);
+  });
+
+  test('Empty <html> should return two diagnostics', async () => {
     const html = '';
 
     const document = await getDocument(html);
@@ -51,24 +69,6 @@ suite('HTML Test Suite', () => {
       diagnostics[0].message,
       messages.html.hasMissingAttribute
     );
-  });
-
-  test('Missing <title> tag', async () => {
-    const content = html(head(meta) + body());
-
-    const document = await getDocument(content);
-    const { message } = generateDiagnostics(document)?.[0];
-
-    assert.strictEqual(message, messages.title.shouldExist);
-  });
-
-  test('Missing viewport attribute on <meta> element', async () => {
-    const content = html(head(title) + body());
-
-    const document = await getDocument(content);
-    const { message } = generateDiagnostics(document)?.[0];
-
-    assert.strictEqual(message, messages.meta.shouldExist);
   });
 
   test('Two occurrences of <title> tag', async () => {
@@ -136,6 +136,16 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.heading.shouldExist);
   });
 
+  test('Heading <h4>, <h3>, and <h2> tags with missing <h2>', async () => {
+    const headings = '<h3></h3><h4></h4><h2></h2>';
+    const content = html(head(meta + title) + body(headings));
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.heading.shouldExist);
+  });
+
   test('Heading <h2> tag with exisiting <h1> tag', async () => {
     const content = html(head(meta + title) + body('<h1></h1><h2></h2>'));
 
@@ -176,7 +186,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.link.onclick);
   });
 
-  test('Anchor with an tabindex of "-1"', async () => {
+  test('Anchor with a tabindex of "-1"', async () => {
     const content = html(head(meta + title) + body(`<a tabindex="-1"></a>`));
 
     const document = await getDocument(content);
