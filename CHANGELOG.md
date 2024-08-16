@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.2]- 2024-08-16
+
+### Added
+
+- **HTML Validation:**
+  - Added validation for <div> elements to ensure they are not improperly used as buttons.
+
+### Changed
+
+- Improved performance by processing the entire document only once during validation.
+- Nodes are now pre-sorted by a dedicated class (NodeOrganizer), streamlining the validation process.
+
 ## [0.0.1] - 2024-08-15
 
 ### Added

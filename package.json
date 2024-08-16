@@ -2,7 +2,7 @@
   "name": "zugang",
   "displayName": "Zugang",
   "description": "Accessibility Refactoring Assistant",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "bpetermann",
   "repository": {
     "type": "git",

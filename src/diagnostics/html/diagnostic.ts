@@ -94,7 +94,7 @@ export class Diagnostic {
   }
 
   /**
-   * Gets the range based on a node
+   * Gets the range of a node
    */
   private getNodeRange(node: AnyNode | undefined) {
     return node && node.startIndex && node.endIndex
