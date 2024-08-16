@@ -10,6 +10,7 @@ import {
   UniquenessValidator,
   Validator,
 } from './validator';
+import { DiagnosticSeverity } from 'vscode';
 
 export class Diagnostic {
   private diagnostics: vscode.Diagnostic[] = [];
@@ -36,8 +37,8 @@ export class Diagnostic {
       this.validators.forEach((validator) => {
         const errors = validator.validate(nodes);
 
-        errors.forEach(({ message, node }) =>
-          this.diagnostics.push(this.getDiagnostic(message, node ?? undefined))
+        errors.forEach(({ message, node, severity }) =>
+          this.diagnostics.push(this.getDiagnostic(message, node, severity))
         );
       });
     } catch (error) {
@@ -61,7 +62,11 @@ export class Diagnostic {
     );
   }
 
-  private getDiagnostic(message: string, node?: AnyNode): vscode.Diagnostic {
+  private getDiagnostic(
+    message: string,
+    node: AnyNode | undefined,
+    severity: DiagnosticSeverity
+  ): vscode.Diagnostic {
     const range =
       node && node.startIndex && node.endIndex
         ? new vscode.Range(
@@ -76,7 +81,7 @@ export class Diagnostic {
     return new vscode.Diagnostic(
       range,
       message,
-      vscode.DiagnosticSeverity.Warning
+      severity ?? vscode.DiagnosticSeverity.Warning
     );
   }
 }

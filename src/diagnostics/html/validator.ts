@@ -1,9 +1,14 @@
 import { AnyNode } from 'domhandler';
 import { warnings } from './warnings';
 import NodeList from './nodelist';
+import { DiagnosticSeverity } from 'vscode';
 
 export class ValidatorError {
-  constructor(public message: string, public node?: AnyNode) {}
+  constructor(
+    public message: string,
+    public node?: AnyNode,
+    public severity: DiagnosticSeverity = DiagnosticSeverity.Warning
+  ) {}
 }
 
 export interface Validator {
@@ -54,7 +59,13 @@ export class RequiredValidator implements Validator {
 
     Object.keys(this.warnings).forEach((tag) => {
       if (!findNodeByTag(domNodes, tag)) {
-        errors.push(new ValidatorError(this.warnings[tag]));
+        errors.push(
+          new ValidatorError(
+            this.warnings[tag],
+            undefined,
+            DiagnosticSeverity.Error
+          )
+        );
       }
     });
 
