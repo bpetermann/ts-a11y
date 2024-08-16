@@ -31,10 +31,6 @@ export function activate(context: vscode.ExtensionContext) {
         const htmlDiagnostic = new HTMLDiagnostic(text, event.document);
         diagnostics.push(...htmlDiagnostic.generateDiagnostics());
         break;
-      case 'javascript' || 'typescriptreact':
-        const generator = new TSXDiagnostic(text, event.document);
-        diagnostics.push(...generator.generateDiagnostics());
-        break;
     }
 
     diagnosticManager.updateDiagnostics(event.document, diagnostics);
