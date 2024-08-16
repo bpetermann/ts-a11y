@@ -6,7 +6,7 @@
   "publisher": "bpetermann",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bpetermann/ts-zugang"
+    "url": "git+https://github.com/bpetermann/vscode-zugang"
   },
   "license": "MIT",
   "engines": {

@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { Diagnostic as HTMLDiagnostic } from '../diagnostics/html/diagnostic';
 import { warnings } from '../diagnostics/html/warnings';
-import { body, head, html, link, meta, title } from './helper';
+import { body, div, head, html, link, meta, title } from './helper';
 
 /**
  * Creates an html document based on a string.
@@ -196,6 +196,49 @@ suite('HTML Test Suite', () => {
     const { message } = generateDiagnostics(document)?.[0];
 
     assert.strictEqual(message, warnings.link.mail);
+  });
+
+  test('Div with "onclick" event', async () => {
+    const content = html(
+      head(meta + title) + body(`<div onclick="click()"></div>`)
+    );
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, warnings.div);
+  });
+
+  test('Div with "role" set to "button"', async () => {
+    const content = html(
+      head(meta + title) + body(`<div role="button"></div>`)
+    );
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, warnings.div);
+  });
+
+  test('Two divs used as buttons', async () => {
+    const divs = `<div role="button"></div><div onclick="click()"div>`;
+    const content = html(head(meta + title) + body(divs));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 2);
+  });
+
+  test('A valid div container', async () => {
+    const content = html(
+      head(meta + title) + body(div(`<button onclick="click()"></button>`))
+    );
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
   });
 
   test('Valid HTML should return no diagnostics', async () => {

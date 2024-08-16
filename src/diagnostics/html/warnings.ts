@@ -30,4 +30,5 @@ export const warnings = {
       '[Zugang] Avoid using negative tabindex values on elements that require direct keyboard navigation, like links or buttons.',
     mail: '[Zugang] Include the email address in the link text to help users who find switching between applications tedious.',
   },
+  div: '[Zugang] In most cases, it is better to use the native HTML <button> element instead of assigning a role="button" or adding onclick events to a <div>, unless you have specific reasons for doing so.',
 };

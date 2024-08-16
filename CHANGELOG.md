@@ -18,4 +18,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Validation of `<nav>` elements with appropriate labels for accessibility.
   - Validation of `<a>` (link) elements, including generic link text, proper attributes, and `mailto` links.
 
-[0.0.1]: https://github.com/bpetermann/ts-zugang/releases/tag/v0.0.1
+[0.0.1]: https://github.com/bpetermann/vscode-zugang/releases/tag/v0.0.1

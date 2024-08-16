@@ -4,13 +4,16 @@ Zugang is a VS Code extension designed to help you improve the accessibility of 
 
 ## Overview of the Extension Features
 
-Currently, Zugang offers warnings when your HTML lacks essential elements, tags, or attributes that are necessary for proper accessibility. The extension focuses on common mistakes such as:
+Currently, Zugang offers warnings and hints when your HTML lacks essential elements, tags, or attributes that are necessary for proper accessibility. The extension focuses on common mistakes such as:
 
 - Missing or incorrect accessibility-related attributes (e.g., `lang` on html, `aria-label` when multiple `nav` elements are present).
 - Ignoring proper heading hierarchy (e.g., `h1 -> h2 -> h3`...).
 - Omitting essential meta elements (e.g., viewport settings).
 
 Each warning is accompanied by specific suggestions for improvement, helping you to understand the issue and make the necessary corrections.
+
+> [!NOTE]  
+> Please note that the warnings displayed are general good practices, but in real-world scenarios, there are often valid reasons to deviate from these rules depending on the specific context, which a general extension cannot always take into account.
 
 ## Future Features
 
@@ -38,8 +41,8 @@ Create a branch on your fork, add commits to your fork, and open a pull request 
 
 ## Changelog
 
-To check full changelog click [here](https://github.com/bpetermann/ts-zugang/blob/main/CHANGELOG.md)
+To check full changelog click [here](https://github.com/bpetermann/vscode-zugang/blob/main/CHANGELOG.md)
 
 ## License
 
-[MIT](https://github.com/bpetermann/ts-zugang/blob/main/LICENSE)
+[MIT](https://github.com/bpetermann/vscode-zugang/blob/main/LICENSE)
