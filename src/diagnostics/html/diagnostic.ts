@@ -31,6 +31,9 @@ export class Diagnostic {
     ]
   ) {}
 
+  /**
+   * Generates and returns all diagnostics after running the validation process
+   */
   generateDiagnostics() {
     try {
       const parsedHtml = this.parseHtmlDocument();
@@ -43,6 +46,9 @@ export class Diagnostic {
     return this.diagnostics;
   }
 
+  /**
+   * Runs the validators against the organized nodes and collects diagnostics
+   */
   private runValidators(nodeOrganizer: NodeOrganizer) {
     this.validators.forEach((validator) => {
       const nodes = nodeOrganizer.getNodes(validator.nodeTags);
@@ -55,6 +61,9 @@ export class Diagnostic {
     });
   }
 
+  /**
+   * Parses the HTML content into a document object
+   */
   private parseHtmlDocument() {
     return parseDocument(this.htmlContent, {
       withStartIndices: true,
@@ -62,6 +71,9 @@ export class Diagnostic {
     });
   }
 
+  /**
+   * Organizes the nodes into a structure accessible by tag name
+   */
   private organizeNodes(parsedHtml: Document) {
     const tagNodes = DomUtils.filter(
       (node) => node.type === 'tag',
@@ -70,6 +82,9 @@ export class Diagnostic {
     return new NodeOrganizer(tagNodes);
   }
 
+  /**
+   * Creates a diagnostic object with a specific range, message, and severity
+   */
   private createDiagnostic(
     message: string,
     node: AnyNode | undefined,
@@ -78,6 +93,9 @@ export class Diagnostic {
     return new vscode.Diagnostic(this.getNodeRange(node), message, severity);
   }
 
+  /**
+   * Gets the range based on a node
+   */
   private getNodeRange(node: AnyNode | undefined) {
     return node && node.startIndex && node.endIndex
       ? new vscode.Range(
