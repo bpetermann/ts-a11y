@@ -260,3 +260,28 @@ export class LinkValidator implements Validator {
     return attrib in attributes && (!value || attributes[attrib] === value);
   }
 }
+
+export class DivValidator implements Validator {
+  validate(nodes: AnyNode[]): ValidatorError[] {
+    const {
+      nodes: divs,
+      getNodeAttributes,
+      getNodeAttribute,
+    } = new NodeList(nodes, 'div');
+
+    if (!divs.length) {
+      return [];
+    }
+
+    return divs
+      .filter((div) => {
+        const hasOnClick = 'onclick' in (getNodeAttributes(div) || {});
+        const hasButtonRole = getNodeAttribute(div, 'role') === 'button';
+
+        return hasOnClick || hasButtonRole;
+      })
+      .map(
+        (div) => new ValidatorError(warnings.div, div, DiagnosticSeverity.Hint)
+      );
+  }
+}
