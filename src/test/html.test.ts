@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { Diagnostic as HTMLDiagnostic } from '../diagnostics/html/diagnostic';
-import { warnings } from '../diagnostics/html/warnings';
+import { messages } from '../diagnostics/html/messages';
 import { body, div, head, html, link, meta, title } from './helper';
 
 /**
@@ -28,7 +28,7 @@ suite('HTML Test Suite', () => {
 
     assert.strictEqual(
       diagnostics[0].message,
-      warnings.html.hasMissingAttribute
+      messages.html.hasMissingAttribute
     );
   });
 
@@ -49,7 +49,7 @@ suite('HTML Test Suite', () => {
 
     assert.strictEqual(
       diagnostics[0].message,
-      warnings.html.hasMissingAttribute
+      messages.html.hasMissingAttribute
     );
   });
 
@@ -59,7 +59,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, warnings.title.shouldExist);
+    assert.strictEqual(message, messages.title.shouldExist);
   });
 
   test('Missing viewport attribute on <meta> element', async () => {
@@ -68,7 +68,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, warnings.meta.shouldExist);
+    assert.strictEqual(message, messages.meta.shouldExist);
   });
 
   test('Two occurrences of <title> tag', async () => {
@@ -77,7 +77,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, warnings.title.shouldBeUnique);
+    assert.strictEqual(message, messages.title.shouldBeUnique);
   });
 
   test('Two occurrences of <main> tag', async () => {
@@ -88,7 +88,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, warnings.main);
+    assert.strictEqual(message, messages.main.shouldBeUnique);
   });
 
   test('Two occurrences of <nav> without attributes', async () => {
@@ -97,7 +97,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, warnings.nav);
+    assert.strictEqual(message, messages.nav);
   });
 
   test('Two occurrences of <nav> with attributes', async () => {
@@ -115,7 +115,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, warnings.h1);
+    assert.strictEqual(message, messages.h1.shouldBeUnique);
   });
 
   test('Heading <h4> tag with missing <h3>', async () => {
@@ -124,7 +124,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, warnings.heading.shouldExist);
+    assert.strictEqual(message, messages.heading.shouldExist);
   });
 
   test('Heading <h4> and <h3> tag with missing <h2>', async () => {
@@ -133,7 +133,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, warnings.heading.shouldExist);
+    assert.strictEqual(message, messages.heading.shouldExist);
   });
 
   test('Heading <h2> tag with exisiting <h1> tag', async () => {
@@ -152,7 +152,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, `${warnings.link.avoid}"${linktext}"`);
+    assert.strictEqual(message, `${messages.link.avoid}"${linktext}"`);
   });
 
   test('Anchor with a good description', async () => {
@@ -173,7 +173,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, warnings.link.wrongAttribute);
+    assert.strictEqual(message, messages.link.onclick);
   });
 
   test('Anchor with an tabindex of "-1"', async () => {
@@ -182,7 +182,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, warnings.link.tabindex);
+    assert.strictEqual(message, messages.link.tabindex);
   });
 
   test('Anchor with "mailto" in "href"', async () => {
@@ -195,7 +195,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, warnings.link.mail);
+    assert.strictEqual(message, messages.link.mail);
   });
 
   test('Div with "onclick" event', async () => {
@@ -206,7 +206,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, warnings.div);
+    assert.strictEqual(message, messages.div);
   });
 
   test('Div with "role" set to "button"', async () => {
@@ -217,7 +217,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, warnings.div);
+    assert.strictEqual(message, messages.div);
   });
 
   test('Two divs used as buttons', async () => {

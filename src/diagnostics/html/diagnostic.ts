@@ -12,14 +12,14 @@ import {
   Validator,
 } from './validator';
 import { DiagnosticSeverity } from 'vscode';
+import NodeOrganizer from './organizer';
 
 export class Diagnostic {
   private diagnostics: vscode.Diagnostic[] = [];
 
   constructor(
-    private text: string,
+    private htmlContent: string,
     private document: vscode.TextDocument,
-
     private validators: Validator[] = [
       new AttributesValidator(),
       new RequiredValidator(),
@@ -33,16 +33,9 @@ export class Diagnostic {
 
   generateDiagnostics() {
     try {
-      const parsedDocument = this.getDocument();
-      const nodes = this.getNodes(parsedDocument);
-
-      this.validators.forEach((validator) => {
-        const errors = validator.validate(nodes);
-
-        errors.forEach(({ message, node, severity }) =>
-          this.diagnostics.push(this.getDiagnostic(message, node, severity))
-        );
-      });
+      const parsedHtml = this.parseHtmlDocument();
+      const nodeOrganizer = this.organizeNodes(parsedHtml);
+      this.runValidators(nodeOrganizer);
     } catch (error) {
       console.error('Error parsing HTML: ', error);
     }
@@ -50,40 +43,47 @@ export class Diagnostic {
     return this.diagnostics;
   }
 
-  private getDocument() {
-    return parseDocument(this.text, {
+  private runValidators(nodeOrganizer: NodeOrganizer) {
+    this.validators.forEach((validator) => {
+      const nodes = nodeOrganizer.getNodes(validator.nodeTags);
+
+      validator
+        .validate(nodes)
+        .forEach(({ message, node, severity }) =>
+          this.diagnostics.push(this.createDiagnostic(message, node, severity))
+        );
+    });
+  }
+
+  private parseHtmlDocument() {
+    return parseDocument(this.htmlContent, {
       withStartIndices: true,
       withEndIndices: true,
     });
   }
 
-  private getNodes(parsedDocument: Document) {
-    return DomUtils.filter(
+  private organizeNodes(parsedHtml: Document) {
+    const tagNodes = DomUtils.filter(
       (node) => node.type === 'tag',
-      parsedDocument.children
+      parsedHtml.children
     );
+    return new NodeOrganizer(tagNodes);
   }
 
-  private getDiagnostic(
+  private createDiagnostic(
     message: string,
     node: AnyNode | undefined,
     severity: DiagnosticSeverity
   ): vscode.Diagnostic {
-    const range =
-      node && node.startIndex && node.endIndex
-        ? new vscode.Range(
-            this.document.positionAt(node.startIndex),
-            this.document.positionAt(node.endIndex)
-          )
-        : new vscode.Range(
-            new vscode.Position(0, 0),
-            new vscode.Position(0, 0)
-          );
+    return new vscode.Diagnostic(this.getNodeRange(node), message, severity);
+  }
 
-    return new vscode.Diagnostic(
-      range,
-      message,
-      severity ?? vscode.DiagnosticSeverity.Warning
-    );
+  private getNodeRange(node: AnyNode | undefined) {
+    return node && node.startIndex && node.endIndex
+      ? new vscode.Range(
+          this.document.positionAt(node.startIndex),
+          this.document.positionAt(node.endIndex)
+        )
+      : new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 0));
   }
 }

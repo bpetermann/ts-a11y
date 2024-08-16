@@ -1,5 +1,5 @@
 import { AnyNode } from 'domhandler';
-import { warnings } from './warnings';
+import { messages } from './messages';
 import NodeList from './nodelist';
 import { DiagnosticSeverity } from 'vscode';
 
@@ -12,30 +12,37 @@ export class ValidatorError {
 }
 
 export interface Validator {
+  readonly nodeTags: readonly string[];
   validate(nodes: AnyNode[]): ValidatorError[];
 }
 
 export class HeadingValidator implements Validator {
-  cache = new Set<string>();
+  readonly #nodeTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const;
+
+  get nodeTags() {
+    return this.#nodeTags;
+  }
 
   validate(domNodes: AnyNode[]): ValidatorError[] {
     const errors: ValidatorError[] = [];
+    const cache = new Set<string>();
+
     const { findNodeByTag } = NodeList;
 
     for (let i = 2; i <= 6; i++) {
-      const tag = `h${i}`;
+      const tag = this.#nodeTags[i];
       const heading = findNodeByTag(domNodes, tag);
 
       if (heading) {
-        const prevTag = `h${i - 1}`;
-        this.cache.add(tag);
+        const prevTag = this.#nodeTags[i - 1];
+        cache.add(tag);
 
         const prevHeadingExists =
-          this.cache.has(prevTag) || findNodeByTag(domNodes, prevTag);
+          cache.has(prevTag) || findNodeByTag(domNodes, prevTag);
 
         if (!prevHeadingExists) {
           errors.push(
-            new ValidatorError(warnings.heading.shouldExist, heading)
+            new ValidatorError(messages.heading.shouldExist, heading)
           );
         }
       }
@@ -46,22 +53,21 @@ export class HeadingValidator implements Validator {
 }
 
 export class RequiredValidator implements Validator {
-  readonly warnings: {
-    [tag: string]: string;
-  } = {
-    meta: warnings.meta.shouldExist,
-    title: warnings.title.shouldExist,
-  };
+  readonly #nodeTags = ['meta', 'title'] as const;
+
+  get nodeTags() {
+    return this.#nodeTags;
+  }
 
   validate(domNodes: AnyNode[]): ValidatorError[] {
     const errors: ValidatorError[] = [];
     const { findNodeByTag } = NodeList;
 
-    Object.keys(this.warnings).forEach((tag) => {
+    this.nodeTags.forEach((tag) => {
       if (!findNodeByTag(domNodes, tag)) {
         errors.push(
           new ValidatorError(
-            this.warnings[tag],
+            messages[tag].shouldExist,
             undefined,
             DiagnosticSeverity.Error
           )
@@ -74,29 +80,32 @@ export class RequiredValidator implements Validator {
 }
 
 export class UniquenessValidator implements Validator {
-  readonly warnings: {
-    [tag: string]: string;
-  } = {
-    html: warnings.heading.shouldBeUnique,
-    h1: warnings.h1,
-    main: warnings.main,
-    title: warnings.title.shouldBeUnique,
-  };
+  readonly #nodeTags = ['html', 'h1', 'main', 'title'] as const;
+
+  get nodeTags() {
+    return this.#nodeTags;
+  }
 
   validate(domNodes: AnyNode[]): ValidatorError[] {
-    const warnings: ValidatorError[] = [];
+    const errors: ValidatorError[] = [];
 
-    Object.keys(this.warnings).forEach((tag) => {
+    this.nodeTags.forEach((tag) => {
       const { nodes } = new NodeList(domNodes, tag);
       if (nodes.length > 1) {
-        warnings.push(new ValidatorError(this.warnings[tag], nodes[0]));
+        errors.push(new ValidatorError(messages[tag].shouldBeUnique, nodes[0]));
       }
     });
-    return warnings;
+    return errors;
   }
 }
 
 export class NavigationValidator implements Validator {
+  readonly #nodeTags = ['nav'] as const;
+
+  get nodeTags() {
+    return this.#nodeTags;
+  }
+
   validate(domNodes: AnyNode[]): ValidatorError[] {
     const errors: ValidatorError[] = [];
 
@@ -111,7 +120,7 @@ export class NavigationValidator implements Validator {
           ('aria-labelledby' in navAttributes || 'aria-label' in navAttributes);
 
         if (!hasAriaAttribute) {
-          errors.push(new ValidatorError(warnings.nav, nav));
+          errors.push(new ValidatorError(messages.nav, nav));
         }
       });
     }
@@ -121,12 +130,12 @@ export class NavigationValidator implements Validator {
 }
 
 export class AttributesValidator implements Validator {
-  readonly warnings: {
-    [tag: string]: string;
-  } = {
-    html: warnings.html.hasMissingAttribute,
-    meta: warnings.meta.hasMissingAttribute,
-  };
+  readonly #nodeTags = ['html', 'meta'] as const;
+
+  get nodeTags() {
+    return this.#nodeTags;
+  }
+
   readonly attributes = {
     html: ['lang'],
     meta: ['name'],
@@ -135,17 +144,19 @@ export class AttributesValidator implements Validator {
   validate(domNodes: AnyNode[]): ValidatorError[] {
     const errors: ValidatorError[] = [];
 
-    Object.keys(this.warnings).forEach((tag) => {
+    this.nodeTags.forEach((tag) => {
       const nodeList = new NodeList(domNodes, tag);
       const { nodes: elements } = nodeList;
 
       if (elements.length) {
-        const anyNodeHasAttribs = this.attributes[
-          tag as keyof typeof this.attributes
-        ].every((attr) => nodeList.anyNodeHasAttribute(attr));
+        const anyNodeHasAttribs = this.attributes[tag].every((attr) =>
+          nodeList.anyNodeHasAttribute(attr)
+        );
 
         if (!anyNodeHasAttribs) {
-          errors.push(new ValidatorError(this.warnings[tag], elements[0]));
+          errors.push(
+            new ValidatorError(messages[tag].hasMissingAttribute, elements[0])
+          );
         }
       }
     });
@@ -155,13 +166,19 @@ export class AttributesValidator implements Validator {
 }
 
 export class LinkValidator implements Validator {
+  #nodeTags: string[] = ['a'];
+
+  get nodeTags() {
+    return this.#nodeTags;
+  }
+
   private nodeList: NodeList | null = null;
 
   readonly warnings: {
     [tag: string]: string;
   } = {
-    onclick: warnings.link.wrongAttribute,
-    tabindex: warnings.link.tabindex,
+    onclick: messages.link.onclick,
+    tabindex: messages.link.tabindex,
   };
 
   private readonly genericTexts = new Set([
@@ -180,7 +197,7 @@ export class LinkValidator implements Validator {
   > = {
     onclick: null,
     tabindex: '-1',
-  };
+  } as const;
 
   validate(domNodes: AnyNode[]): ValidatorError[] {
     this.nodeList = new NodeList(domNodes, 'a');
@@ -204,7 +221,7 @@ export class LinkValidator implements Validator {
       const linkText = this.nodeList?.getNodeData(link);
       if (this.isGeneric(linkText)) {
         errors.push(
-          new ValidatorError(`${warnings.link.avoid}"${linkText}"`, link)
+          new ValidatorError(`${messages.link.avoid}"${linkText}"`, link)
         );
       }
     });
@@ -222,7 +239,12 @@ export class LinkValidator implements Validator {
           if (
             this.isFaulty(attributes, attrib as 'onclick' | 'tabindex', value)
           ) {
-            errors.push(new ValidatorError(this.warnings[attrib], link));
+            errors.push(
+              new ValidatorError(
+                messages.link[attrib as 'onclick' | 'tabindex'],
+                link
+              )
+            );
           }
         });
       }
@@ -240,7 +262,7 @@ export class LinkValidator implements Validator {
       ) {
         const linkText = this.nodeList?.getNodeData(link);
         if (linkText && !linkText.includes('@')) {
-          errors.push(new ValidatorError(warnings.link.mail, link));
+          errors.push(new ValidatorError(messages.link.mail, link));
         }
       }
     });
@@ -262,6 +284,11 @@ export class LinkValidator implements Validator {
 }
 
 export class DivValidator implements Validator {
+  readonly #nodeTags = ['div'] as const;
+
+  get nodeTags() {
+    return this.#nodeTags;
+  }
   validate(nodes: AnyNode[]): ValidatorError[] {
     const {
       nodes: divs,
@@ -281,7 +308,7 @@ export class DivValidator implements Validator {
         return hasOnClick || hasButtonRole;
       })
       .map(
-        (div) => new ValidatorError(warnings.div, div, DiagnosticSeverity.Hint)
+        (div) => new ValidatorError(messages.div, div, DiagnosticSeverity.Hint)
       );
   }
 }
