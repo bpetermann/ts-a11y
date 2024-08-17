@@ -284,20 +284,28 @@ export class LinkValidator implements Validator {
 
 export class DivValidator implements Validator {
   readonly #nodeTags = ['div'] as const;
+  private nodeList: NodeList | null = null;
 
   get nodeTags() {
     return this.#nodeTags;
   }
   validate(nodes: AnyNode[]): ValidatorError[] {
-    const {
-      nodes: divs,
-      getNodeAttributes,
-      getNodeAttribute,
-    } = new NodeList(nodes, 'div');
+    this.nodeList = new NodeList(nodes, 'div');
+    const { nodes: divs } = this.nodeList;
 
     if (!divs.length) {
       return [];
     }
+
+    return [...this.checkButtonRole(divs), ...this.checkWrongAttributes(divs)];
+  }
+
+  checkButtonRole(divs: AnyNode[]) {
+    if (!this.nodeList) {
+      return [];
+    }
+
+    const { getNodeAttributes, getNodeAttribute } = this.nodeList;
 
     return divs
       .filter((div) => {
@@ -307,7 +315,27 @@ export class DivValidator implements Validator {
         return hasOnClick || hasButtonRole;
       })
       .map(
-        (div) => new ValidatorError(messages.div, div, DiagnosticSeverity.Hint)
+        (div) =>
+          new ValidatorError(messages.div.button, div, DiagnosticSeverity.Hint)
+      );
+  }
+
+  checkWrongAttributes(divs: AnyNode[]) {
+    if (!this.nodeList) {
+      return [];
+    }
+
+    const { getNodeAttributes } = this.nodeList;
+
+    return divs
+      .filter((div) => 'aria-expanded' in (getNodeAttributes(div) || {}))
+      .map(
+        (div) =>
+          new ValidatorError(
+            messages.div.expanded,
+            div,
+            DiagnosticSeverity.Hint
+          )
       );
   }
 }

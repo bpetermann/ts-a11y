@@ -216,7 +216,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, messages.div);
+    assert.strictEqual(message, messages.div.button);
   });
 
   test('Div with "role" set to "button"', async () => {
@@ -227,7 +227,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, messages.div);
+    assert.strictEqual(message, messages.div.button);
   });
 
   test('Two divs used as buttons', async () => {
