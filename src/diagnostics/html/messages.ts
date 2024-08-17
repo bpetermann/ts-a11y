@@ -45,5 +45,7 @@ export const messages = {
   button: {
     switchRole:
       '[Zugang] A button that toggles a seeting must communicate whether it is active, the "aria-checked" attribute represents the current state of the widget that the switch role is applied to. ',
+    disabled:
+      '[Zugang] Do not disable buttons as they do not provide valuable feedback. Users should always have the option to interact with a button.',
   },
 };

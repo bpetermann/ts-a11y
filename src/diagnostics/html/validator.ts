@@ -342,21 +342,32 @@ export class DivValidator implements Validator {
 
 export class ButtonValidator implements Validator {
   readonly #nodeTags = ['button'] as const;
+  private nodeList: NodeList | null = null;
 
   get nodeTags() {
     return this.#nodeTags;
   }
 
   validate(nodes: AnyNode[]): ValidatorError[] {
-    const {
-      nodes: buttons,
-      getNodeAttributes,
-      getNodeAttribute,
-    } = new NodeList(nodes, 'button');
+    this.nodeList = new NodeList(nodes, 'button');
+    const { nodes: buttons } = this.nodeList;
 
     if (!buttons.length) {
       return [];
     }
+
+    return [
+      ...this.checkSwitchButtons(buttons),
+      ...this.checkDisabledButtons(buttons),
+    ];
+  }
+
+  private checkSwitchButtons(buttons: AnyNode[]) {
+    if (!this.nodeList) {
+      return [];
+    }
+
+    const { getNodeAttribute, getNodeAttributes } = this.nodeList;
 
     return buttons
       .filter((button) => {
@@ -370,6 +381,26 @@ export class ButtonValidator implements Validator {
         (button) =>
           new ValidatorError(
             messages.button.switchRole,
+            button,
+            DiagnosticSeverity.Hint
+          )
+      );
+  }
+
+  private checkDisabledButtons(buttons: AnyNode[]) {
+    if (!this.nodeList) {
+      return [];
+    }
+
+    return buttons
+      .filter(
+        (button) =>
+          'disabled' in (this.nodeList!.getNodeAttributes(button) || {})
+      )
+      .map(
+        (button) =>
+          new ValidatorError(
+            messages.button.disabled,
             button,
             DiagnosticSeverity.Warning
           )

@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Improved performance by processing the entire document only once during validation.
 - Nodes are now pre-sorted by a dedicated class (NodeOrganizer), streamlining the validation process.
+- Severity of validation errors divided into hints, warnings and errors
 
 ## [0.0.1] - 2024-08-15
 

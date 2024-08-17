@@ -208,7 +208,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.link.mail);
   });
 
-  test('Div with "onclick" event', async () => {
+  test('<Div> with "onclick" event', async () => {
     const content = html(
       head(meta + title) + body(`<div onclick="click()"></div>`)
     );
@@ -219,7 +219,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.div.button);
   });
 
-  test('Div with "role" set to "button"', async () => {
+  test('<Div> with "role" set to "button"', async () => {
     const content = html(
       head(meta + title) + body(`<div role="button"></div>`)
     );
@@ -230,7 +230,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.div.button);
   });
 
-  test('Two divs used as buttons', async () => {
+  test('Two <div> used as buttons', async () => {
     const divs = `<div role="button"></div><div onclick="click()"div>`;
     const content = html(head(meta + title) + body(divs));
 
@@ -240,10 +240,19 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 2);
   });
 
-  test('A valid div container', async () => {
+  test('<Div> with attribute "aria-expanded"', async () => {
     const content = html(
-      head(meta + title) + body(div(`<button onclick="click()"></button>`))
+      head(meta + title) + body(`<div aria-expanded="true"></div>`)
     );
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.div.expanded);
+  });
+
+  test('A valid <div> container', async () => {
+    const content = html(head(meta + title) + body(div()));
 
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
@@ -260,6 +269,17 @@ suite('HTML Test Suite', () => {
     const { message } = generateDiagnostics(document)?.[0];
 
     assert.strictEqual(message, messages.button.switchRole);
+  });
+
+  test('A <button> that is disabled', async () => {
+    const content = html(
+      head(meta + title) + body(div(`<button disabled></button>`))
+    );
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.button.disabled);
   });
 
   test('Valid HTML should return no diagnostics', async () => {
