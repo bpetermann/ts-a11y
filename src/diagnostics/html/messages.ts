@@ -27,7 +27,10 @@ export const messages = {
     shouldBeUnique:
       '[Zugang] There should only be one visible <main> element on the page.',
   },
-  nav: '[Zugang] If you have more than one <nav> element on a page, label them with aria-labelledby or aria-label to make them distinguishable.',
+  nav: {
+    label:
+      '[Zugang] If you have more than one <nav> element on a page, label them with aria-labelledby or aria-label to make them distinguishable.',
+  },
   link: {
     avoid:
       '[Zugang] Avoid generic link text, as it makes it difficult for users to anticipate what the links lead to. Link text: ',
@@ -35,6 +38,8 @@ export const messages = {
     tabindex:
       '[Zugang] Avoid using negative tabindex values on elements that require direct keyboard navigation, like links or buttons.',
     mail: '[Zugang] Include the email address in the link text to help users who find switching between applications tedious.',
+    current:
+      '[Zugang] If any of the links point to the current page, mark that link with aria-current="page". This improves navigation and helps users, especially those using assistive technologies, understand their current location.',
   },
   div: {
     button:

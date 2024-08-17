@@ -2,6 +2,8 @@ import { AnyNode } from 'domhandler';
 import { messages } from '../messages';
 import NodeList from '../nodelist';
 import { Validator, ValidatorError } from './Validator';
+import { DiagnosticSeverity } from 'vscode';
+import { error } from 'console';
 
 export class LinkValidator implements Validator {
   #nodeTags: string[] = ['a'];
@@ -53,12 +55,12 @@ export class LinkValidator implements Validator {
       const attributes = getNodeAttributes(link);
       const linkText = getNodeData(link);
 
-      if (Object.keys(attributes).length) {
-        errors.push(this.getGenericTextError(link, linkText));
-        errors.push(this.getEmailError(link, attributes, linkText));
-        errors.push(...this.getWrongAttributeErrors(link, attributes));
-      }
+      errors.push(this.getGenericTextError(link, linkText));
+      errors.push(this.getEmailError(link, attributes, linkText));
+      errors.push(...this.getWrongAttributeErrors(link, attributes));
     });
+
+    errors.push(this.getAriaCurrentError(links));
 
     return errors.filter((error) => error instanceof ValidatorError);
   }
@@ -99,6 +101,21 @@ export class LinkValidator implements Validator {
       !linkText?.includes('@')
     ) {
       return new ValidatorError(messages.link.mail, link);
+    }
+  }
+
+  private getAriaCurrentError(links: AnyNode[]): ValidatorError | undefined {
+    if (
+      links.length > 1 &&
+      !links.find(
+        (link) => 'attribs' in link && 'aria-current' in link['attribs']
+      )
+    ) {
+      return new ValidatorError(
+        messages.link.current,
+        links[0],
+        DiagnosticSeverity.Hint
+      );
     }
   }
 

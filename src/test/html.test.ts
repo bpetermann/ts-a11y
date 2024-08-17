@@ -97,7 +97,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, messages.nav);
+    assert.strictEqual(message, messages.nav.label);
   });
 
   test('Two occurrences of <nav> with attributes', async () => {
@@ -214,13 +214,26 @@ suite('HTML Test Suite', () => {
     const onclick = `onclick="click()" `;
     const text = 'click';
     const anchor = `<a ${tabindex}${href}${onclick}>${text}</a>`;
-    
+
     const content = html(head(meta + title) + body(anchor));
 
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
 
     assert.strictEqual(diagnostics.length, 4);
+  });
+
+  test('Anchors without "aria-current" attribute', async () => {
+    const anchors = ['home', 'products', 'contact']
+      .map((a) => `<a href="/${a}">${a}</a>`)
+      .toString();
+
+    const content = html(head(meta + title) + body(anchors));
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.link.current);
   });
 
   test('<Div> with "onclick" event', async () => {

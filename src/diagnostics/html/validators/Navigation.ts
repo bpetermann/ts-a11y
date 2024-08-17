@@ -24,7 +24,7 @@ export class NavigationValidator implements Validator {
           ('aria-labelledby' in navAttributes || 'aria-label' in navAttributes);
 
         if (!hasAriaAttribute) {
-          errors.push(new ValidatorError(messages.nav, nav));
+          errors.push(new ValidatorError(messages.nav.label, nav));
         }
       });
     }
