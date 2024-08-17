@@ -251,6 +251,17 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
+  test('A switch <button> without "aria-checked"', async () => {
+    const content = html(
+      head(meta + title) + body(div(`<button role="switch"></button>`))
+    );
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.button.switchRole);
+  });
+
   test('Valid HTML should return no diagnostics', async () => {
     const content = html(head(meta + title) + body());
 

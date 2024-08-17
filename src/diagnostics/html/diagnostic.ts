@@ -3,6 +3,7 @@ import { DomUtils, parseDocument } from 'htmlparser2';
 import * as vscode from 'vscode';
 import {
   AttributesValidator,
+  ButtonValidator,
   DivValidator,
   HeadingValidator,
   LinkValidator,
@@ -28,6 +29,7 @@ export class Diagnostic {
       new HeadingValidator(),
       new LinkValidator(),
       new DivValidator(),
+      new ButtonValidator(),
     ]
   ) {}
 

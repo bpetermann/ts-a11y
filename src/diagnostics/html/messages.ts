@@ -37,4 +37,8 @@ export const messages = {
     mail: '[Zugang] Include the email address in the link text to help users who find switching between applications tedious.',
   },
   div: '[Zugang] In most cases, it is better to use the native HTML <button> element instead of assigning a role="button" or adding onclick events to a <div>, unless you have specific reasons for doing so.',
+  button: {
+    switchRole:
+      '[Zugang] A button that toggles a seeting must communicate whether it is active, the "aria-checked" attribute represents the current state of the widget that the switch role is applied to. ',
+  },
 };

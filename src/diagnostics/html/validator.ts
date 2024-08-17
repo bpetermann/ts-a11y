@@ -311,3 +311,40 @@ export class DivValidator implements Validator {
       );
   }
 }
+
+export class ButtonValidator implements Validator {
+  readonly #nodeTags = ['button'] as const;
+
+  get nodeTags() {
+    return this.#nodeTags;
+  }
+
+  validate(nodes: AnyNode[]): ValidatorError[] {
+    const {
+      nodes: buttons,
+      getNodeAttributes,
+      getNodeAttribute,
+    } = new NodeList(nodes, 'button');
+
+    if (!buttons.length) {
+      return [];
+    }
+
+    return buttons
+      .filter((button) => {
+        const hasSwitchRole = getNodeAttribute(button, 'role') === 'switch';
+        const hasAriaChecked =
+          'aria-checked' in (getNodeAttributes(button) || {});
+
+        return hasSwitchRole && !hasAriaChecked;
+      })
+      .map(
+        (button) =>
+          new ValidatorError(
+            messages.button.switchRole,
+            button,
+            DiagnosticSeverity.Warning
+          )
+      );
+  }
+}
