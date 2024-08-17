@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **HTML Validation:**
+  - Added validation for <button> elements (e.g., tabindex, switch and disabled attributes).
+
 ## [0.0.2]- 2024-08-16
 
 ### Added

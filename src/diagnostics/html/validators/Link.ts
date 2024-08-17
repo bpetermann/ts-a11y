@@ -6,19 +6,6 @@ import { Validator, ValidatorError } from './Validator';
 export class LinkValidator implements Validator {
   #nodeTags: string[] = ['a'];
 
-  get nodeTags() {
-    return this.#nodeTags;
-  }
-
-  private nodeList: NodeList | null = null;
-
-  readonly warnings: {
-    [tag: string]: string;
-  } = {
-    onclick: messages.link.onclick,
-    tabindex: messages.link.tabindex,
-  };
-
   private readonly genericTexts = new Set([
     'click me',
     'download',
@@ -37,75 +24,82 @@ export class LinkValidator implements Validator {
     tabindex: '-1',
   } as const;
 
+  get nodeTags() {
+    return this.#nodeTags;
+  }
+
   validate(domNodes: AnyNode[]): ValidatorError[] {
-    this.nodeList = new NodeList(domNodes, 'a');
-    const { nodes: links } = this.nodeList;
+    const {
+      nodes: links,
+      getNodeAttributes,
+      getNodeData,
+    } = new NodeList(domNodes, 'a');
 
     if (!links.length) {
       return [];
     }
 
-    return [
-      ...this.checkGenericTexts(links),
-      ...this.checkFaultyAttributes(links),
-      ...this.checkEmailLinks(links),
-    ];
+    return this.getErrors(links, getNodeAttributes, getNodeData);
   }
 
-  private checkGenericTexts(links: AnyNode[]): ValidatorError[] {
-    const errors: ValidatorError[] = [];
+  private getErrors(
+    links: AnyNode[],
+    getNodeAttributes: (node: AnyNode) => { [name: string]: string } | {},
+    getNodeData: (node: AnyNode) => string | undefined
+  ): ValidatorError[] {
+    const errors: (ValidatorError | undefined)[] = [];
 
     links.forEach((link) => {
-      const linkText = this.nodeList?.getNodeData(link);
-      if (this.isGeneric(linkText)) {
-        errors.push(
-          new ValidatorError(`${messages.link.avoid}"${linkText}"`, link)
-        );
+      const attributes = getNodeAttributes(link);
+      const linkText = getNodeData(link);
+
+      if (Object.keys(attributes).length) {
+        errors.push(this.getGenericTextError(link, linkText));
+        errors.push(this.getEmailError(link, attributes, linkText));
+        errors.push(...this.getWrongAttributeErrors(link, attributes));
       }
     });
 
-    return errors;
+    return errors.filter((error) => error instanceof ValidatorError);
   }
 
-  private checkFaultyAttributes(links: AnyNode[]): ValidatorError[] {
-    const errors: ValidatorError[] = [];
-
-    links.forEach((link) => {
-      const attributes = this.nodeList?.getNodeAttributes(link);
-      if (attributes) {
-        Object.entries(this.faultyAttributes).forEach(([attrib, value]) => {
-          if (
-            this.isFaulty(attributes, attrib as 'onclick' | 'tabindex', value)
-          ) {
-            errors.push(
-              new ValidatorError(
-                messages.link[attrib as 'onclick' | 'tabindex'],
-                link
-              )
-            );
-          }
-        });
-      }
-    });
-
-    return errors;
+  private getGenericTextError(
+    link: AnyNode,
+    linkText: string | undefined
+  ): ValidatorError | undefined {
+    if (this.isGeneric(linkText)) {
+      return new ValidatorError(`${messages.link.avoid}"${linkText}"`, link);
+    }
   }
 
-  private checkEmailLinks(links: AnyNode[]): ValidatorError[] {
-    const errors: ValidatorError[] = [];
-
-    links.forEach((link) => {
-      if (
-        this.nodeList?.getNodeAttribute(link, 'href')?.startsWith('mailto:')
-      ) {
-        const linkText = this.nodeList?.getNodeData(link);
-        if (linkText && !linkText.includes('@')) {
-          errors.push(new ValidatorError(messages.link.mail, link));
+  private getWrongAttributeErrors(
+    link: AnyNode,
+    attributes: { [name: string]: string }
+  ): ValidatorError[] {
+    return Object.entries(this.faultyAttributes)
+      .map(([attrib, value]) => {
+        if (this.isFaulty(attributes, attrib, value)) {
+          return new ValidatorError(
+            messages.link[attrib as 'onclick' | 'tabindex'],
+            link
+          );
         }
-      }
-    });
+      })
+      .filter((value) => value instanceof ValidatorError);
+  }
 
-    return errors;
+  private getEmailError(
+    link: AnyNode,
+    attributes: { [name: string]: string },
+    linkText: string | undefined
+  ): ValidatorError | undefined {
+    if (
+      'href' in attributes &&
+      attributes['href'].startsWith('mailto:') &&
+      !linkText?.includes('@')
+    ) {
+      return new ValidatorError(messages.link.mail, link);
+    }
   }
 
   private isGeneric(text?: string): boolean {

@@ -208,6 +208,21 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.link.mail);
   });
 
+  test('Anchor with all checks failing', async () => {
+    const tabindex = `tabindex="-1" `;
+    const href = `href="mailto:support@office.com" `;
+    const onclick = `onclick="click()" `;
+    const text = 'click';
+    const anchor = `<a ${tabindex}${href}${onclick}>${text}</a>`;
+    
+    const content = html(head(meta + title) + body(anchor));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 4);
+  });
+
   test('<Div> with "onclick" event', async () => {
     const content = html(
       head(meta + title) + body(`<div onclick="click()"></div>`)
