@@ -1,6 +1,8 @@
+import * as vscode from 'vscode';
 import { AnyNode, Document } from 'domhandler';
 import { DomUtils, parseDocument } from 'htmlparser2';
-import * as vscode from 'vscode';
+import { DiagnosticSeverity } from 'vscode';
+import NodeOrganizer from './organizer';
 import {
   AttributesValidator,
   ButtonValidator,
@@ -11,9 +13,7 @@ import {
   RequiredValidator,
   UniquenessValidator,
   Validator,
-} from './validator';
-import { DiagnosticSeverity } from 'vscode';
-import NodeOrganizer from './organizer';
+} from './validators';
 
 export class Diagnostic {
   private diagnostics: vscode.Diagnostic[] = [];
