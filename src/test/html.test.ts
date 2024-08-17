@@ -282,6 +282,17 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.button.disabled);
   });
 
+  test('A <button> with tabindex greater than zero', async () => {
+    const content = html(
+      head(meta + title) + body(div(`<button tabindex="2"></button>`))
+    );
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.button.tabindex);
+  });
+
   test('Valid HTML should return no diagnostics', async () => {
     const content = html(head(meta + title) + body());
 

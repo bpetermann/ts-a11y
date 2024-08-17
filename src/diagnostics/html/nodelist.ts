@@ -55,8 +55,8 @@ export default class NodeList {
    * @param {AnyNode} node - The node to retrieve attributes from
    * @returns {{ [name: string]: string } | undefined} Object containing the node's attributes, or undefined if none exist
    */
-  getNodeAttributes(node: AnyNode): { [name: string]: string } | undefined {
-    return 'attribs' in node ? node.attribs : undefined;
+  getNodeAttributes(node: AnyNode): { [name: string]: string } | {} {
+    return 'attribs' in node ? node.attribs : {};
   }
 
   /**

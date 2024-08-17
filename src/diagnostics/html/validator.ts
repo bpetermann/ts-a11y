@@ -284,126 +284,145 @@ export class LinkValidator implements Validator {
 
 export class DivValidator implements Validator {
   readonly #nodeTags = ['div'] as const;
-  private nodeList: NodeList | null = null;
 
   get nodeTags() {
     return this.#nodeTags;
   }
   validate(nodes: AnyNode[]): ValidatorError[] {
-    this.nodeList = new NodeList(nodes, 'div');
-    const { nodes: divs } = this.nodeList;
+    const { nodes: divs, getNodeAttributes } = new NodeList(nodes, 'div');
 
     if (!divs.length) {
       return [];
     }
 
-    return [...this.checkButtonRole(divs), ...this.checkWrongAttributes(divs)];
+    return this.getErrors(divs, getNodeAttributes);
   }
 
-  checkButtonRole(divs: AnyNode[]) {
-    if (!this.nodeList) {
-      return [];
-    }
+  private getErrors(
+    divs: AnyNode[],
+    getNodeAttributes: (node: AnyNode) => { [name: string]: string } | {}
+  ): ValidatorError[] {
+    const errors: (ValidatorError | undefined)[] = [];
 
-    const { getNodeAttributes, getNodeAttribute } = this.nodeList;
+    divs.forEach((div) => {
+      const attributes = getNodeAttributes(div);
 
-    return divs
-      .filter((div) => {
-        const hasOnClick = 'onclick' in (getNodeAttributes(div) || {});
-        const hasButtonRole = getNodeAttribute(div, 'role') === 'button';
+      if (Object.keys(attributes).length) {
+        errors.push(this.getButtonError(div, attributes));
+        errors.push(this.getWrongAttributesError(div, attributes));
+      }
+    });
 
-        return hasOnClick || hasButtonRole;
-      })
-      .map(
-        (div) =>
-          new ValidatorError(messages.div.button, div, DiagnosticSeverity.Hint)
-      );
+    return errors.filter((error) => error instanceof ValidatorError);
   }
 
-  checkWrongAttributes(divs: AnyNode[]) {
-    if (!this.nodeList) {
-      return [];
-    }
-
-    const { getNodeAttributes } = this.nodeList;
-
-    return divs
-      .filter((div) => 'aria-expanded' in (getNodeAttributes(div) || {}))
-      .map(
-        (div) =>
-          new ValidatorError(
-            messages.div.expanded,
-            div,
-            DiagnosticSeverity.Hint
-          )
+  private getButtonError(
+    div: AnyNode,
+    attributes: { [name: string]: string }
+  ): ValidatorError | undefined {
+    if (
+      'onclick' in attributes ||
+      ('role' in attributes && attributes['role'] === 'button')
+    ) {
+      return new ValidatorError(
+        messages.div.button,
+        div,
+        DiagnosticSeverity.Hint
       );
+    }
+  }
+
+  private getWrongAttributesError(
+    div: AnyNode,
+    attributes: { [name: string]: string }
+  ): ValidatorError | undefined {
+    if ('aria-expanded' in attributes) {
+      return new ValidatorError(
+        messages.div.expanded,
+        div,
+        DiagnosticSeverity.Hint
+      );
+    }
   }
 }
 
 export class ButtonValidator implements Validator {
   readonly #nodeTags = ['button'] as const;
-  private nodeList: NodeList | null = null;
 
   get nodeTags() {
     return this.#nodeTags;
   }
 
   validate(nodes: AnyNode[]): ValidatorError[] {
-    this.nodeList = new NodeList(nodes, 'button');
-    const { nodes: buttons } = this.nodeList;
+    const { nodes: buttons, getNodeAttributes } = new NodeList(nodes, 'button');
 
     if (!buttons.length) {
       return [];
     }
 
-    return [
-      ...this.checkSwitchButtons(buttons),
-      ...this.checkDisabledButtons(buttons),
-    ];
+    return this.getErrors(buttons, getNodeAttributes);
   }
 
-  private checkSwitchButtons(buttons: AnyNode[]) {
-    if (!this.nodeList) {
-      return [];
-    }
+  private getErrors(
+    buttons: AnyNode[],
+    getNodeAttributes: (node: AnyNode) => { [name: string]: string } | {}
+  ): ValidatorError[] {
+    const errors: (ValidatorError | undefined)[] = [];
 
-    const { getNodeAttribute, getNodeAttributes } = this.nodeList;
+    buttons.forEach((button) => {
+      const attributes = getNodeAttributes(button);
 
-    return buttons
-      .filter((button) => {
-        const hasSwitchRole = getNodeAttribute(button, 'role') === 'switch';
-        const hasAriaChecked =
-          'aria-checked' in (getNodeAttributes(button) || {});
+      if (Object.keys(attributes).length) {
+        errors.push(this.getTabIndexError(button, attributes));
+        errors.push(this.getDisabledError(button, attributes));
+        errors.push(this.getSwitchError(button, attributes));
+      }
+    });
 
-        return hasSwitchRole && !hasAriaChecked;
-      })
-      .map(
-        (button) =>
-          new ValidatorError(
-            messages.button.switchRole,
-            button,
-            DiagnosticSeverity.Hint
-          )
-      );
+    return errors.filter((error) => error instanceof ValidatorError);
   }
 
-  private checkDisabledButtons(buttons: AnyNode[]) {
-    if (!this.nodeList) {
-      return [];
-    }
-
-    return buttons
-      .filter(
-        (button) =>
-          'disabled' in (this.nodeList!.getNodeAttributes(button) || {})
-      )
-      .map(
-        (button) =>
-          new ValidatorError(
-            messages.button.disabled,
-            button,
-            DiagnosticSeverity.Warning
-          )
+  private getTabIndexError(
+    button: AnyNode,
+    attributes: { [name: string]: string }
+  ): ValidatorError | undefined {
+    const tab = 'tabindex' as const;
+    if (tab in attributes && +attributes[tab] > 0) {
+      return new ValidatorError(
+        messages.button[tab],
+        button,
+        DiagnosticSeverity.Hint
       );
+    }
+  }
+
+  private getSwitchError(
+    button: AnyNode,
+    attributes: { [name: string]: string }
+  ): ValidatorError | undefined {
+    if (
+      'role' in attributes &&
+      attributes['role'] === 'switch' &&
+      !('aria-checked' in attributes)
+    ) {
+      return new ValidatorError(
+        messages.button.switchRole,
+        button,
+        DiagnosticSeverity.Hint
+      );
+    }
+  }
+
+  private getDisabledError(
+    button: AnyNode,
+    attributes: { [name: string]: string }
+  ): ValidatorError | undefined {
+    if ('disabled' in attributes) {
+      return new ValidatorError(
+        messages.button.disabled,
+        button,
+        DiagnosticSeverity.Warning
+      );
+    }
   }
 }
