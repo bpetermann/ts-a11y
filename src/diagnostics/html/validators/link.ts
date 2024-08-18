@@ -3,7 +3,6 @@ import { messages } from '../messages';
 import NodeList from '../nodelist';
 import { Validator, ValidatorError } from './validator';
 import { DiagnosticSeverity } from 'vscode';
-import { error } from 'console';
 
 export class LinkValidator implements Validator {
   #nodeTags: string[] = ['a'];
@@ -117,6 +116,34 @@ export class LinkValidator implements Validator {
         DiagnosticSeverity.Hint
       );
     }
+  }
+
+  private getLongSequenceError(links: AnyNode[]): ValidatorError | undefined {
+    let longestSequence: number = 0;
+
+    for (let index = 0; index < links.length; index++) {
+      let node = links[index];
+      const startIndex = index;
+
+      while (this.nextNodeIsLink(node)) {
+        index++;
+        node = node.next as AnyNode;
+      }
+
+      longestSequence = Math.max(index - startIndex + 1, longestSequence);
+    }
+
+    if (longestSequence > 10) {
+      return new ValidatorError(
+        messages.link.list,
+        links[0],
+        DiagnosticSeverity.Hint
+      );
+    }
+  }
+
+  private nextNodeIsLink(node: AnyNode): boolean {
+    return node && !!node.next && 'name' in node.next && node.next.name === 'a';
   }
 
   private isGeneric(text?: string): boolean {
