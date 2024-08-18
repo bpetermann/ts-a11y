@@ -3,8 +3,8 @@ import { AnyNode } from 'domhandler';
 export default class NodeList {
   public nodes: AnyNode[];
 
-  constructor(nodes: AnyNode[], tag: string) {
-    this.nodes = this.findNodesByTag(nodes, tag);
+  constructor(nodes: AnyNode[], tag?: string) {
+    this.nodes = tag ? this.findNodesByTag(nodes, tag) : nodes;
   }
 
   /**
