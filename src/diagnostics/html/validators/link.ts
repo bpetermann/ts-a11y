@@ -1,7 +1,7 @@
 import { AnyNode } from 'domhandler';
 import { messages } from '../messages';
 import NodeList from '../nodelist';
-import { Validator, ValidatorError } from './Validator';
+import { Validator, ValidatorError } from './validator';
 import { DiagnosticSeverity } from 'vscode';
 import { error } from 'console';
 

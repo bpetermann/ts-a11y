@@ -2,7 +2,7 @@ import { AnyNode } from 'domhandler';
 import { messages } from '../messages';
 import NodeList from '../nodelist';
 import { DiagnosticSeverity } from 'vscode';
-import { Validator, ValidatorError } from './Validator';
+import { Validator, ValidatorError } from './validator';
 
 export class ButtonValidator implements Validator {
   readonly #nodeTags = ['button'] as const;

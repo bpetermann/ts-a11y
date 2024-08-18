@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { AnyNode } from 'domhandler';
 import { DiagnosticSeverity } from 'vscode';
-import { ValidatorError } from './validators/Validator';
+import { ValidatorError } from './validators/validator';
 
 export class Diagnostic {
   #diagnostic: vscode.Diagnostic;
