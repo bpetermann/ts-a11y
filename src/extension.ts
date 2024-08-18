@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
-import { TSXDiagnostic } from './diagnostics/tsx/diagnostic';
-import { Diagnostic as HTMLDiagnostic } from './diagnostics/html/diagnostic';
+import { HTMLDiagnosticGenerator as DiagnosticGenerator } from './diagnostics/html/generator';
 
 class DiagnosticManager {
   private diagnosticCollection: vscode.DiagnosticCollection;
@@ -28,8 +27,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     switch (event.document.languageId) {
       case 'html':
-        const htmlDiagnostic = new HTMLDiagnostic(text, event.document);
-        diagnostics.push(...htmlDiagnostic.generateDiagnostics());
+        const generator = new DiagnosticGenerator(text, event.document);
+        diagnostics.push(...generator.generateDiagnostics());
         break;
     }
 

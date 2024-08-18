@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { Diagnostic as HTMLDiagnostic } from '../diagnostics/html/diagnostic';
+import { HTMLDiagnosticGenerator } from '../diagnostics/html/generator';
 import { messages } from '../diagnostics/html/messages';
 import {
   body,
@@ -17,7 +17,10 @@ import {
  * Generates diagnostics for an html document.
  */
 const generateDiagnostics = (document: vscode.TextDocument) =>
-  new HTMLDiagnostic(document.getText(), document).generateDiagnostics();
+  new HTMLDiagnosticGenerator(
+    document.getText(),
+    document
+  ).generateDiagnostics();
 
 suite('HTML Test Suite', () => {
   test('Missing lang attribute in <html> tag', async () => {

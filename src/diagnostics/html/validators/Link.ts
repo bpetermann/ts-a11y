@@ -53,10 +53,10 @@ export class LinkValidator implements Validator {
 
     links.forEach((link) => {
       const attributes = getNodeAttributes(link);
-      const linkText = getNodeData(link);
+      const textContent = getNodeData(link);
 
-      errors.push(this.getGenericTextError(link, linkText));
-      errors.push(this.getEmailError(link, attributes, linkText));
+      errors.push(this.getGenericTextError(link, textContent));
+      errors.push(this.getEmailError(link, attributes, textContent));
       errors.push(...this.getWrongAttributeErrors(link, attributes));
     });
 
@@ -67,10 +67,10 @@ export class LinkValidator implements Validator {
 
   private getGenericTextError(
     link: AnyNode,
-    linkText: string | undefined
+    textContent: string | undefined
   ): ValidatorError | undefined {
-    if (this.isGeneric(linkText)) {
-      return new ValidatorError(`${messages.link.avoid}"${linkText}"`, link);
+    if (this.isGeneric(textContent)) {
+      return new ValidatorError(`${messages.link.avoid}"${textContent}"`, link);
     }
   }
 
@@ -93,12 +93,12 @@ export class LinkValidator implements Validator {
   private getEmailError(
     link: AnyNode,
     attributes: { [name: string]: string },
-    linkText: string | undefined
+    textContent: string | undefined
   ): ValidatorError | undefined {
     if (
       'href' in attributes &&
       attributes['href'].startsWith('mailto:') &&
-      !linkText?.includes('@')
+      !textContent?.includes('@')
     ) {
       return new ValidatorError(messages.link.mail, link);
     }
