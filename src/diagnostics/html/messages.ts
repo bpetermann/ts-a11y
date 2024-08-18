@@ -40,6 +40,7 @@ export const messages = {
     mail: '[Zugang] Include the email address in the link text to help users who find switching between applications tedious.',
     current:
       '[Zugang] If any of the links point to the current page, mark that link with aria-current="page". This improves navigation and helps users, especially those using assistive technologies, understand their current location.',
+    list: '[Zugang] Complex navigations can be challenging for blind screen reader users, as they may struggle to understand the size and structure. Consider wrapping long lists of links in a <ul> to provide additional semantic information.',
   },
   div: {
     button:
@@ -54,5 +55,9 @@ export const messages = {
       '[Zugang] Do not disable buttons as they do not provide valuable feedback. Users should always have the option to interact with a button.',
     tabindex:
       '[Zugang] Avoid using positive values for the tab index, as it then quickly becomes difficult to maintain a meaningful order.',
+  },
+  input: {
+    label:
+      '[Zugang] Screen reader users may have difficulty recognizing the purpose of a field if you do not label your input elements by either nesting them in a label element, specifying a label as a sibling, or creating a reference with “aria-labelledby”.',
   },
 };

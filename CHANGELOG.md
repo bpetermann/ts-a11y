@@ -10,14 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **HTML Validation:**
-  - Added validation for <button> elements (e.g., tabindex, switch and disabled attributes).
+  - Added validation for `<button>` elements (e.g., tabindex, switch and disabled attributes).
+  - Added validation for `<input>` elements (e.g., checking for existing label).
+
+### Changed
+
+- Validation of `<a>` (link) elements now includes “aria-current” check
 
 ## [0.0.2]- 2024-08-16
 
 ### Added
 
 - **HTML Validation:**
-  - Added validation for <div> elements to ensure they are not improperly used as buttons.
+  - Added validation for `<div>` elements to ensure they are not improperly used as buttons.
 
 ### Changed
 

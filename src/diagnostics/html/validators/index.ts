@@ -2,6 +2,7 @@ export { AttributesValidator } from './attributes';
 export { ButtonValidator } from './button';
 export { DivValidator } from './div';
 export { HeadingValidator } from './heading';
+export { InputValidator } from './input';
 export { LinkValidator } from './link';
 export { NavigationValidator } from './navigation';
 export { RequiredValidator } from './required';

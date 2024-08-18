@@ -8,6 +8,7 @@ import {
   ButtonValidator,
   DivValidator,
   HeadingValidator,
+  InputValidator,
   LinkValidator,
   NavigationValidator,
   RequiredValidator,
@@ -31,6 +32,7 @@ export class HTMLDiagnosticGenerator {
       new LinkValidator(),
       new DivValidator(),
       new ButtonValidator(),
+      new InputValidator(),
     ]
   ) {}
 

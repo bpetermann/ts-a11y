@@ -239,6 +239,21 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.link.current);
   });
 
+  test('A long list of consecutive <a> elements', async () => {
+    let links = '<a aria-current="page">Home</a>';
+
+    for (let index = 0; index < 30; index++) {
+      links += `<a>link number ${index}</a>`;
+    }
+
+    const content = html(head(meta + title) + body(links));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
   test('<Div> with "onclick" event', async () => {
     const content = html(
       head(meta + title) + body(`<div onclick="click()"></div>`)
@@ -322,6 +337,46 @@ suite('HTML Test Suite', () => {
     const { message } = generateDiagnostics(document)?.[0];
 
     assert.strictEqual(message, messages.button.tabindex);
+  });
+
+  test('Input field nested inside a label element', async () => {
+    const input = '<label>Username<input type="text"></label>';
+    const content = html(head(meta + title) + body(input));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('Input field next to a label element', async () => {
+    const input = '<label>Username</label><input id="username" type="text">';
+    const content = html(head(meta + title) + body(input));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('Input field with "aria-labelledby" attribute', async () => {
+    const input = '<input type="text" aria-labelledby="btn_search">';
+    const content = html(head(meta + title) + body(input));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('Input field with no visible label or reference', async () => {
+    const input = '<input type="text">';
+    const content = html(head(meta + title) + body(input));
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.input.label);
   });
 
   test('Valid HTML should return no diagnostics', async () => {
