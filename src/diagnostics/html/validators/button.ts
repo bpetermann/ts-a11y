@@ -18,10 +18,10 @@ export class ButtonValidator implements Validator {
       return [];
     }
 
-    return this.getErrors(buttons, getNodeAttributes);
+    return this.runChecks(buttons, getNodeAttributes);
   }
 
-  private getErrors(
+  private runChecks(
     buttons: AnyNode[],
     getNodeAttributes: (node: AnyNode) => { [name: string]: string } | {}
   ): ValidatorError[] {
@@ -31,16 +31,16 @@ export class ButtonValidator implements Validator {
       const attributes = getNodeAttributes(button);
 
       if (Object.keys(attributes).length) {
-        errors.push(this.getTabIndexError(button, attributes));
-        errors.push(this.getDisabledError(button, attributes));
-        errors.push(this.getSwitchError(button, attributes));
+        errors.push(this.checkTabIndex(button, attributes));
+        errors.push(this.checkDeactivation(button, attributes));
+        errors.push(this.checkSwitchRole(button, attributes));
       }
     });
 
     return errors.filter((error) => error instanceof ValidatorError);
   }
 
-  private getTabIndexError(
+  private checkTabIndex(
     button: AnyNode,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
@@ -54,7 +54,20 @@ export class ButtonValidator implements Validator {
     }
   }
 
-  private getSwitchError(
+  private checkDeactivation(
+    button: AnyNode,
+    attributes: { [name: string]: string }
+  ): ValidatorError | undefined {
+    if ('disabled' in attributes) {
+      return new ValidatorError(
+        messages.button.disabled,
+        button,
+        DiagnosticSeverity.Warning
+      );
+    }
+  }
+
+  private checkSwitchRole(
     button: AnyNode,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
@@ -67,19 +80,6 @@ export class ButtonValidator implements Validator {
         messages.button.switchRole,
         button,
         DiagnosticSeverity.Hint
-      );
-    }
-  }
-
-  private getDisabledError(
-    button: AnyNode,
-    attributes: { [name: string]: string }
-  ): ValidatorError | undefined {
-    if ('disabled' in attributes) {
-      return new ValidatorError(
-        messages.button.disabled,
-        button,
-        DiagnosticSeverity.Warning
       );
     }
   }

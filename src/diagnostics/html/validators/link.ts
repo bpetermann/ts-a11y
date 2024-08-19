@@ -6,6 +6,7 @@ import { DiagnosticSeverity } from 'vscode';
 
 export class LinkValidator implements Validator {
   #nodeTags: string[] = ['a'];
+  private maxSequenceLength = 10;
 
   private readonly genericTexts = new Set([
     'click me',
@@ -40,10 +41,10 @@ export class LinkValidator implements Validator {
       return [];
     }
 
-    return this.getErrors(links, getNodeAttributes, getNodeData);
+    return this.runChecks(links, getNodeAttributes, getNodeData);
   }
 
-  private getErrors(
+  private runChecks(
     links: AnyNode[],
     getNodeAttributes: (node: AnyNode) => { [name: string]: string } | {},
     getNodeData: (node: AnyNode) => string | undefined
@@ -54,9 +55,9 @@ export class LinkValidator implements Validator {
       const attributes = getNodeAttributes(link);
       const textContent = getNodeData(link);
 
-      errors.push(this.getGenericTextError(link, textContent));
-      errors.push(this.getEmailError(link, attributes, textContent));
-      errors.push(...this.getWrongAttributeErrors(link, attributes));
+      errors.push(this.checkgenericText(link, textContent));
+      errors.push(this.checkMailLink(link, attributes, textContent));
+      errors.push(...this.checkWrongAttributes(link, attributes));
     });
 
     errors.push(this.getAriaCurrentError(links));
@@ -64,7 +65,7 @@ export class LinkValidator implements Validator {
     return errors.filter((error) => error instanceof ValidatorError);
   }
 
-  private getGenericTextError(
+  private checkgenericText(
     link: AnyNode,
     textContent: string | undefined
   ): ValidatorError | undefined {
@@ -73,7 +74,7 @@ export class LinkValidator implements Validator {
     }
   }
 
-  private getWrongAttributeErrors(
+  private checkWrongAttributes(
     link: AnyNode,
     attributes: { [name: string]: string }
   ): ValidatorError[] {
@@ -89,7 +90,7 @@ export class LinkValidator implements Validator {
       .filter((value) => value instanceof ValidatorError);
   }
 
-  private getEmailError(
+  private checkMailLink(
     link: AnyNode,
     attributes: { [name: string]: string },
     textContent: string | undefined
@@ -118,7 +119,7 @@ export class LinkValidator implements Validator {
     }
   }
 
-  private getLongSequenceError(links: AnyNode[]): ValidatorError | undefined {
+  private checkSequenceLength(links: AnyNode[]): ValidatorError | undefined {
     let longestSequence: number = 0;
 
     for (let index = 0; index < links.length; index++) {
@@ -133,7 +134,7 @@ export class LinkValidator implements Validator {
       longestSequence = Math.max(index - startIndex + 1, longestSequence);
     }
 
-    if (longestSequence > 10) {
+    if (longestSequence > this.maxSequenceLength) {
       return new ValidatorError(
         messages.link.list,
         links[0],

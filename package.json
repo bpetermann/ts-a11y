@@ -1,7 +1,7 @@
 {
   "name": "zugang",
   "displayName": "Zugang",
-  "description": "Accessibility Refactoring Assistant",
+  "description": "A11y Linter",
   "version": "0.0.2",
   "publisher": "bpetermann",
   "repository": {

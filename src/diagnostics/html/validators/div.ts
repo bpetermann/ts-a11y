@@ -17,10 +17,10 @@ export class DivValidator implements Validator {
       return [];
     }
 
-    return this.getErrors(divs, getNodeAttributes);
+    return this.runChecks(divs, getNodeAttributes);
   }
 
-  private getErrors(
+  private runChecks(
     divs: AnyNode[],
     getNodeAttributes: (node: AnyNode) => { [name: string]: string } | {}
   ): ValidatorError[] {
@@ -30,15 +30,15 @@ export class DivValidator implements Validator {
       const attributes = getNodeAttributes(div);
 
       if (Object.keys(attributes).length) {
-        errors.push(this.getButtonError(div, attributes));
-        errors.push(this.getWrongAttributesError(div, attributes));
+        errors.push(this.checkButtonRole(div, attributes));
+        errors.push(this.checkWrongAttibutes(div, attributes));
       }
     });
 
     return errors.filter((error) => error instanceof ValidatorError);
   }
 
-  private getButtonError(
+  private checkButtonRole(
     div: AnyNode,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
@@ -54,7 +54,7 @@ export class DivValidator implements Validator {
     }
   }
 
-  private getWrongAttributesError(
+  private checkWrongAttibutes(
     div: AnyNode,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
