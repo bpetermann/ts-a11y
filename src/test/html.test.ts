@@ -349,8 +349,21 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
-  test('Input field next to a label element', async () => {
-    const input = '<label>Username</label><input id="username" type="text">';
+  test('Input field next to a label  element', async () => {
+    const input = `<label>Username</label><input id="username" type="text">`;
+    const content = html(head(meta + title) + body(input));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('Input field next to a label (linebreak) element', async () => {
+    const input = `
+    <label>Username</label>
+    <input id="username" type="text">
+    `;
     const content = html(head(meta + title) + body(input));
 
     const document = await getDocument(content);
@@ -390,6 +403,21 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
+  test('<Fieldset> with <legend> (linebreak) as first child', async () => {
+    const input = `
+    <fieldset>
+    <legend>What is your spirit animal?</legend>
+    </fieldset>
+    `;
+
+    const content = html(head(meta + title) + body(input));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
   test('<Fieldset> with no <legend>', async () => {
     const input = '<fieldset></fieldset>';
     const content = html(head(meta + title) + body(input));
@@ -401,8 +429,8 @@ suite('HTML Test Suite', () => {
   });
 
   test('<Fieldset> with nested <legend>', async () => {
-    const input =
-      '<fieldset><div><legend>What is your spirit animal?</legend></div></fieldset>';
+    const input = `<fieldset>
+      <div><legend>What is your spirit animal?</legend></div></fieldset>`;
     const content = html(head(meta + title) + body(input));
 
     const document = await getDocument(content);

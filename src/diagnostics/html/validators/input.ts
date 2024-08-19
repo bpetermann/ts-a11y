@@ -11,24 +11,23 @@ export class InputValidator implements Validator {
   }
 
   validate(nodes: AnyNode[]): ValidatorError[] {
-    const { nodes: inputs, getNodeAttributes } = new NodeList(nodes);
+    const nodeList = new NodeList(nodes);
+    const { nodes: inputs } = new NodeList(nodes);
 
     if (!inputs.length) {
       return [];
     }
 
-    return this.runChecks(inputs, getNodeAttributes);
+    return this.runChecks(inputs, nodeList);
   }
 
-  private runChecks(
-    inputs: AnyNode[],
-    getNodeAttributes: (node: AnyNode) => { [name: string]: string } | {}
-  ): ValidatorError[] {
+  private runChecks(inputs: AnyNode[], nodeList: NodeList): ValidatorError[] {
     const errors: (ValidatorError | undefined)[] = [];
 
     inputs.forEach((input) => {
-      const attributes = getNodeAttributes(input);
-      errors.push(this.checkLabel(input, attributes));
+      const attributes = nodeList.getNodeAttributes(input);
+      const sibling = nodeList.getFirstSibling(input);
+      errors.push(this.checkLabel(input, attributes, sibling));
     });
 
     return errors.filter((error) => error instanceof ValidatorError);
@@ -36,11 +35,15 @@ export class InputValidator implements Validator {
 
   checkLabel(
     input: AnyNode,
-    attributes: {} | { [name: string]: string }
+    attributes: {} | { [name: string]: string },
+    sibling?: AnyNode
   ): ValidatorError | undefined {
+    const isSiblingLabel =
+      sibling && 'name' in sibling && sibling['name'] === 'label';
+
     if (
       !this.isParentLabel(input) &&
-      !(this.isSiblingLabel(input) && 'id' in attributes) &&
+      !(isSiblingLabel && 'id' in attributes) &&
       !('aria-labelledby' in attributes)
     ) {
       return new ValidatorError(messages.input.label, input);
@@ -50,13 +53,6 @@ export class InputValidator implements Validator {
   private isParentLabel(input: AnyNode) {
     return (
       input.parent && 'name' in input.parent && input.parent['name'] === 'label'
-    );
-  }
-
-  private isSiblingLabel(input: AnyNode) {
-    return (
-      (input.prev && 'name' in input.prev && input.prev['name'] === 'label') ||
-      (input.next && 'name' in input.next && input.next['name'] === 'label')
     );
   }
 }

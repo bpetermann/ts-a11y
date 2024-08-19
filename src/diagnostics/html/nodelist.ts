@@ -1,4 +1,4 @@
-import { AnyNode } from 'domhandler';
+import { AnyNode, Element, ProcessingInstruction } from 'domhandler';
 
 export default class NodeList {
   public nodes: AnyNode[];
@@ -78,5 +78,40 @@ export default class NodeList {
     return 'children' in node && node.children[0] && 'data' in node.children[0]
       ? node.children[0].data
       : undefined;
+  }
+
+  /**
+   * Returns the first child node of the given node
+   * @param {AnyNode} node - The parent node from which to retrieve the first child.
+   * @returns {Element | ProcessingInstruction | undefined} - The first child node with a `name` property, or `undefined` if none exists.
+   */
+  getFirstChildNode(
+    node: AnyNode
+  ): Element | ProcessingInstruction | undefined {
+    if (!('children' in node)) {
+      return;
+    }
+
+    for (let index = 0; index < node.children.length; index++) {
+      const childNode = node.children[index];
+      if ('name' in childNode) {
+        return childNode;
+      }
+    }
+  }
+
+  /**
+   * Returns the first sibling node before the given node
+   * @param {AnyNode} node - The node whose previous sibling is being sought.
+   * @returns {Element | ProcessingInstruction | null} The first sibling node, or `undefined` if none exists.
+   */
+  getFirstSibling(node: AnyNode): Element | ProcessingInstruction | undefined {
+    let prevNode = node.prev;
+
+    while (prevNode && !('name' in prevNode)) {
+      prevNode = prevNode.prev;
+    }
+
+    return prevNode ?? undefined;
   }
 }

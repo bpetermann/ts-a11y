@@ -13,23 +13,17 @@ export class FieldsetValidator implements Validator {
   validate(domNodes: AnyNode[]): ValidatorError[] {
     const errors: ValidatorError[] = [];
 
+    const nodeList = new NodeList(domNodes);
     const { nodes: fieldsets } = new NodeList(domNodes);
 
     fieldsets.forEach((fieldset) => {
-      if (!this.isChildLegend(fieldset)) {
+      const childNode = nodeList.getFirstChildNode(fieldset);
+
+      if (!(childNode && childNode.name === 'legend')) {
         errors.push(new ValidatorError(messages.fieldset.legend, fieldset));
       }
     });
 
     return errors;
-  }
-
-  private isChildLegend(node: AnyNode): boolean {
-    return (
-      'children' in node &&
-      node.children[0] &&
-      'name' in node.children[0] &&
-      node.children[0]['name'] === 'legend'
-    );
   }
 }
