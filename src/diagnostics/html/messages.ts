@@ -60,4 +60,8 @@ export const messages = {
     label:
       '[Zugang] Screen reader users may have difficulty recognizing the purpose of a field if you do not label your input elements by either nesting them in a label element, specifying a label as a sibling, or creating a reference with “aria-labelledby”.',
   },
+  fieldset: {
+    legend:
+      '[Zugang] Always provide a legend to the fieldset element. The legend should be the first child of the fieldset and must not be nested within other elements. Otherwise, it will not provide an accessible name for the fieldset.',
+  },
 };

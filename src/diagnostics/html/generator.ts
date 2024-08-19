@@ -7,6 +7,7 @@ import {
   AttributesValidator,
   ButtonValidator,
   DivValidator,
+  FieldsetValidator,
   HeadingValidator,
   InputValidator,
   LinkValidator,
@@ -33,6 +34,7 @@ export class HTMLDiagnosticGenerator {
       new DivValidator(),
       new ButtonValidator(),
       new InputValidator(),
+      new FieldsetValidator(),
     ]
   ) {}
 

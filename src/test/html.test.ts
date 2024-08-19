@@ -379,6 +379,38 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.input.label);
   });
 
+  test('<Fieldset> with <legend> as first child>', async () => {
+    const input =
+      '<fieldset><legend>What is your spirit animal?</legend></fieldset>';
+    const content = html(head(meta + title) + body(input));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('<Fieldset> with no <legend>', async () => {
+    const input = '<fieldset></fieldset>';
+    const content = html(head(meta + title) + body(input));
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.fieldset.legend);
+  });
+
+  test('<Fieldset> with nested <legend>', async () => {
+    const input =
+      '<fieldset><div><legend>What is your spirit animal?</legend></div></fieldset>';
+    const content = html(head(meta + title) + body(input));
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.fieldset.legend);
+  });
+
   test('Valid HTML should return no diagnostics', async () => {
     const content = html(head(meta + title) + body());
 
