@@ -1,7 +1,7 @@
 import { AnyNode } from 'domhandler';
 import { messages } from '../messages';
-import NodeList from '../nodelist';
 import { Validator, ValidatorError } from './validator';
+import ElementList from '../elements';
 
 export class AttributesValidator implements Validator {
   readonly #nodeTags = ['html', 'meta'] as const;
@@ -19,12 +19,12 @@ export class AttributesValidator implements Validator {
     const errors: ValidatorError[] = [];
 
     this.nodeTags.forEach((tag) => {
-      const nodeList = new NodeList(domNodes, tag);
-      const { nodes: elements } = nodeList;
+      const elementList = new ElementList(domNodes, tag);
+      const { elements } = elementList;
 
       if (elements.length) {
         const anyNodeHasAttribs = this.attributes[tag].every((attr) =>
-          nodeList.anyNodeHasAttribute(attr)
+          elementList.anyElementHasAttribute(attr)
         );
 
         if (!anyNodeHasAttribs) {

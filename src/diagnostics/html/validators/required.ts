@@ -1,8 +1,8 @@
 import { AnyNode } from 'domhandler';
 import { messages } from '../messages';
-import NodeList from '../nodelist';
 import { Validator, ValidatorError } from './validator';
 import { DiagnosticSeverity } from 'vscode';
+import ElementList from '../elements';
 
 export class RequiredValidator implements Validator {
   readonly #nodeTags = ['meta', 'title'] as const;
@@ -13,10 +13,10 @@ export class RequiredValidator implements Validator {
 
   validate(domNodes: AnyNode[]): ValidatorError[] {
     const errors: ValidatorError[] = [];
-    const { findNodeByTag } = NodeList;
+    const { findElementByTag } = ElementList;
 
     this.nodeTags.forEach((tag) => {
-      if (!findNodeByTag(domNodes, tag)) {
+      if (!findElementByTag(domNodes, tag)) {
         errors.push(
           new ValidatorError(
             messages[tag].shouldExist,

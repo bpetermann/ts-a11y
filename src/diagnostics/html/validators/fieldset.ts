@@ -1,7 +1,7 @@
 import { AnyNode } from 'domhandler';
 import { messages } from '../messages';
-import NodeList from '../nodelist';
 import { Validator, ValidatorError } from './validator';
+import ElementList from '../elements';
 
 export class FieldsetValidator implements Validator {
   readonly #nodeTags = ['fieldset'] as const;
@@ -13,11 +13,11 @@ export class FieldsetValidator implements Validator {
   validate(domNodes: AnyNode[]): ValidatorError[] {
     const errors: ValidatorError[] = [];
 
-    const nodeList = new NodeList(domNodes);
-    const { nodes: fieldsets } = new NodeList(domNodes);
+    const elementsList = new ElementList(domNodes);
+    const { elements: fieldsets } = elementsList;
 
     fieldsets.forEach((fieldset) => {
-      const childNode = nodeList.getFirstChildNode(fieldset);
+      const childNode = elementsList.getFirstChild(fieldset);
 
       if (!(childNode && childNode.name === 'legend')) {
         errors.push(new ValidatorError(messages.fieldset.legend, fieldset));

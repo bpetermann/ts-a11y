@@ -1,7 +1,7 @@
 import { AnyNode } from 'domhandler';
 import { messages } from '../messages';
-import NodeList from '../nodelist';
 import { Validator, ValidatorError } from './validator';
+import ElementList from '../elements';
 
 export class NavigationValidator implements Validator {
   readonly #nodeTags = ['nav'] as const;
@@ -13,12 +13,12 @@ export class NavigationValidator implements Validator {
   validate(domNodes: AnyNode[]): ValidatorError[] {
     const errors: ValidatorError[] = [];
 
-    const nodeList = new NodeList(domNodes, 'nav');
-    const { nodes: navElements } = nodeList;
+    const el = new ElementList(domNodes);
+    const { elements: navElements } = el;
 
     if (navElements.length > 1) {
       navElements.forEach((nav) => {
-        const navAttributes = nodeList.getNodeAttributes(nav);
+        const navAttributes = el.getElementAttributes(nav);
         const hasAriaAttribute =
           navAttributes &&
           ('aria-labelledby' in navAttributes || 'aria-label' in navAttributes);

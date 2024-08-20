@@ -55,7 +55,7 @@ export default class ElementList {
    * @param {Element} element - The element to retrieve attributes from
    * @returns {{ [name: string]: string } | undefined} Object containing the element's attributes, or undefined if none exist
    */
-  getElementAttributes(element: Element): { [name: string]: string } {
+  getElementAttributes(element: Element): { [name: string]: string } | {} {
     return element.attribs;
   }
 
@@ -66,7 +66,7 @@ export default class ElementList {
    * @returns {string | undefined} The element's value, or undefined if the attribute does not exist
    */
   getElementAttribute(element: Element, attr: string): string | undefined {
-    return element.attribs[attr];
+    return element.attribs?.[attr];
   }
 
   /**
@@ -75,7 +75,11 @@ export default class ElementList {
    * @returns {string | undefined} The text content of the element, or undefined if not applicable
    */
   getElementData(element: Element): string | undefined {
-    return 'data' in element.children[0] ? element.children[0].data : undefined;
+    return 'children' in element &&
+      element.children[0] &&
+      'data' in element.children[0]
+      ? element.children[0].data
+      : undefined;
   }
 
   /**

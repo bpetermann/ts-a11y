@@ -1,8 +1,8 @@
-import { AnyNode } from 'domhandler';
+import { AnyNode, Element } from 'domhandler';
 import { messages } from '../messages';
-import NodeList from '../nodelist';
 import { DiagnosticSeverity } from 'vscode';
 import { Validator, ValidatorError } from './validator';
+import ElementList from '../elements';
 
 export class DivValidator implements Validator {
   readonly #nodeTags = ['div'] as const;
@@ -11,23 +11,26 @@ export class DivValidator implements Validator {
     return this.#nodeTags;
   }
   validate(nodes: AnyNode[]): ValidatorError[] {
-    const { nodes: divs, getNodeAttributes } = new NodeList(nodes, 'div');
+    const { elements: divs, getElementAttributes } = new ElementList(
+      nodes,
+      'div'
+    );
 
     if (!divs.length) {
       return [];
     }
 
-    return this.runChecks(divs, getNodeAttributes);
+    return this.runChecks(divs, getElementAttributes);
   }
 
   private runChecks(
-    divs: AnyNode[],
-    getNodeAttributes: (node: AnyNode) => { [name: string]: string } | {}
+    divs: Element[],
+    getElementAttributes: (element: Element) => { [name: string]: string }
   ): ValidatorError[] {
     const errors: (ValidatorError | undefined)[] = [];
 
     divs.forEach((div) => {
-      const attributes = getNodeAttributes(div);
+      const attributes = getElementAttributes(div);
 
       if (Object.keys(attributes).length) {
         errors.push(this.checkButtonRole(div, attributes));
@@ -39,13 +42,10 @@ export class DivValidator implements Validator {
   }
 
   private checkButtonRole(
-    div: AnyNode,
+    div: Element,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
-    if (
-      'onclick' in attributes ||
-      ('role' in attributes && attributes['role'] === 'button')
-    ) {
+    if ('onclick' in attributes || attributes?.['role'] === 'button') {
       return new ValidatorError(
         messages.div.button,
         div,
@@ -55,7 +55,7 @@ export class DivValidator implements Validator {
   }
 
   private checkWrongAttibutes(
-    div: AnyNode,
+    div: Element,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
     if ('aria-expanded' in attributes) {
