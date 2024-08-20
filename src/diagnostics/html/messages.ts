@@ -64,4 +64,7 @@ export const messages = {
     legend:
       '[Zugang] Always provide a legend to the fieldset element. The legend should be the first child of the fieldset and must not be nested within other elements. Otherwise, it will not provide an accessible name for the fieldset.',
   },
+  img: {
+    alt: '[Zugang] Use the alt attribute to specify a text description of the image. For purely decorative images, use an empty alt attribute to indicate that the image should be ignored by supporting technologies.',
+  },
 };

@@ -439,6 +439,26 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.fieldset.legend);
   });
 
+  test('<img> with missing alt attribute', async () => {
+    const img = `<img src="send.png">`;
+    const content = html(head(meta + title) + body(img));
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.img.alt);
+  });
+
+  test('<img> with empty alt attribute', async () => {
+    const img = `<img src="send.png" alt="">`;
+    const content = html(head(meta + title) + body(img));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
   test('Valid HTML should return no diagnostics', async () => {
     const content = html(head(meta + title) + body());
 
