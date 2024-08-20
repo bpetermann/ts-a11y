@@ -41,6 +41,8 @@ export const messages = {
     current:
       '[Zugang] If any of the links point to the current page, mark that link with aria-current="page". This improves navigation and helps users, especially those using assistive technologies, understand their current location.',
     list: '[Zugang] Complex navigations can be challenging for blind screen reader users, as they may struggle to understand the size and structure. Consider wrapping long lists of links in a <ul> to provide additional semantic information.',
+    'aria-hidden':
+      '[Zugang] Do not use aria-hidden="true" on focusable elements.',
   },
   div: {
     button:

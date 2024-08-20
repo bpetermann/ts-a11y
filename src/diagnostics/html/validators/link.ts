@@ -19,11 +19,12 @@ export class LinkValidator implements Validator {
   ]);
 
   private readonly faultyAttributes: Record<
-    'onclick' | 'tabindex',
-    string | null
+    'onclick' | 'tabindex' | 'aria-hidden',
+    string | null | boolean
   > = {
     onclick: null,
     tabindex: '-1',
+    'aria-hidden': "true",
   } as const;
 
   get nodeTags() {
@@ -82,7 +83,7 @@ export class LinkValidator implements Validator {
       .map(([attrib, value]) => {
         if (this.isFaulty(attributes, attrib, value)) {
           return new ValidatorError(
-            messages.link[attrib as 'onclick' | 'tabindex'],
+            messages.link[attrib as 'onclick' | 'tabindex' | 'aria-hidden'],
             link
           );
         }
@@ -154,7 +155,7 @@ export class LinkValidator implements Validator {
   private isFaulty(
     attributes: { [name: string]: string },
     attrib: string,
-    value: string | null
+    value: string | null | boolean
   ): boolean {
     return attrib in attributes && (!value || attributes[attrib] === value);
   }

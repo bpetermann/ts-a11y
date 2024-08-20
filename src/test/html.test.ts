@@ -189,6 +189,17 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.link.onclick);
   });
 
+  test('Anchor with a "aria-hidden" set to true', async () => {
+    const content = html(
+      head(meta + title) + body(`<a aria-hidden="true"></a>`)
+    );
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.link['aria-hidden']);
+  });
+
   test('Anchor with a tabindex of "-1"', async () => {
     const content = html(head(meta + title) + body(`<a tabindex="-1"></a>`));
 
