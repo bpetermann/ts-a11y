@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **HTML Validation:**
+- Added validation of `<img>` elements (e.g., alt attribute).
+
+### Changed
+
+- Change initial filtering of nodes to only leave elements
+
 ## [0.0.3]- 2024-08-18
 
 ### Added
