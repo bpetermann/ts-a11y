@@ -1,8 +1,8 @@
-import { AnyNode } from 'domhandler';
+import { AnyNode, Element } from 'domhandler';
 import { messages } from '../messages';
-import NodeList from '../nodelist';
 import { Validator, ValidatorError } from './validator';
 import { DiagnosticSeverity } from 'vscode';
+import ElementList from '../elements';
 
 export class LinkValidator implements Validator {
   #nodeTags: string[] = ['a'];
@@ -32,28 +32,28 @@ export class LinkValidator implements Validator {
 
   validate(domNodes: AnyNode[]): ValidatorError[] {
     const {
-      nodes: links,
-      getNodeAttributes,
-      getNodeData,
-    } = new NodeList(domNodes, 'a');
+      elements: links,
+      getElementAttributes,
+      getElementData,
+    } = new ElementList(domNodes, 'a');
 
     if (!links.length) {
       return [];
     }
 
-    return this.runChecks(links, getNodeAttributes, getNodeData);
+    return this.runChecks(links, getElementAttributes, getElementData);
   }
 
   private runChecks(
-    links: AnyNode[],
-    getNodeAttributes: (node: AnyNode) => { [name: string]: string } | {},
-    getNodeData: (node: AnyNode) => string | undefined
+    links: Element[],
+    getElementAttributes: (element: Element) => { [name: string]: string },
+    getElementData: (element: Element) => string | undefined
   ): ValidatorError[] {
     const errors: (ValidatorError | undefined)[] = [];
 
     links.forEach((link) => {
-      const attributes = getNodeAttributes(link);
-      const textContent = getNodeData(link);
+      const attributes = getElementAttributes(link);
+      const textContent = getElementData(link);
 
       errors.push(this.checkgenericText(link, textContent));
       errors.push(this.checkMailLink(link, attributes, textContent));
@@ -66,7 +66,7 @@ export class LinkValidator implements Validator {
   }
 
   private checkgenericText(
-    link: AnyNode,
+    link: Element,
     textContent: string | undefined
   ): ValidatorError | undefined {
     if (this.isGeneric(textContent)) {
@@ -75,7 +75,7 @@ export class LinkValidator implements Validator {
   }
 
   private checkWrongAttributes(
-    link: AnyNode,
+    link: Element,
     attributes: { [name: string]: string }
   ): ValidatorError[] {
     return Object.entries(this.faultyAttributes)
@@ -91,7 +91,7 @@ export class LinkValidator implements Validator {
   }
 
   private checkMailLink(
-    link: AnyNode,
+    link: Element,
     attributes: { [name: string]: string },
     textContent: string | undefined
   ): ValidatorError | undefined {
@@ -119,16 +119,16 @@ export class LinkValidator implements Validator {
     }
   }
 
-  private checkSequenceLength(links: AnyNode[]): ValidatorError | undefined {
+  private checkSequenceLength(links: Element[]): ValidatorError | undefined {
     let longestSequence: number = 0;
 
     for (let index = 0; index < links.length; index++) {
-      let node = links[index];
+      let element = links[index];
       const startIndex = index;
 
-      while (this.nextNodeIsLink(node)) {
+      while (this.nextNodeIsLink(element)) {
         index++;
-        node = node.next as AnyNode;
+        element = element.next as Element;
       }
 
       longestSequence = Math.max(index - startIndex + 1, longestSequence);
@@ -143,8 +143,8 @@ export class LinkValidator implements Validator {
     }
   }
 
-  private nextNodeIsLink(node: AnyNode): boolean {
-    return node && !!node.next && 'name' in node.next && node.next.name === 'a';
+  private nextNodeIsLink({ next }: Element): boolean {
+    return !!next && 'name' in next && next.name === 'a';
   }
 
   private isGeneric(text?: string): boolean {

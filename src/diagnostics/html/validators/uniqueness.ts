@@ -1,7 +1,7 @@
 import { AnyNode } from 'domhandler';
 import { messages } from '../messages';
-import NodeList from '../nodelist';
 import { Validator, ValidatorError } from './validator';
+import ElementList from '../elements';
 
 export class UniquenessValidator implements Validator {
   readonly #nodeTags = ['html', 'h1', 'main', 'title'] as const;
@@ -14,9 +14,11 @@ export class UniquenessValidator implements Validator {
     const errors: ValidatorError[] = [];
 
     this.nodeTags.forEach((tag) => {
-      const { nodes } = new NodeList(domNodes, tag);
-      if (nodes.length > 1) {
-        errors.push(new ValidatorError(messages[tag].shouldBeUnique, nodes[0]));
+      const { elements } = new ElementList(domNodes, tag);
+      if (elements.length > 1) {
+        errors.push(
+          new ValidatorError(messages[tag].shouldBeUnique, elements[0])
+        );
       }
     });
     return errors;

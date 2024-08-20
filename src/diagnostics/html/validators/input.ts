@@ -1,7 +1,7 @@
-import { AnyNode } from 'domhandler';
+import { AnyNode, Element } from 'domhandler';
 import { Validator, ValidatorError } from './validator';
-import NodeList from '../nodelist';
 import { messages } from '../messages';
+import ElementList from '../elements';
 
 export class InputValidator implements Validator {
   readonly #nodeTags = ['input'] as const;
@@ -11,22 +11,22 @@ export class InputValidator implements Validator {
   }
 
   validate(nodes: AnyNode[]): ValidatorError[] {
-    const nodeList = new NodeList(nodes);
-    const { nodes: inputs } = new NodeList(nodes);
+    const el = new ElementList(nodes);
+    const { elements: inputs } = el;
 
     if (!inputs.length) {
       return [];
     }
 
-    return this.runChecks(inputs, nodeList);
+    return this.runChecks(inputs, el);
   }
 
-  private runChecks(inputs: AnyNode[], nodeList: NodeList): ValidatorError[] {
+  private runChecks(inputs: Element[], el: ElementList): ValidatorError[] {
     const errors: (ValidatorError | undefined)[] = [];
 
     inputs.forEach((input) => {
-      const attributes = nodeList.getNodeAttributes(input);
-      const sibling = nodeList.getFirstSibling(input);
+      const attributes = el.getElementAttributes(input);
+      const sibling = el.getFirstSibling(input);
       errors.push(this.checkLabel(input, attributes, sibling));
     });
 
@@ -34,12 +34,11 @@ export class InputValidator implements Validator {
   }
 
   checkLabel(
-    input: AnyNode,
+    input: Element,
     attributes: {} | { [name: string]: string },
-    sibling?: AnyNode
+    sibling?: Element | null
   ): ValidatorError | undefined {
-    const isSiblingLabel =
-      sibling && 'name' in sibling && sibling['name'] === 'label';
+    const isSiblingLabel = sibling?.['name'] === 'label';
 
     if (
       !this.isParentLabel(input) &&
@@ -50,7 +49,7 @@ export class InputValidator implements Validator {
     }
   }
 
-  private isParentLabel(input: AnyNode) {
+  private isParentLabel(input: Element) {
     return (
       input.parent && 'name' in input.parent && input.parent['name'] === 'label'
     );

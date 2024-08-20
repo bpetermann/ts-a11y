@@ -1,8 +1,8 @@
-import { AnyNode } from 'domhandler';
+import { AnyNode, Element } from 'domhandler';
 import { messages } from '../messages';
-import NodeList from '../nodelist';
 import { DiagnosticSeverity } from 'vscode';
 import { Validator, ValidatorError } from './validator';
+import ElementList from '../elements';
 
 export class ButtonValidator implements Validator {
   readonly #nodeTags = ['button'] as const;
@@ -12,23 +12,26 @@ export class ButtonValidator implements Validator {
   }
 
   validate(nodes: AnyNode[]): ValidatorError[] {
-    const { nodes: buttons, getNodeAttributes } = new NodeList(nodes, 'button');
+    const { elements: buttons, getElementAttributes } = new ElementList(
+      nodes,
+      'button'
+    );
 
     if (!buttons.length) {
       return [];
     }
 
-    return this.runChecks(buttons, getNodeAttributes);
+    return this.runChecks(buttons, getElementAttributes);
   }
 
   private runChecks(
-    buttons: AnyNode[],
-    getNodeAttributes: (node: AnyNode) => { [name: string]: string } | {}
+    buttons: Element[],
+    getElementAttributes: (element: Element) => { [name: string]: string }
   ): ValidatorError[] {
     const errors: (ValidatorError | undefined)[] = [];
 
     buttons.forEach((button) => {
-      const attributes = getNodeAttributes(button);
+      const attributes = getElementAttributes(button);
 
       if (Object.keys(attributes).length) {
         errors.push(this.checkTabIndex(button, attributes));
@@ -41,7 +44,7 @@ export class ButtonValidator implements Validator {
   }
 
   private checkTabIndex(
-    button: AnyNode,
+    button: Element,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
     const tab = 'tabindex' as const;
@@ -55,7 +58,7 @@ export class ButtonValidator implements Validator {
   }
 
   private checkDeactivation(
-    button: AnyNode,
+    button: Element,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
     if ('disabled' in attributes) {
@@ -68,14 +71,10 @@ export class ButtonValidator implements Validator {
   }
 
   private checkSwitchRole(
-    button: AnyNode,
+    button: Element,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
-    if (
-      'role' in attributes &&
-      attributes['role'] === 'switch' &&
-      !('aria-checked' in attributes)
-    ) {
+    if (attributes?.['role'] === 'switch' && !('aria-checked' in attributes)) {
       return new ValidatorError(
         messages.button.switchRole,
         button,
