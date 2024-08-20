@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
-import { AnyNode, Document } from 'domhandler';
+import { Document } from 'domhandler';
 import { DomUtils, parseDocument } from 'htmlparser2';
-import { DiagnosticSeverity } from 'vscode';
 import NodeOrganizer from './organizer';
 import {
   AttributesValidator,
