@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.4]- 2024-08-21
+
 ### Added
 
 - **HTML Validation:**
@@ -14,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Change initial filtering of nodes to only leave elements
+- Change node list to element list
 
 ## [0.0.3]- 2024-08-18
 
