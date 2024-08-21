@@ -1,4 +1,4 @@
-import { AnyNode, Element } from 'domhandler';
+import { Element } from 'domhandler';
 import { Validator, ValidatorError } from './validator';
 import { messages } from '../messages';
 import ElementList from '../elements';
@@ -10,8 +10,8 @@ export class InputValidator implements Validator {
     return this.#nodeTags;
   }
 
-  validate(nodes: AnyNode[]): ValidatorError[] {
-    const el = new ElementList(nodes);
+  validate(domNodes: Element[]): ValidatorError[] {
+    const el = new ElementList(domNodes);
     const { elements: inputs } = el;
 
     if (!inputs.length) {

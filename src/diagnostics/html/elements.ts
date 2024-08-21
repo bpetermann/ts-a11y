@@ -8,16 +8,6 @@ export default class ElementList {
   }
 
   /**
-   * Find a node in an array of nodes by tag
-   * @param {AnyNode[]} nodes - Array of nodes to search within
-   * @param {string} tag - The tag name to search for
-   * @returns {AnyNode | undefined} The first node that matches the tag, or undefined if not found
-   */
-  static findElementByTag(nodes: AnyNode[], tag: string): AnyNode | undefined {
-    return nodes.find((node) => 'name' in node && node.name === tag);
-  }
-
-  /**
    * Filter an array of nodes by tag
    * @param {AnyNode[]} nodes - Array of nodes to filter
    * @param {string} tag - The tag name to filter by
@@ -28,6 +18,16 @@ export default class ElementList {
       (node) => 'name' in node && node instanceof Element
     );
     return tag ? elements.filter(({ name }) => name === tag) : elements;
+  }
+
+  /**
+   * Find a element in an array of nodes by tag
+   * @param {Element[]} nodes - Array of element to search within
+   * @param {string} tag - The tag name to search for
+   * @returns {Element | undefined} The first element that matches the tag, or undefined if not found
+   */
+  static findElementByTag(nodes: Element[], tag: string): Element | undefined {
+    return nodes.find((node) => 'name' in node && node.name === tag);
   }
 
   /**

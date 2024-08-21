@@ -24,14 +24,14 @@ export class LinkValidator implements Validator {
   > = {
     onclick: null,
     tabindex: '-1',
-    'aria-hidden': "true",
+    'aria-hidden': 'true',
   } as const;
 
   get nodeTags() {
     return this.#nodeTags;
   }
 
-  validate(domNodes: AnyNode[]): ValidatorError[] {
+  validate(domNodes: Element[]): ValidatorError[] {
     const {
       elements: links,
       getElementAttributes,
@@ -105,7 +105,7 @@ export class LinkValidator implements Validator {
     }
   }
 
-  private getAriaCurrentError(links: AnyNode[]): ValidatorError | undefined {
+  private getAriaCurrentError(links: Element[]): ValidatorError | undefined {
     if (
       links.length > 1 &&
       !links.find(

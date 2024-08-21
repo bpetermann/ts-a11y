@@ -1,4 +1,4 @@
-import { AnyNode } from 'domhandler';
+import { Element } from 'domhandler';
 import ElementList from '../elements';
 import { messages } from '../messages';
 import { Validator, ValidatorError } from './validator';
@@ -10,8 +10,10 @@ export class ImageValidator implements Validator {
     return this.#nodeTags;
   }
 
-  validate(nodes: AnyNode[]): ValidatorError[] {
-    const { elements: images, getElementAttributes } = new ElementList(nodes);
+  validate(domNodes: Element[]): ValidatorError[] {
+    const { elements: images, getElementAttributes } = new ElementList(
+      domNodes
+    );
 
     return images
       .map((img) => {

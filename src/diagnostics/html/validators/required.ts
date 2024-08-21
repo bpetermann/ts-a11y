@@ -1,4 +1,4 @@
-import { AnyNode } from 'domhandler';
+import { Element } from 'domhandler';
 import { messages } from '../messages';
 import { Validator, ValidatorError } from './validator';
 import { DiagnosticSeverity } from 'vscode';
@@ -11,7 +11,7 @@ export class RequiredValidator implements Validator {
     return this.#nodeTags;
   }
 
-  validate(domNodes: AnyNode[]): ValidatorError[] {
+  validate(domNodes: Element[]): ValidatorError[] {
     const errors: ValidatorError[] = [];
     const { findElementByTag } = ElementList;
 
