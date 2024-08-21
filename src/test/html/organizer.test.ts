@@ -6,7 +6,6 @@ import {
   getOrganizedNodes,
   head,
   html,
-  link,
   meta,
   title,
 } from './helper';

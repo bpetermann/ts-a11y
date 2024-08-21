@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { HTMLDiagnosticGenerator } from '../diagnostics/html/generator';
-import { messages } from '../diagnostics/html/messages';
+import { HTMLDiagnosticGenerator } from '../../diagnostics/html/generator';
+import { messages } from '../../diagnostics/html/messages';
 import {
   body,
   div,
@@ -35,7 +35,7 @@ suite('HTML Test Suite', () => {
     );
   });
 
-  test('Missing viewport attribute on <meta> element', async () => {
+  test('Missing viewport attribute in <meta> element', async () => {
     const content = html(head(title) + body());
 
     const document = await getDocument(content);
@@ -53,7 +53,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.title.shouldExist);
   });
 
-  test('Empty <html> should return two diagnostics', async () => {
+  test('Empty <html> tag should return two diagnostics', async () => {
     const html = '';
 
     const document = await getDocument(html);
@@ -121,7 +121,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.h1.shouldBeUnique);
   });
 
-  test('Heading <h4> tag with missing <h3>', async () => {
+  test('<h4> tag present without preceding <h3> tag', async () => {
     const content = html(head(meta + title) + body('<h4></h4>'));
 
     const document = await getDocument(content);
@@ -130,7 +130,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.heading.shouldExist);
   });
 
-  test('Heading <h4> and <h3> tag with missing <h2>', async () => {
+  test('<h4> and <h3> tags present without preceding <h2> tag', async () => {
     const content = html(head(meta + title) + body('<h3>h3</h3><h4></h4>'));
 
     const document = await getDocument(content);
@@ -139,7 +139,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.heading.shouldExist);
   });
 
-  test('Heading <h4>, <h3>, and <h2> tags with missing <h2>', async () => {
+  test('<h4>, <h3>, and <h2> tags present with missing <h2> tag', async () => {
     const headings = '<h3></h3><h4></h4><h2></h2>';
     const content = html(head(meta + title) + body(headings));
 
@@ -149,7 +149,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.heading.shouldExist);
   });
 
-  test('Heading <h2> tag with exisiting <h1> tag', async () => {
+  test('<h2> tag present with existing <h1> tag', async () => {
     const content = html(head(meta + title) + body('<h1></h1><h2></h2>'));
 
     const document = await getDocument(content);
@@ -158,7 +158,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
-  test('Anchor with a generic description', async () => {
+  test('<a> tag with a generic description', async () => {
     const linktext = 'Click';
     const content = html(head(meta + title) + body(link(linktext)));
 
@@ -168,7 +168,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, `${messages.link.avoid}"${linktext}"`);
   });
 
-  test('Anchor with a good description', async () => {
+  test('<a> tag with a good description', async () => {
     const linktext = 'Learn how to create meaningful content';
     const content = html(head(meta + title) + body(link(linktext)));
 
@@ -178,7 +178,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
-  test('Anchor with a an "onclick" event', async () => {
+  test('<a> tag with a an "onclick" event', async () => {
     const content = html(
       head(meta + title) + body(`<a onclick="click()"></a>`)
     );
@@ -189,7 +189,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.link.onclick);
   });
 
-  test('Anchor with a "aria-hidden" set to true', async () => {
+  test('<a> tag with a aria-hidden="true"', async () => {
     const content = html(
       head(meta + title) + body(`<a aria-hidden="true"></a>`)
     );
@@ -200,7 +200,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.link['aria-hidden']);
   });
 
-  test('Anchor with a tabindex of "-1"', async () => {
+  test('<a> tag with tabindex="-1"', async () => {
     const content = html(head(meta + title) + body(`<a tabindex="-1"></a>`));
 
     const document = await getDocument(content);
@@ -209,7 +209,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.link.tabindex);
   });
 
-  test('Anchor with "mailto" in "href"', async () => {
+  test('<a> tag with "mailto" in the "href"', async () => {
     const linktext = 'If you want to learn more about our products, contact us';
     const content = html(
       head(meta + title) +
@@ -222,7 +222,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.link.mail);
   });
 
-  test('Anchor with all checks failing', async () => {
+  test('<a> tag with all checks failing', async () => {
     const tabindex = `tabindex="-1" `;
     const href = `href="mailto:support@office.com" `;
     const onclick = `onclick="click()" `;
@@ -237,7 +237,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 4);
   });
 
-  test('Anchors without "aria-current" attribute', async () => {
+  test('<a> tag missing the aria-current attribute', async () => {
     const anchors = ['home', 'products', 'contact']
       .map((a) => `<a href="/${a}">${a}</a>`)
       .toString();
@@ -250,7 +250,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.link.current);
   });
 
-  test('A long list of consecutive <a> elements', async () => {
+  test('<a> tag in a long consecutive list', async () => {
     let links = '<a aria-current="page">Home</a>';
 
     for (let index = 0; index < 30; index++) {
@@ -265,7 +265,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
-  test('<Div> with "onclick" event', async () => {
+  test('<div> tag with "onclick" event', async () => {
     const content = html(
       head(meta + title) + body(`<div onclick="click()"></div>`)
     );
@@ -276,7 +276,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.div.button);
   });
 
-  test('<Div> with "role" set to "button"', async () => {
+  test('<div> tag with role="button"', async () => {
     const content = html(
       head(meta + title) + body(`<div role="button"></div>`)
     );
@@ -287,7 +287,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.div.button);
   });
 
-  test('Two <div> used as buttons', async () => {
+  test('<div> used as a button', async () => {
     const divs = `<div role="button"></div><div onclick="click()"div>`;
     const content = html(head(meta + title) + body(divs));
 
@@ -297,7 +297,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 2);
   });
 
-  test('<Div> with attribute "aria-expanded"', async () => {
+  test('<div> tag with aria-expanded attribute', async () => {
     const content = html(
       head(meta + title) + body(`<div aria-expanded="true"></div>`)
     );
@@ -308,7 +308,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.div.expanded);
   });
 
-  test('A valid <div> container', async () => {
+  test('A valid <div> element', async () => {
     const content = html(head(meta + title) + body(div()));
 
     const document = await getDocument(content);
@@ -317,7 +317,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
-  test('A switch <button> without "aria-checked"', async () => {
+  test('<button> with role="switch" but missing aria-checked', async () => {
     const content = html(
       head(meta + title) + body(div(`<button role="switch"></button>`))
     );
@@ -328,7 +328,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.button.switchRole);
   });
 
-  test('A <button> that is disabled', async () => {
+  test('<button> with disabled role', async () => {
     const content = html(
       head(meta + title) + body(div(`<button disabled></button>`))
     );
@@ -339,7 +339,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.button.disabled);
   });
 
-  test('A <button> with tabindex greater than zero', async () => {
+  test(' <button> with "tabindex" greater than zero', async () => {
     const content = html(
       head(meta + title) + body(div(`<button tabindex="2"></button>`))
     );
@@ -350,7 +350,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.button.tabindex);
   });
 
-  test('Input field nested inside a label element', async () => {
+  test('<input> field nested inside a <label> element', async () => {
     const input = '<label>Username<input type="text"></label>';
     const content = html(head(meta + title) + body(input));
 
@@ -360,7 +360,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
-  test('Input field next to a label  element', async () => {
+  test('<input> field adjacent to a <label> element', async () => {
     const input = `<label>Username</label><input id="username" type="text">`;
     const content = html(head(meta + title) + body(input));
 
@@ -370,7 +370,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
-  test('Input field next to a label (linebreak) element', async () => {
+  test('<input> field adjacent to a <label> element with a line break', async () => {
     const input = `
     <label>Username</label>
     <input id="username" type="text">
@@ -383,7 +383,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
-  test('Input field with "aria-labelledby" attribute', async () => {
+  test('<input> field with "aria-labelledby" attribute', async () => {
     const input = '<input type="text" aria-labelledby="btn_search">';
     const content = html(head(meta + title) + body(input));
 
@@ -393,7 +393,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
-  test('Input field with no visible label or reference', async () => {
+  test('<input> field with no visible label or reference', async () => {
     const input = '<input type="text">';
     const content = html(head(meta + title) + body(input));
 
@@ -403,7 +403,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.input.label);
   });
 
-  test('<Fieldset> with <legend> as first child>', async () => {
+  test('<fieldset> with <legend> as the first child>', async () => {
     const input =
       '<fieldset><legend>What is your spirit animal?</legend></fieldset>';
     const content = html(head(meta + title) + body(input));
@@ -414,7 +414,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
-  test('<Fieldset> with <legend> (linebreak) as first child', async () => {
+  test('<fieldset> with a line break before the first <legend> child', async () => {
     const input = `
     <fieldset>
     <legend>What is your spirit animal?</legend>
@@ -429,7 +429,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
-  test('<Fieldset> with no <legend>', async () => {
+  test('<fieldset> with no <legend> tag', async () => {
     const input = '<fieldset></fieldset>';
     const content = html(head(meta + title) + body(input));
 
@@ -439,7 +439,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.fieldset.legend);
   });
 
-  test('<Fieldset> with nested <legend>', async () => {
+  test('<fieldset> with nested <legend> tag', async () => {
     const input = `<fieldset>
       <div><legend>What is your spirit animal?</legend></div></fieldset>`;
     const content = html(head(meta + title) + body(input));
@@ -450,7 +450,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.fieldset.legend);
   });
 
-  test('<img> with missing alt attribute', async () => {
+  test('<img> tag missing the alt attribute', async () => {
     const img = `<img src="send.png">`;
     const content = html(head(meta + title) + body(img));
 
@@ -460,7 +460,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.img.alt);
   });
 
-  test('<img> with empty alt attribute', async () => {
+  test('<img> tag with an empty alt attribute', async () => {
     const img = `<img src="send.png" alt="">`;
     const content = html(head(meta + title) + body(img));
 
