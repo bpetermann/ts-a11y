@@ -1,7 +1,7 @@
 {
   "name": "zugang",
   "displayName": "Zugang",
-  "description": "A11y Linter",
+  "description": "Accessibility Linter",
   "version": "0.0.4",
   "publisher": "bpetermann",
   "icon": "resources/logo.png",
