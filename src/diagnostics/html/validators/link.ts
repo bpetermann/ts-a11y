@@ -1,4 +1,4 @@
-import { AnyNode, Element } from 'domhandler';
+import { Element } from 'domhandler';
 import { messages } from '../messages';
 import { Validator, ValidatorError } from './validator';
 import { DiagnosticSeverity } from 'vscode';

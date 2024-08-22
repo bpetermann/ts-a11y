@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **TSX Validation:**
+- Added support for tsx files.
+- Added validation of `<img>` elements (e.g., alt attribute).
+
 ## [0.0.4]- 2024-08-21
 
 ### Added
