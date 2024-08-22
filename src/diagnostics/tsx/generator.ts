@@ -4,6 +4,7 @@ import traverse from '@babel/traverse';
 import * as jsx from '@babel/types';
 import { ButtonValidator } from './validators/button';
 import { Validator } from './validators/validator';
+import { TSXElement } from './element';
 
 export class TSXDiagnosticGenerator {
   private diagnostics: vscode.Diagnostic[] = [];
@@ -34,49 +35,22 @@ export class TSXDiagnosticGenerator {
    * Checks a JSX element and adds diagnostics if issues are found.
    */
   private checkElement(node: jsx.JSXOpeningElement): void {
-    const name = this.getElementName(node.name);
+    const element = new TSXElement(node);
+    const { name } = element;
 
     if (!name) {
       return;
     }
 
-    const validator = this.validators.find(({ tags }) => tags.includes(name));
+    const validator = this.findValidator(name);
 
-    validator?.validate(node).forEach(({ diagnostic }) => {
+    validator?.validate(element).forEach(({ diagnostic }) => {
       this.diagnostics.push(diagnostic);
     });
   }
 
-  /**
-   * Retrieves the string name of a JSX element.
-   */
-  private getElementName(
-    elementName:
-      | jsx.JSXIdentifier
-      | jsx.JSXMemberExpression
-      | jsx.JSXNamespacedName
-  ): string | undefined {
-    switch (elementName.type) {
-      case 'JSXIdentifier':
-        return elementName.name;
-      case 'JSXMemberExpression':
-        return this.getMemberExpressionName(elementName);
-      default:
-        return `${elementName?.namespace?.name}:${elementName?.name?.name}`;
-    }
-  }
-
-  /**
-   * Retrieves the string name of a JSX MemberExpression.
-   */
-  private getMemberExpressionName(
-    elementName: jsx.JSXMemberExpression
-  ): string | undefined {
-    const { object, property } = elementName;
-    if (object.type !== 'JSXIdentifier' || property.type !== 'JSXIdentifier') {
-      return undefined;
-    }
-    return `${object.name}.${property.name}`;
+  private findValidator(name: string) {
+    return this.validators.find(({ tags }) => tags.includes(name));
   }
 
   /**

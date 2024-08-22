@@ -1,7 +1,7 @@
-import { JSXOpeningElement } from '@babel/types';
 import { Diagnostic } from '../diagnostic';
+import { TSXElement } from '../element';
 
 export interface Validator {
   readonly tags: readonly string[];
-  validate(node: JSXOpeningElement): Diagnostic[];
+  validate(node: TSXElement): Diagnostic[];
 }

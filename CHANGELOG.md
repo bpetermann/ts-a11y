@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+### Added
+
+- **TSX Validation:**
+- Added support for tsx files.
+
+
 ## [0.0.4]- 2024-08-21
 
 ### Added
