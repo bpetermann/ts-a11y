@@ -1,6 +1,6 @@
-# Zugang ![Version](https://img.shields.io/visual-studio-marketplace/v/bpetermann.zugang)
+# Zugang ![Version](https://img.shields.io/visual-studio-marketplace/v/bpetermann.zugang) <img src="https://img.shields.io/badge/LICENSE-MIT-green"  />
 
-Zugang is a VS Code extension designed to help you improve the accessibility of your HTML code. By providing warnings and suggestions, it guides you towards meeting accessibility standards in a more structured and intuitive way. The extension draws inspiration from Manuel Matuzović's excellent book, ["Web Accessibility Cookbook"](https://www.oreilly.com/library/view/web-accessibility-cookbook/9781098145590/).
+Zugang is a VS Code extension designed to help improve the accessibility of your HTML code. By providing warnings and suggestions, it guides you toward meeting accessibility standards in a structured and intuitive way.
 
 ## Overview of the Extension Features
 
@@ -10,10 +10,12 @@ Currently, Zugang offers warnings and hints when your HTML lacks essential eleme
 - Ignoring proper heading hierarchy (e.g., `h1 -> h2 -> h3`...).
 - Omitting essential meta elements (e.g., viewport settings).
 
-Each warning is accompanied by specific suggestions for improvement, helping you to understand the issue and make the necessary corrections.
+Each warning is accompanied by specific suggestions for improvement, helping you understand the issue and make the necessary corrections.
 
 > [!NOTE]  
-> Please note that the warnings displayed are general good practices, but in real-world scenarios, there are often valid reasons to deviate from these rules depending on the specific context, which a general extension cannot always take into account.
+> The warnings provided are based on general best practices. However, in real-world scenarios, there may be valid reasons to deviate from these rules depending on the specific context. A general extension cannot always account for these variations.
+>
+> Additionally, the actual accessibility of a particular element is often influenced by the complex interplay of HTML, CSS, and JavaScript.
 
 ## Future Features
 
@@ -34,6 +36,10 @@ The current version is a **pre-release** version. Expect frequent updates as new
 ## Usage Examples
 
 ![simplescreenrecorder-2024-08-15_23 16 27-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/8be37fc9-c96a-45ef-aaf4-bb4e93ea1b1a)
+
+## Inspiration
+
+This project drew inspiration from Manuel Matuzović's excellent book, [“Web Accessibility Cookbook”](https://www.oreilly.com/library/view/web-accessibility-cookbook/9781098145590/), a lecture by [chrcit](https://github.com/chrcit), and Mary Sutton's courses on [Frontend Masters](https://frontendmasters.com/courses/react-accessibility/introduction/)
 
 ## Contributing
 

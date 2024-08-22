@@ -1,72 +1,73 @@
 export const messages = {
   heading: {
     shouldExist:
-      '[Zugang] Do not skip heading levels: always start with <h1>, followed by <h2>, and so on.',
+      '[Zugang] Do not skip heading levels. Always start with an <h1> and follow with <h2>, <h3>, and so on.',
   },
   meta: {
     shouldExist:
-      '[Zugang] Ensure the viewport meta tag is set to allow zooming.',
+      '[Zugang] Ensure the viewport meta tag is configured to allow zooming for accessibility.',
     hasMissingAttribute:
-      '[Zugang] Ensure the viewport meta tag is set to allow zooming.',
+      '[Zugang] Ensure the viewport meta tag is configured to allow zooming for accessibility.',
   },
   html: {
-    shouldBeUnique: '[Zugang] The <html> element should be unique.',
+    shouldBeUnique: '[Zugang] The <html> element should be unique on the page.',
     hasMissingAttribute:
-      '[Zugang] Define the natural language of your page by using the lang attribute on the <html> element.',
+      '[Zugang] Specify the page’s natural language by using the lang attribute on the <html> element.',
   },
   title: {
     shouldExist:
-      '[Zugang] Use the <title> element to name your page, helping screen reader users identify the page they are on.',
-    shouldBeUnique: '[Zugang] The <title> element should be unique.',
+      '[Zugang] Use the <title> element to provide a clear name for your page. This helps screen reader users identify the page.',
+    shouldBeUnique:
+      '[Zugang] The <title> element should be unique for each page.',
   },
   h1: {
     shouldBeUnique:
-      "[Zugang] A page should generally have a single <h1> element that describes the page's content, similar to the <title> element.",
+      '[Zugang] Each page should have a single <h1> element that summarizes the content, similar to the purpose of the <title> element.',
   },
   main: {
     shouldBeUnique:
-      '[Zugang] There should only be one visible <main> element on the page.',
+      '[Zugang] Only one visible <main> element should exist on a page.',
   },
   nav: {
     label:
-      '[Zugang] If you have more than one <nav> element on a page, label them with aria-labelledby or aria-label to make them distinguishable.',
+      '[Zugang] When using more than one <nav> element on a page, label them with aria-labelledby or aria-label to differentiate them for assistive technology users.',
   },
   link: {
     avoid:
-      '[Zugang] Avoid generic link text, as it makes it difficult for users to anticipate what the links lead to. Link text: ',
-    onclick: '[Zugang] Links should not have a click event.',
+      '[Zugang] Avoid using generic link text, as it can be unclear to users what the link leads to. Link text: ',
+    onclick: '[Zugang] Avoid assigning click events directly to links.',
     tabindex:
-      '[Zugang] Avoid using negative tabindex values on elements that require direct keyboard navigation, like links or buttons.',
-    mail: '[Zugang] Include the email address in the link text to help users who find switching between applications tedious.',
+      '[Zugang] Avoid using negative tabindex values on elements like links or buttons that require direct keyboard navigation.',
+    mail: '[Zugang] Include the email address in the link text to help users who may find switching between applications difficult.',
     current:
-      '[Zugang] If any of the links point to the current page, mark that link with aria-current="page". This improves navigation and helps users, especially those using assistive technologies, understand their current location.',
-    list: '[Zugang] Complex navigations can be challenging for blind screen reader users, as they may struggle to understand the size and structure. Consider wrapping long lists of links in a <ul> to provide additional semantic information.',
+      '[Zugang] If a link points to the current page, mark it with aria-current="page" to enhance navigation for users, particularly those using assistive technologies.',
+    list: '[Zugang] Wrap long lists of links in a <ul> element to provide semantic information that aids screen reader users in navigating complex menus.',
     'aria-hidden':
-      '[Zugang] Do not use aria-hidden="true" on focusable elements.',
+      '[Zugang] Avoid using aria-hidden="true" on focusable elements, as it can disrupt accessibility.',
   },
   div: {
     button:
-      '[Zugang] In most cases, it is better to use the native HTML <button> element instead of assigning a role="button" or adding onclick events to a <div>, unless you have specific reasons for doing so.',
+      '[Zugang] Use the native HTML <button> element instead of assigning a role="button" or adding onclick events to a <div>, unless a specific use case justifies it.',
     expanded:
-      '[Zugang] Set the "aria-expanded" attribute on the element that is controlling, not on the controlled element',
+      '[Zugang] The "aria-expanded" attribute should be applied to the element that controls the expansion, not the element being expanded.',
   },
   button: {
     switchRole:
-      '[Zugang] A button that toggles a seeting must communicate whether it is active, the "aria-checked" attribute represents the current state of the widget that the switch role is applied to. ',
+      '[Zugang] A button that toggles a setting must indicate its active state using the "aria-checked" attribute, which reflects the widget’s current state.',
     disabled:
-      '[Zugang] Do not disable buttons as they do not provide valuable feedback. Users should always have the option to interact with a button.',
+      '[Zugang] Avoid disabling buttons, as they do not provide useful feedback. Users should always be able to interact with a button.',
     tabindex:
-      '[Zugang] Avoid using positive values for the tab index, as it then quickly becomes difficult to maintain a meaningful order.',
+      '[Zugang] Avoid using positive tabindex values, as they can make it difficult to maintain a meaningful focus order.',
   },
   input: {
     label:
-      '[Zugang] Screen reader users may have difficulty recognizing the purpose of a field if you do not label your input elements by either nesting them in a label element, specifying a label as a sibling, or creating a reference with “aria-labelledby”.',
+      '[Zugang] Ensure input elements have accessible labels by either nesting them within a <label> element, placing the label as a sibling, or using "aria-labelledby" to associate the label.',
   },
   fieldset: {
     legend:
-      '[Zugang] Always provide a legend to the fieldset element. The legend should be the first child of the fieldset and must not be nested within other elements. Otherwise, it will not provide an accessible name for the fieldset.',
+      '[Zugang] Always provide a legend for the <fieldset> element. The legend should be the first child of the fieldset and not nested within other elements to ensure it provides an accessible name.',
   },
   img: {
-    alt: '[Zugang] Use the alt attribute to specify a text description of the image. For purely decorative images, use an empty alt attribute to indicate that the image should be ignored by supporting technologies.',
+    alt: '[Zugang] Use the alt attribute to provide a text description for images. For decorative images, use an empty alt attribute to indicate they should be ignored by assistive technologies.',
   },
 };
