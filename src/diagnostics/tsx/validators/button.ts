@@ -11,10 +11,17 @@ export class ButtonValidator implements Validator {
   }
 
   validate(node: TSXElement): Diagnostic[] {
-    if (!node.hasAttribute('aria-label')) {
-      return [new Diagnostic(messages.button['aria-label'], node.loc)];
-    }
+    return [this.checkSwitchRole(node)].filter(
+      (error) => error instanceof Diagnostic
+    );
+  }
 
-    return [];
+  checkSwitchRole(node: TSXElement): Diagnostic | undefined {
+    if (
+      node.getAttribute('role') === 'switch' &&
+      !node.hasAttribute('aria-checked')
+    ) {
+      return new Diagnostic(messages.button.switch, node.loc);
+    }
   }
 }

@@ -42,4 +42,17 @@ export class TSXElement {
       (attr) => attr.type === 'JSXAttribute' && attr.name.name === attribute
     );
   }
+
+  getAttribute(attribute: string | jsx.JSXIdentifier): string | undefined {
+    const jsxAttribute = this.node.attributes.find(
+      (attr) => attr.type === 'JSXAttribute' && attr.name.name === attribute
+    );
+    if (
+      jsxAttribute &&
+      'value' in jsxAttribute &&
+      jsxAttribute['value']?.type === 'StringLiteral'
+    ) {
+      return jsxAttribute.value.value;
+    }
+  }
 }
