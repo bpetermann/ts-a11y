@@ -1,4 +1,4 @@
-export const tsxWarning = {
+export const messages = {
   button: {
     'aria-label':
       '[Zugang] Button elements should have an aria-label for accessibility.',

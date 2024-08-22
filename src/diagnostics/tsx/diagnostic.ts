@@ -1,110 +1,48 @@
 import * as vscode from 'vscode';
-import * as parser from '@babel/parser';
-import traverse from '@babel/traverse';
-import { tsxWarning } from './warnings';
+import { DiagnosticSeverity } from 'vscode';
 import * as jsx from '@babel/types';
 
-export class TSXDiagnostic {
-  private diagnostics: vscode.Diagnostic[] = [];
+export class Diagnostic {
+  #diagnostic: vscode.Diagnostic;
 
-  constructor(private text: string, private document: vscode.TextDocument) {}
+  constructor(
+    private message: string,
+    private location?: jsx.SourceLocation | null,
+    private severity: vscode.DiagnosticSeverity = DiagnosticSeverity.Warning
+  ) {
+    this.#diagnostic = this.createDiagnostic();
+  }
 
-  /**
-   * Generates diagnostics for the TSX code.
-   */
-  public generateDiagnostics(): vscode.Diagnostic[] {
-    try {
-      const ast = parser.parse(this.text, {
-        sourceType: 'module',
-        plugins: ['jsx', 'typescript'],
-      });
-
-      traverse(ast, {
-        JSXOpeningElement: (path) => this.checkElement(path.node),
-      });
-    } catch (error) {
-      console.error('Error parsing code: ', error);
-    }
-
-    return this.diagnostics;
+  get diagnostic(): vscode.Diagnostic {
+    return this.#diagnostic;
   }
 
   /**
-   * Checks a JSX element and adds diagnostics if issues are found.
+   * Creates a diagnostic object with a specific range, message, and severity
    */
-  private checkElement(node: jsx.JSXOpeningElement): void {
-    const { name, loc, attributes } = node;
-    const elementNameString = this.getElementNameString(name);
-
-    if (!loc) {
-      return;
-    }
-
-    switch (elementNameString) {
-      case 'button':
-        if (!this.hasAttribute('aria-label', attributes)) {
-          this.diagnostics.push(
-            this.createDiagnostic(loc, tsxWarning.button['aria-label'])
-          );
-        }
-        break;
-    }
+  private createDiagnostic(): vscode.Diagnostic {
+    return new vscode.Diagnostic(this.getRange(), this.message, this.severity);
   }
 
   /**
-   * Retrieves the string name of a JSX element.
+   * Gets the range of a location
    */
-  private getElementNameString(
-    elementName:
-      | jsx.JSXIdentifier
-      | jsx.JSXMemberExpression
-      | jsx.JSXNamespacedName
-  ): string | undefined {
-    switch (elementName.type) {
-      case 'JSXIdentifier':
-        return elementName.name;
-      case 'JSXMemberExpression':
-        const objectName = elementName.object;
-        const propertyName = elementName.property;
-        if (
-          objectName.type !== 'JSXIdentifier' ||
-          propertyName.type !== 'JSXIdentifier'
-        ) {
-          return undefined;
-        }
-        return `${objectName.name}.${propertyName.name}`;
-      default:
-        return `${elementName.namespace.name}:${elementName.name.name}`;
-    }
+  private getRange(): vscode.Range {
+    return this.location?.start && this.location?.end
+      ? this.getLocationRange()
+      : new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 0));
   }
 
-  /**
-   * Checks if the JSX element has a specified attribute.
-   */
-  private hasAttribute(
-    attribute: string | jsx.JSXIdentifier,
-    element: (jsx.JSXAttribute | jsx.JSXSpreadAttribute)[]
-  ): boolean {
-    return element.some(
-      (attr) => attr.type === 'JSXAttribute' && attr.name.name === attribute
-    );
-  }
-
-  /**
-   * Creates a diagnostic message for a given source location.
-   */
-  private createDiagnostic(
-    location: jsx.SourceLocation,
-    message: string
-  ): vscode.Diagnostic {
-    const range = new vscode.Range(
-      new vscode.Position(location.start.line - 1, location.start.column),
-      new vscode.Position(location.end.line - 1, location.end.column)
-    );
-    return new vscode.Diagnostic(
-      range,
-      message,
-      vscode.DiagnosticSeverity.Warning
+  private getLocationRange(): vscode.Range {
+    return new vscode.Range(
+      new vscode.Position(
+        this.location!.start.line - 1,
+        this.location!.start.column
+      ),
+      new vscode.Position(
+        this.location!.end.line - 1,
+        this.location!.end.column
+      )
     );
   }
 }
