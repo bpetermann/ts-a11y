@@ -120,34 +120,6 @@ export class LinkValidator implements Validator {
     }
   }
 
-  private checkSequenceLength(links: Element[]): ValidatorError | undefined {
-    let longestSequence: number = 0;
-
-    for (let index = 0; index < links.length; index++) {
-      let element = links[index];
-      const startIndex = index;
-
-      while (this.nextNodeIsLink(element)) {
-        index++;
-        element = element.next as Element;
-      }
-
-      longestSequence = Math.max(index - startIndex + 1, longestSequence);
-    }
-
-    if (longestSequence > this.maxSequenceLength) {
-      return new ValidatorError(
-        messages.link.list,
-        links[0],
-        DiagnosticSeverity.Hint
-      );
-    }
-  }
-
-  private nextNodeIsLink({ next }: Element): boolean {
-    return !!next && 'name' in next && next.name === 'a';
-  }
-
   private isGeneric(text?: string): boolean {
     return !!text && this.genericTexts.has(text.toLowerCase().trim());
   }

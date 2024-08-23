@@ -105,4 +105,34 @@ export default class ElementList {
 
     return prevNode;
   }
+
+  /**
+   * Returns the longest consecutive sequence of elements with the tag name of the first element.
+   * @param {Element[]} elements - The array of elements to be checked.
+   * @returns {number} The length of the longest sequence of consecutive elements with the specified tag.
+   */
+  getLongestSequence(elements: Element[]): number {
+    const tag = elements?.[0].name;
+
+    let longestSequence: number = 0;
+
+    for (let index = 0; index < elements.length; index++) {
+      let element = elements[index];
+      const startIndex = index;
+
+      while (this.childElementHasTag(element, tag)) {
+        index++;
+        element = this.getFirstChild(element) as Element;
+      }
+
+      longestSequence = Math.max(index - startIndex + 1, longestSequence);
+    }
+
+    return longestSequence;
+  }
+
+  childElementHasTag(element: Element, tag: string) {
+    const child = this.getFirstChild(element);
+    return !!child && child.name === tag;
+  }
 }

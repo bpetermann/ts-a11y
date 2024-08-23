@@ -308,6 +308,15 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.div.expanded);
   });
 
+  test('Long sequence of nested <div> elements', async () => {
+    const content = html(head(meta + title) + body(div(div(div(div(div()))))));
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.div.soup);
+  });
+
   test('A valid <div> element', async () => {
     const content = html(head(meta + title) + body(div()));
 
