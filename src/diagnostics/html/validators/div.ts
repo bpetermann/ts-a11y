@@ -11,32 +11,32 @@ export class DivValidator implements Validator {
     return this.#nodeTags;
   }
   validate(nodes: AnyNode[]): ValidatorError[] {
-    const { elements: divs, getElementAttributes } = new ElementList(
-      nodes,
-      'div'
-    );
+    const elementList = new ElementList(nodes);
+    const { elements: divs } = elementList;
 
     if (!divs.length) {
       return [];
     }
 
-    return this.runChecks(divs, getElementAttributes);
+    return this.runChecks(divs, elementList);
   }
 
   private runChecks(
     divs: Element[],
-    getElementAttributes: (element: Element) => { [name: string]: string }
+    elementList: ElementList
   ): ValidatorError[] {
     const errors: (ValidatorError | undefined)[] = [];
 
     divs.forEach((div) => {
-      const attributes = getElementAttributes(div);
+      const attributes = elementList.getElementAttributes(div);
 
       if (Object.keys(attributes).length) {
         errors.push(this.checkButtonRole(div, attributes));
         errors.push(this.checkWrongAttibutes(div, attributes));
       }
     });
+
+    errors.push(this.checkSequenceLength(elementList.getLongestSequence(divs)));
 
     return errors.filter((error) => error instanceof ValidatorError);
   }
@@ -62,6 +62,18 @@ export class DivValidator implements Validator {
       return new ValidatorError(
         messages.div.expanded,
         div,
+        DiagnosticSeverity.Hint
+      );
+    }
+  }
+
+  private checkSequenceLength(
+    longestSequence: Element[]
+  ): ValidatorError | undefined {
+    if (longestSequence.length >= 4) {
+      return new ValidatorError(
+        messages.div.soup,
+        longestSequence[0],
         DiagnosticSeverity.Hint
       );
     }

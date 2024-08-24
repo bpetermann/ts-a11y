@@ -50,6 +50,7 @@ export const messages = {
       '[Zugang] Use the native HTML <button> element instead of assigning a role="button" or adding onclick events to a <div>, unless a specific use case justifies it.',
     expanded:
       '[Zugang] The "aria-expanded" attribute should be applied to the element that controls the expansion, not the element being expanded.',
+    soup: '[Zugang] Nesting too many <div>s can create complex, hard-to-navigate structures for screen readers and other assistive technologies. This can make it difficult for users with disabilities to understand the content, reducing accessibility and usability. Keep the HTML structure simple and meaningful by using proper semantic elements instead of excessive <div> nesting.',
   },
   button: {
     switchRole:
