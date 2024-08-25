@@ -6,7 +6,7 @@ import ElementList from '../elements';
 
 export class LinkValidator implements Validator {
   #nodeTags: string[] = ['a'];
-  private maxSequenceLength = 10;
+  private maxSequenceLength = 5;
 
   private readonly genericTexts = new Set([
     'click me',
@@ -32,29 +32,25 @@ export class LinkValidator implements Validator {
   }
 
   validate(domNodes: Element[]): ValidatorError[] {
-    const {
-      elements: links,
-      getElementAttributes,
-      getElementData,
-    } = new ElementList(domNodes, 'a');
+    const elementList = new ElementList(domNodes);
+    const { elements: links } = elementList;
 
     if (!links.length) {
       return [];
     }
 
-    return this.runChecks(links, getElementAttributes, getElementData);
+    return this.runChecks(links, elementList);
   }
 
   private runChecks(
     links: Element[],
-    getElementAttributes: (element: Element) => { [name: string]: string },
-    getElementData: (element: Element) => string | undefined
+    elementList: ElementList
   ): ValidatorError[] {
     const errors: (ValidatorError | undefined)[] = [];
 
     links.forEach((link) => {
-      const attributes = getElementAttributes(link);
-      const textContent = getElementData(link);
+      const attributes = elementList.getElementAttributes(link);
+      const textContent = elementList.getElementData(link);
 
       errors.push(this.checkgenericText(link, textContent));
       errors.push(this.checkMailLink(link, attributes, textContent));
@@ -62,6 +58,9 @@ export class LinkValidator implements Validator {
     });
 
     errors.push(this.getAriaCurrentError(links));
+    errors.push(
+      this.checkSequenceLength(elementList.getLongestSequence(links, 'sibling'))
+    );
 
     return errors.filter((error) => error instanceof ValidatorError);
   }
@@ -115,6 +114,16 @@ export class LinkValidator implements Validator {
       return new ValidatorError(
         messages.link.current,
         links[0],
+        DiagnosticSeverity.Hint
+      );
+    }
+  }
+
+  checkSequenceLength(sequence: Element[]) {
+    if (sequence.length > this.maxSequenceLength) {
+      return new ValidatorError(
+        messages.link.list,
+        sequence[0],
         DiagnosticSeverity.Hint
       );
     }

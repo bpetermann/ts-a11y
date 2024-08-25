@@ -96,31 +96,51 @@ export default class ElementList {
    * @param {Element} element - The element whose previous sibling is being sought.
    * @returns {Element | null} The first sibling element, or `null` if none exists.
    */
-  getFirstSibling(element: Element): Element | null {
-    let prevNode = element.prev;
+  getPrevSibling(element: Element): Element | undefined {
+    let prevNode = element?.prev;
 
-    while (prevNode && !(prevNode instanceof Element)) {
+    while (prevNode && !(prevNode instanceof Element) && 'prev' in prevNode) {
       prevNode = prevNode.prev;
     }
 
-    return prevNode;
+    return prevNode instanceof Element ? prevNode : undefined;
+  }
+
+  /**
+   * Returns the first sibling after before the given element
+   * @param {Element} element - The element whose next sibling is being sought.
+   * @returns {Element | null} The next sibling element, or `null` if none exists.
+   */
+  getFirstSibling(element: Element): Element | undefined {
+    let nextNode = element?.next;
+
+    while (nextNode && !(nextNode instanceof Element)) {
+      nextNode = nextNode.next;
+    }
+
+    return nextNode instanceof Element ? nextNode : undefined;
   }
 
   /**
    * Returns the longest consecutive sequence of elements.
    * @param {Element[]} elements - The array of elements to be checked.
+   * @param {string} relationship - The next element to look for (e.g. child, sibling).
    * @returns {Element[]} The elements that make up the longest sequence.
    */
-  getLongestSequence(elements: Element[], ): Element[] {
+  getLongestSequence(
+    elements: Element[],
+    relationship: 'child' | 'sibling' = 'child'
+  ): Element[] {
+    const relation = relationship === 'child' ? 'Child' : 'Sibling';
     let longestSequence: Element[] = [];
 
     for (let index = 0; index < elements.length; index++) {
       let element = elements[index];
-      const sequence: Element[] = [element];
+      const sequence = [element];
 
-      while (this.childElementHasTag(element, element.name)) {
+      while (this[`next${relation}HasTag`](element, elements[0].name)) {
         index++;
-        element = this.getFirstChild(element) as Element;
+        element = this[`getFirst${relation}`](element)!;
         sequence.push(element);
       }
 
@@ -132,8 +152,13 @@ export default class ElementList {
     return longestSequence;
   }
 
-  childElementHasTag(element: Element, tag: string) {
+  private nextChildHasTag(element: Element, tag: string): boolean {
     const child = this.getFirstChild(element);
     return !!child && child.name === tag;
+  }
+
+  private nextSiblingHasTag(element: Element, tag: string): boolean {
+    const sibling = this.getFirstSibling(element);
+    return !!sibling && sibling.name === tag;
   }
 }

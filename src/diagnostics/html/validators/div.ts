@@ -5,6 +5,7 @@ import { Validator, ValidatorError } from './validator';
 import ElementList from '../elements';
 
 export class DivValidator implements Validator {
+  private maxSequenceLength = 4;
   readonly #nodeTags = ['div'] as const;
 
   get nodeTags() {
@@ -70,7 +71,7 @@ export class DivValidator implements Validator {
   private checkSequenceLength(
     longestSequence: Element[]
   ): ValidatorError | undefined {
-    if (longestSequence.length >= 4) {
+    if (longestSequence.length >= this.maxSequenceLength) {
       return new ValidatorError(
         messages.div.soup,
         longestSequence[0],

@@ -253,16 +253,16 @@ suite('HTML Test Suite', () => {
   test('<a> tag in a long consecutive list', async () => {
     let links = '<a aria-current="page">Home</a>';
 
-    for (let index = 0; index < 30; index++) {
+    for (let index = 0; index < 5; index++) {
       links += `<a>link number ${index}</a>`;
     }
 
     const content = html(head(meta + title) + body(links));
 
     const document = await getDocument(content);
-    const diagnostics = generateDiagnostics(document);
+    const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(diagnostics.length, 0);
+    assert.strictEqual(message, messages.link.list);
   });
 
   test('<div> tag with "onclick" event', async () => {
