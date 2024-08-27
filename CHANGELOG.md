@@ -14,12 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 **TSX Validation:**
 
 - Added support for .tsx files.
-- Added validation for <img> elements (e.g., checking for alt attributes).
+- Added validation for `<img>` elements (e.g., checking for alt attributes).
 
 **HTML Validation:**
 
-- Added check for consecutive <div> elements.
-- Added check for consecutive <a> elements.
+- Added check for consecutive `<div>` elements.
+- Added check for consecutive `<a>` elements.
 
 ## [0.0.4]- 2024-08-21
 
@@ -77,3 +77,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.0.1]: https://github.com/bpetermann/vscode-zugang/releases/tag/v0.0.1
 [0.0.2]: https://github.com/bpetermann/vscode-zugang/releases/tag/v0.0.2
 [0.0.3]: https://github.com/bpetermann/vscode-zugang/releases/tag/v0.0.3
+[0.0.5]: https://github.com/bpetermann/vscode-zugang/releases/tag/v0.0.5
