@@ -71,4 +71,8 @@ export const messages = {
   img: {
     alt: '[Zugang] Use the alt attribute to provide a text description for images. For decorative images, use an empty alt attribute to indicate they should be ignored by assistive technologies.',
   },
+  section: {
+    label:
+      '[Zugang] When using more than one <section> element on a page, label them with aria-labelledby or aria-label to differentiate them for assistive technology users.',
+  },
 };

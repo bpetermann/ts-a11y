@@ -8,5 +8,6 @@ export { ImageValidator } from './image';
 export { LinkValidator } from './link';
 export { NavigationValidator } from './navigation';
 export { RequiredValidator } from './required';
+export { SectionValidator } from './section';
 export { UniquenessValidator } from './uniqueness';
 export { Validator } from './validator';
