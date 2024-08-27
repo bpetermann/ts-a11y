@@ -26,7 +26,7 @@ export class InputValidator implements Validator {
 
     inputs.forEach((input) => {
       const attributes = el.getElementAttributes(input);
-      const sibling = el.getFirstSibling(input);
+      const sibling = el.getPrevSibling(input);
       errors.push(this.checkLabel(input, attributes, sibling));
     });
 
@@ -36,7 +36,7 @@ export class InputValidator implements Validator {
   checkLabel(
     input: Element,
     attributes: {} | { [name: string]: string },
-    sibling?: Element | null
+    sibling?: Element
   ): ValidatorError | undefined {
     const isSiblingLabel = sibling?.['name'] === 'label';
 
