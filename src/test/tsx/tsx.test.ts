@@ -2,6 +2,7 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { messages } from '../../diagnostics/tsx/messages';
 import { TSXDiagnosticGenerator } from '../../diagnostics/tsx/generator';
+import { div } from '../helper';
 
 /**
  * Generates diagnostics for an html document.
@@ -60,5 +61,23 @@ suite('TSX Test Suite', () => {
     const diagnostics = generateDiagnostics(document);
 
     assert.strictEqual(diagnostics[0].message, messages.button.switch);
+  });
+
+  test('Long sequence of nested <div> elements', async () => {
+    const content = div(div(div(div(div(div())))));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics[0].message, messages.div.soup);
+  });
+
+  test('A single <div> element', async () => {
+    const content = `<div></div>`;
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
   });
 });

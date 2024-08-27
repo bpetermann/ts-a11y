@@ -11,7 +11,7 @@ import {
   link,
   meta,
   title,
-} from './helper';
+} from '../helper';
 
 /**
  * Generates diagnostics for an html document.

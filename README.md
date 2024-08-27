@@ -1,10 +1,10 @@
 # Zugang ![Version](https://img.shields.io/visual-studio-marketplace/v/bpetermann.zugang) <img src="https://img.shields.io/badge/LICENSE-MIT-green"  />
 
-Zugang is a VS Code extension designed to help improve the accessibility of your HTML code. By providing warnings and suggestions, it guides you toward meeting accessibility standards in a structured and intuitive way.
+Zugang is a VS Code extension designed to help improve the accessibility of your HTML and React/TypeScript (.tsx) code. By providing warnings and suggestions, it guides you toward meeting accessibility standards in a structured and intuitive way.
 
 ## Overview of the Extension Features
 
-Currently, Zugang offers warnings and hints when your HTML lacks essential elements, tags, or attributes that are necessary for proper accessibility. The extension focuses on common mistakes such as:
+Zugang currently offers warnings and hints when your HTML or .tsx code lacks essential elements, tags, or attributes necessary for proper accessibility. The extension focuses on common mistakes such as:
 
 - Missing or incorrect accessibility-related attributes (e.g., `lang` on html, `aria-label` when multiple `nav` elements are present).
 - Ignoring proper heading hierarchy (e.g., `h1 -> h2 -> h3`...).
@@ -19,7 +19,7 @@ Each warning is accompanied by specific suggestions for improvement, helping you
 
 ## Future Features
 
-Expansion to support `.tsx` files, ensuring accessibility best practices are maintained in React/TypeScript projects as well.
+Support for .tsx files will continue to expand, ensuring accessibility best practices are maintained across both standard HTML and React/TypeScript projects.
 
 ## Installation
 

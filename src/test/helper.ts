@@ -1,5 +1,5 @@
 import { DomUtils, parseDocument } from 'htmlparser2';
-import NodeOrganizer from '../../diagnostics/html/organizer';
+import NodeOrganizer from '../diagnostics/html/organizer';
 import * as vscode from 'vscode';
 
 export const meta =

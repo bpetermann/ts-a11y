@@ -8,7 +8,7 @@ import {
   html,
   meta,
   title,
-} from './helper';
+} from '../helper';
 
 suite('Node Organizer Test Suite', () => {
   test('Should return the correct number of divs', async () => {
