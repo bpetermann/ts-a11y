@@ -348,7 +348,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.button.disabled);
   });
 
-  test(' <button> with "tabindex" greater than zero', async () => {
+  test('<button> with "tabindex" greater than zero', async () => {
     const content = html(
       head(meta + title) + body(div(`<button tabindex="2"></button>`))
     );
