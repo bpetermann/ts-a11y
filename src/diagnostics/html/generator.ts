@@ -15,6 +15,7 @@ import {
   RequiredValidator,
   UniquenessValidator,
   Validator,
+  SectionValidator,
 } from './validators';
 import { Diagnostic } from './diagnostic';
 
@@ -36,6 +37,7 @@ export class HTMLDiagnosticGenerator {
       new InputValidator(),
       new FieldsetValidator(),
       new ImageValidator(),
+      new SectionValidator(),
     ]
   ) {}
 

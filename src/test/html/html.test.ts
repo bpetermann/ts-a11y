@@ -104,7 +104,9 @@ suite('HTML Test Suite', () => {
   });
 
   test('Two occurrences of <nav> with attributes', async () => {
-    const content = html(head(meta + title) + body());
+    const navs =
+      '<nav aria-label="main"></nav><nav aria-label="customer service"></nav>';
+    const content = html(head(meta + title) + body(navs));
 
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
@@ -472,6 +474,27 @@ suite('HTML Test Suite', () => {
   test('<img> tag with an empty alt attribute', async () => {
     const img = `<img src="send.png" alt="">`;
     const content = html(head(meta + title) + body(img));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('Two occurrences of <section> without attributes', async () => {
+    const sections = '<section></section><section></section>';
+    const content = html(head(meta + title) + body(sections));
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.section.label);
+  });
+
+  test('Two occurrences of <section> with attributes', async () => {
+    const sections =
+      '<section aria-label="about me"></section><section aria-label="contact"></section>';
+    const content = html(head(meta + title) + body(sections));
 
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
