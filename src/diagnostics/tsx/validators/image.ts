@@ -2,7 +2,6 @@ import { messages } from '../messages';
 import { Diagnostic } from '../diagnostic';
 import { Validator } from './validator';
 import { TSXElement } from '../element';
-import { error } from 'console';
 
 export class ImageValidator implements Validator {
   #tags: string[] = ['img'] as const;
