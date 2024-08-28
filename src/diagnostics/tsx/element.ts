@@ -22,6 +22,13 @@ export class TSXElement {
     }
   }
 
+  get text(): string {
+    return (
+      (this.node.children.find(({ type }) => type === 'JSXText') as jsx.JSXText)
+        ?.value ?? ''
+    );
+  }
+
   /**
    * Retrieves the string name of a JSX MemberExpression.
    */
@@ -77,6 +84,19 @@ export class TSXElement {
     return this.node.openingElement.attributes.some(
       (attr) => attr.type === 'JSXAttribute' && attr.name.name === attribute
     );
+  }
+
+  getAttributes(): string[] {
+    return this.node.openingElement.attributes
+      .map((attr) => {
+        if (
+          attr.type === 'JSXAttribute' &&
+          attr.name.type === 'JSXIdentifier'
+        ) {
+          return attr.name.name;
+        }
+      })
+      .filter((attr) => typeof attr === 'string');
   }
 
   getAttribute(attribute: string | jsx.JSXIdentifier): string | undefined {

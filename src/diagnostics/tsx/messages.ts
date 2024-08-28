@@ -13,4 +13,9 @@ export const messages = {
   div: {
     soup: '[Zugang] Nesting too many <div>s can create complex, hard-to-navigate structures for screen readers and other assistive technologies. This can make it difficult for users with disabilities to understand the content, reducing accessibility and usability. Keep the HTML structure simple and meaningful by using proper semantic elements instead of excessive <div> nesting.',
   },
+  link: {
+    onclick: '[Zugang] Avoid assigning click events directly to links.',
+    generic:
+      '[Zugang] Avoid using generic link text, as it can be unclear to users what the link leads to. Link text: ',
+  },
 } as const;

@@ -80,4 +80,32 @@ suite('TSX Test Suite', () => {
 
     assert.strictEqual(diagnostics.length, 0);
   });
+
+  test('<a> tag with a generic description', async () => {
+    const text = 'click';
+    const content = `<a>${text}</a>`;
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics[0].message, messages.link.generic + text);
+  });
+
+  test('<a> tag with a no description', async () => {
+    const content = `<a></a>`;
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('<a> tag with a an "onclick" event', async () => {
+    const content = `<a onclick="click()"></a>`;
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.link.onclick);
+  });
 });

@@ -2,7 +2,12 @@ import * as vscode from 'vscode';
 import * as parser from '@babel/parser';
 import traverse from '@babel/traverse';
 import * as jsx from '@babel/types';
-import { ButtonValidator, ImageValidator, DivValidator } from './validators';
+import {
+  ButtonValidator,
+  ImageValidator,
+  DivValidator,
+  LinkValidator,
+} from './validators';
 import { Validator } from './validators/validator';
 import { TSXElement } from './element';
 
@@ -15,6 +20,7 @@ export class TSXDiagnosticGenerator {
       new ButtonValidator(),
       new ImageValidator(),
       new DivValidator(),
+      new LinkValidator(),
     ]
   ) {}
 
