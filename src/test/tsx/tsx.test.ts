@@ -44,7 +44,7 @@ suite('TSX Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
-  test('<img> tag with an generic alt tex', async () => {
+  test('<img> tag with an generic alt text', async () => {
     const alt = 'A .jpg';
     const tsx = `<img src="/me.jpg" alt="A .jpg"></img>`;
 
@@ -61,6 +61,52 @@ suite('TSX Test Suite', () => {
     const diagnostics = generateDiagnostics(document);
 
     assert.strictEqual(diagnostics[0].message, messages.button.switch);
+  });
+
+  test('<button> with no text content', async () => {
+    const content = `<button></button>`;
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics[0].message, messages.button.text);
+  });
+
+  test('<button> with no text but <img> as child', async () => {
+    const img = '<img src="/me.jpg" alt="Sunrise"></img>';
+    const content = `<button>${img}</button>`;
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('<button> with no text but "aria-label"', async () => {
+    const content = `<button aria-label="product count"></button>`;
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('<button> with no text but "aria-labelledby"', async () => {
+    const content = `<button aria-labelledby="submit-heading"></button>`;
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('<button> with no text but "title"', async () => {
+    const content = `<button title="Submit Form"></button>`;
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
   });
 
   test('Long sequence of nested <div> elements', async () => {

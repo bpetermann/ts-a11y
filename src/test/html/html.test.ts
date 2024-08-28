@@ -361,6 +361,56 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.button.tabindex);
   });
 
+  test('<button> with no text content', async () => {
+    const button = `<button></button>`;
+    const content = html(head(meta + title) + body(button));
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics[0].message, messages.button.text);
+  });
+
+  test('<button> with no text but <img> as child', async () => {
+    const img = '<img src="/me.jpg" alt="Sunrise"></img>';
+    const button = `<button>${img}</button>`;
+    const content = html(head(meta + title) + body(button));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('<button> with no text but "aria-label"', async () => {
+    const button = `<button aria-label="product count"></button>`;
+    const content = html(head(meta + title) + body(button));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('<button> with no text but "aria-labelledby"', async () => {
+    const button = `<button aria-labelledby="submit-heading"></button>`;
+    const content = html(head(meta + title) + body(button));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('<button> with no text but "title"', async () => {
+    const button = `<button title="Submit Form"></button>`;
+    const content = html(head(meta + title) + body(button));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
   test('<input> field nested inside a <label> element', async () => {
     const input = '<label>Username<input type="text"></label>';
     const content = html(head(meta + title) + body(input));

@@ -11,7 +11,7 @@ export class ButtonValidator implements Validator {
   }
 
   validate(node: TSXElement): Diagnostic[] {
-    return [this.checkSwitchRole(node)].filter(
+    return [this.checkSwitchRole(node), this.checkTextContent(node)].filter(
       (error) => error instanceof Diagnostic
     );
   }
@@ -22,6 +22,20 @@ export class ButtonValidator implements Validator {
       !node.hasAttribute('aria-checked')
     ) {
       return new Diagnostic(messages.button.switch, node.loc);
+    }
+  }
+
+  private checkTextContent(node: TSXElement): Diagnostic | undefined {
+    const attributes = node.getAttributes();
+
+    if (
+      !node.text &&
+      !node.getChild('img') &&
+      !attributes.includes('aria-label') &&
+      !attributes.includes('aria-labelledby') &&
+      !attributes.includes('title')
+    ) {
+      return new Diagnostic(messages.button.text, node.loc);
     }
   }
 }

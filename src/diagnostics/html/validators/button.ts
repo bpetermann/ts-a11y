@@ -1,4 +1,4 @@
-import { AnyNode, Element } from 'domhandler';
+import { AnyNode, Element, Text } from 'domhandler';
 import { messages } from '../messages';
 import { DiagnosticSeverity } from 'vscode';
 import { Validator, ValidatorError } from './validator';
@@ -33,11 +33,10 @@ export class ButtonValidator implements Validator {
     buttons.forEach((button) => {
       const attributes = getElementAttributes(button);
 
-      if (Object.keys(attributes).length) {
-        errors.push(this.checkTabIndex(button, attributes));
-        errors.push(this.checkDeactivation(button, attributes));
-        errors.push(this.checkSwitchRole(button, attributes));
-      }
+      errors.push(this.checkTabIndex(button, attributes));
+      errors.push(this.checkDeactivation(button, attributes));
+      errors.push(this.checkSwitchRole(button, attributes));
+      errors.push(this.checkTextContent(button, attributes));
     });
 
     return errors.filter((error) => error instanceof ValidatorError);
@@ -80,6 +79,26 @@ export class ButtonValidator implements Validator {
         button,
         DiagnosticSeverity.Hint
       );
+    }
+  }
+
+  private checkTextContent(
+    button: Element,
+    attributes: { [name: string]: string }
+  ) {
+    const hasTextChild = button.children.find((child) => child instanceof Text);
+    const hasImgChild = button.children.find(
+      (child) => child instanceof Element && child.name === 'img'
+    );
+
+    if (
+      !hasTextChild &&
+      !hasImgChild &&
+      !('aria-label' in attributes) &&
+      !('aria-labelledby' in attributes) &&
+      !('title' in attributes)
+    ) {
+      return new ValidatorError(messages.button.text, button);
     }
   }
 }

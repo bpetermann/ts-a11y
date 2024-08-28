@@ -13,10 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Validation of `<div>` elements (e.g., div soup).
 - Validation of `<a>` (link) elements, including generic link text, proper attributes.
+- Added `<button>` text content check
 
 **HTML Validation:**
 
 - Validation of `<section>` elements (e.g., appropriate labels).
+- Added `<button>` text content check
 
 ## [0.0.5]- 2024-08-27
 
@@ -46,7 +48,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **HTML Validation:**
+**HTML Validation:**
+
 - Added validation of `<button>` elements (e.g., tabindex, switch, and disabled attributes).
 - Added validation of `<input>` elements (e.g., checking for existing labels).
 - Added validation of `<fieldset>` elements (e.g., checking for existing `<legend>`).
