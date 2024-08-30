@@ -71,6 +71,8 @@ export const messages = {
   },
   img: {
     alt: '[Zugang] Use the alt attribute to provide a text description for images. For decorative images, use an empty alt attribute to indicate they should be ignored by assistive technologies.',
+    repeated:
+      '[Zugang] The same alt attribute is being used on multiple images. Screen readers rely on unique and descriptive alt text to convey the content of each image. Please ensure that each image has a distinct alt attribute.',
   },
   section: {
     label:

@@ -531,6 +531,36 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
+  test('Many <img> elements with same alt-attribute', async () => {
+    const img1 = `<img alt="Beach">`;
+    const img4 = `<img alt="Alps">`;
+    const images = img1 + img1 + img1 + img1 + img4;
+
+    const content = html(head(meta + title) + body(images));
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.img.repeated);
+  });
+
+  test('Different <img> elements with same alt-attribute', async () => {
+    const img1 = `<img alt="Beach">`;
+    const img2 = `<img alt="Alps">`;
+    const images = img1 + img2 + img1 + img2 + img1 + img2 + img1 + img2;
+
+    const content = html(head(meta + title) + body(images));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    diagnostics.forEach((diagnostic) => {
+      assert.strictEqual(diagnostic.message, messages.img.repeated);
+    });
+
+    assert.strictEqual(diagnostics.length, 2);
+  });
+
   test('Two occurrences of <section> without attributes', async () => {
     const sections = '<section></section><section></section>';
     const content = html(head(meta + title) + body(sections));
