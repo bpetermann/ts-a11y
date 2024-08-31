@@ -13,15 +13,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **TSX Validation:**
 
-- Validation of <div> elements to identify issues like "div soup."
-- Validation of <a> (link) elements, including checks for generic link text and proper attributes.
-- Added validation for <button> elements to ensure appropriate text content.
+- Validation of `<div>` elements to identify issues like "div soup."
+- Validation of `<a>` (link) elements, including checks for generic link text and proper attributes.
+- Added validation for `<button>` elements to ensure appropriate text content.
 
 **HTML Validation:**
 
-- Validation of <section> elements to ensure appropriate labels are used.
-- Added validation for <button> elements to check for proper text content.
-- Added a check to ensure that <img> elements have unique alt attributes.
+- Validation of `<section>` elements to ensure appropriate labels are used.
+- Added validation for `<button>` elements to check for proper text content.
+- Added a check to ensure that `<img>` elements have unique alt attributes.
 
 ## [0.0.5]- 2024-08-27
 

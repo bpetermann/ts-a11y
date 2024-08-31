@@ -2,7 +2,7 @@
   "name": "zugang",
   "displayName": "Zugang",
   "description": "Accessibility Linter",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "publisher": "bpetermann",
   "icon": "resources/logo.png",
   "repository": {
