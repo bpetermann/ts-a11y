@@ -45,3 +45,13 @@ export const getDomNodes = (text: string) => {
 export const getOrganizedNodes = (document: vscode.TextDocument) => {
   return new NodeOrganizer(getDomNodes(document.getText()));
 };
+
+/**
+ * Logs all diagnostics messages
+ */
+export const logDiagnostics = (diagnostics: vscode.Diagnostic[]) => {
+  console.log(
+    'All diagnostic messages: ',
+    diagnostics.map(({ message }) => message)
+  );
+};

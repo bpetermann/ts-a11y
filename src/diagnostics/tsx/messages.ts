@@ -18,5 +18,6 @@ export const messages = {
     onclick: '[Zugang] Avoid assigning click events directly to links.',
     generic:
       '[Zugang] Avoid using generic link text, as it can be unclear to users what the link leads to. Link text: ',
+    mail: '[Zugang] Include the email address in the link text to help users who may find switching between applications difficult.',
   },
 } as const;

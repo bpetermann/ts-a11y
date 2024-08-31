@@ -24,6 +24,7 @@ export class LinkValidator implements Validator {
     return [
       this.checkGenericText(node),
       this.checkWrongAttributes(node),
+      this.checkMailToLinks(node),
     ].filter((error) => error instanceof Diagnostic);
   }
 
@@ -36,6 +37,17 @@ export class LinkValidator implements Validator {
   checkWrongAttributes(link: TSXElement): Diagnostic | undefined {
     if (link.getAttributes().includes('onclick')) {
       return new Diagnostic(messages.link.onclick, link.loc);
+    }
+  }
+
+  private checkMailToLinks(link: TSXElement): Diagnostic | undefined {
+    const urlFragment = link.getAttribute('href');
+    if (
+      urlFragment &&
+      urlFragment.startsWith('mailto:') &&
+      !link.text?.includes('@')
+    ) {
+      return new Diagnostic(messages.link.mail, link.loc);
     }
   }
 }

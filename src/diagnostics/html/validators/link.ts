@@ -53,7 +53,7 @@ export class LinkValidator implements Validator {
       const textContent = elementList.getElementData(link);
 
       errors.push(this.checkgenericText(link, textContent));
-      errors.push(this.checkMailLink(link, attributes, textContent));
+      errors.push(this.checkMailToLinks(link, attributes, textContent));
       errors.push(...this.checkWrongAttributes(link, attributes));
     });
 
@@ -90,7 +90,7 @@ export class LinkValidator implements Validator {
       .filter((value) => value instanceof ValidatorError);
   }
 
-  private checkMailLink(
+  private checkMailToLinks(
     link: Element,
     attributes: { [name: string]: string },
     textContent: string | undefined

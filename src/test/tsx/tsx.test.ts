@@ -154,4 +154,14 @@ suite('TSX Test Suite', () => {
 
     assert.strictEqual(message, messages.link.onclick);
   });
+
+  test('<a> tag with "mailto" in the "href"', async () => {
+    const linktext = 'If you want to learn more about our products, contact us';
+    const content = `<a href="mailto:support@office.com">${linktext}</a>`;
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.link.mail);
+  });
 });
