@@ -7,19 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.6]- 2024-08-31
+
 ### Added
 
 **TSX Validation:**
 
-- Validation of `<div>` elements (e.g., div soup).
-- Validation of `<a>` (link) elements, including generic link text, proper attributes.
-- Added `<button>` text content check.
+- Validation of <div> elements to identify issues like "div soup."
+- Validation of <a> (link) elements, including checks for generic link text and proper attributes.
+- Added validation for <button> elements to ensure appropriate text content.
 
 **HTML Validation:**
 
-- Validation of `<section>` elements (e.g., appropriate labels).
-- Added `<button>` text content check.
-- Added `<img>` unique alt check.
+- Validation of <section> elements to ensure appropriate labels are used.
+- Added validation for <button> elements to check for proper text content.
+- Added a check to ensure that <img> elements have unique alt attributes.
 
 ## [0.0.5]- 2024-08-27
 
@@ -94,3 +96,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.0.2]: https://github.com/bpetermann/vscode-zugang/releases/tag/v0.0.2
 [0.0.3]: https://github.com/bpetermann/vscode-zugang/releases/tag/v0.0.3
 [0.0.5]: https://github.com/bpetermann/vscode-zugang/releases/tag/v0.0.5
+[0.0.6]: https://github.com/bpetermann/vscode-zugang/releases/tag/v0.0.6
