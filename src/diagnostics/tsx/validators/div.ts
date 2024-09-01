@@ -13,9 +13,11 @@ export class DivValidator implements Validator {
   }
 
   validate(node: TSXElement): Diagnostic[] {
-    return [this.checkSequenceLength(node)].filter(
-      (error) => error instanceof Diagnostic
-    );
+    return [
+      this.checkSequenceLength(node),
+      this.checkButtonRole(node),
+      this.checkWrongAttibutes(node),
+    ].filter((error) => error instanceof Diagnostic);
   }
 
   private checkSequenceLength(node: TSXElement): Diagnostic | undefined {
@@ -24,6 +26,29 @@ export class DivValidator implements Validator {
         messages.div.soup,
         node.loc,
         DiagnosticSeverity.Information
+      );
+    }
+  }
+
+  private checkButtonRole(node: TSXElement): Diagnostic | undefined {
+    if (
+      node.getAttributes().includes('onclick') ||
+      node.getAttribute('role') === 'button'
+    ) {
+      return new Diagnostic(
+        messages.div.button,
+        node.loc,
+        DiagnosticSeverity.Information
+      );
+    }
+  }
+
+  private checkWrongAttibutes(node: TSXElement): Diagnostic | undefined {
+    if (node.getAttribute('aria-expanded') !== undefined) {
+      return new Diagnostic(
+        messages.div.expanded,
+        node.loc,
+        DiagnosticSeverity.Hint
       );
     }
   }

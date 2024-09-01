@@ -2,10 +2,10 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { messages } from '../../diagnostics/tsx/messages';
 import { TSXDiagnosticGenerator } from '../../diagnostics/tsx/generator';
-import { div } from '../helper';
+import { Div, div, fraction } from '../helper';
 
 /**
- * Generates diagnostics for an html document.
+ * Generates diagnostics for an tsx document.
  */
 const generateDiagnostics = (document: vscode.TextDocument) =>
   new TSXDiagnosticGenerator(document.getText()).generateDiagnostics();
@@ -119,12 +119,48 @@ suite('TSX Test Suite', () => {
   });
 
   test('A single <div> element', async () => {
-    const content = `<div></div>`;
+    const content = Div();
 
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
 
     assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('<div> tag with "onclick" event', async () => {
+    const content = Div('onclick="click()"');
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.div.button);
+  });
+
+  test('<div> tag with role="button"', async () => {
+    const content = Div('role="button"');
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.div.button);
+  });
+
+  test('<div> used as a button', async () => {
+    const content = fraction(Div('role="button"'), Div('onclick="click()"'));
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 2);
+  });
+
+  test('<div> tag with aria-expanded attribute', async () => {
+    const content = Div('aria-expanded="true"');
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.div.expanded);
   });
 
   test('<a> tag with a generic description', async () => {
