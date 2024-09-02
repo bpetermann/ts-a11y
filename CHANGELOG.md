@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+**TSX Validation:**
+
+- Added a check to ensure that `<div>` elements are not improperly used.
+
 ## [0.0.6]- 2024-08-31
 
 ### Added
@@ -72,7 +76,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **HTML Validation:**
 
-- Added validation of `<div>` elements to ensure they are not improperly used as buttons.
+- Added validation of `<div>` elements to ensure they are not improperly used.
 
 ### Changed
 
