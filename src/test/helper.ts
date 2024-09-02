@@ -54,4 +54,5 @@ export const getOrganizedNodes = (document: vscode.TextDocument) => {
 
 export const fraction = (...args: string[]) => `<>${args}</>`;
 
-export const Div = (...args: string[]) => `<div ${args}></div>`;
+export const Div = (children: string | null, ...args: string[]) =>
+  `<div ${args}>${children}</div>`;

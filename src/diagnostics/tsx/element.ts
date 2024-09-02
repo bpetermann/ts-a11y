@@ -38,6 +38,14 @@ export class TSXElement {
     );
   }
 
+  get children() {
+    return this.node.children;
+  }
+
+  get element() {
+    return this.node;
+  }
+
   /**
    * Calculates the length of consecutive elements with the same tag.
    * @returns {number} The number of consecutive elements with the same tag.
@@ -161,5 +169,83 @@ export class TSXElement {
    */
   private getFirstChild(element: jsx.JSXElement): jsx.JSXElement | undefined {
     return element.children.find((child) => child.type === 'JSXElement');
+  }
+
+  /**
+   * Recursively determines whether a JSX element and all of its child elements
+   * can safely have the `aria-hidden` attribute applied.
+   *
+   * This method checks if the element itself is focusable or contains any focusable
+   * child elements. If any element in the hierarchy is focusable, applying `aria-hidden`
+   * would create accessibility issues, so the method returns `false`.
+   * Otherwise, it returns `true`, indicating that `aria-hidden` can be safely applied
+   * to the element and all of its descendants.
+   *
+   * @param {jsx.JSXElement} element - The JSX element to check.
+   * @returns {boolean} `true` if the element and all its child elements can have `aria-hidden`; otherwise, `false`.
+   */
+  static canHaveAriaHidden(element: jsx.JSXElement): boolean {
+    if (!TSXElement.isNotFocusable(element)) {
+      return false;
+    }
+
+    const getChildElements = (
+      element: jsx.JSXElement | jsx.JSXFragment
+    ): jsx.JSXElement[] => {
+      return element.children.flatMap((child) => {
+        if (child.type === 'JSXElement') {
+          return child;
+        } else if (child.type === 'JSXFragment') {
+          return getChildElements(child);
+        } else {
+          return [];
+        }
+      });
+    };
+
+    const childElements = getChildElements(element);
+    return childElements.every((child) => TSXElement.canHaveAriaHidden(child));
+  }
+
+  static isNotFocusable(node: jsx.JSXElement): boolean {
+    const isIdentifier = node.openingElement.name.type === 'JSXIdentifier';
+    const asIdentifier = node.openingElement.name as jsx.JSXIdentifier;
+
+    const formElements = ['input', 'button', 'textarea', 'select'];
+    const isFormControl =
+      isIdentifier && formElements.includes(asIdentifier.name);
+
+    const isLink = isIdentifier && asIdentifier.name === 'a';
+
+    const allAttributes = node.openingElement.attributes.filter(
+      (attr) => attr.type === 'JSXAttribute'
+    );
+
+    const getAttributeValue = (attrName: string): string | undefined =>
+      (
+        allAttributes.find(
+          ({ name, value }) =>
+            name.name === attrName && value?.type === 'StringLiteral'
+        )?.value as jsx.StringLiteral
+      )?.value;
+
+    const hasTabIndex = getAttributeValue('tabindex');
+    const tabIndexValue = hasTabIndex !== undefined ? +hasTabIndex : null;
+    const hasNegativeTabIndex = tabIndexValue === -1;
+    const hasPositiveTabIndex = tabIndexValue !== null && tabIndexValue > -1;
+
+    const hasInert = getAttributeValue('inert') !== undefined;
+    const hasContentEditable = getAttributeValue('contenteditable') === 'true';
+    const hasButtonRole = getAttributeValue('role') === 'button';
+    const hasHref = getAttributeValue('href') !== undefined;
+    const isDisabled = getAttributeValue('disabled') !== undefined;
+
+    return !(
+      (isFormControl && !hasNegativeTabIndex && !isDisabled && !hasInert) ||
+      (isLink && hasHref && !hasInert) ||
+      hasContentEditable ||
+      hasPositiveTabIndex ||
+      (hasButtonRole && !hasNegativeTabIndex)
+    );
   }
 }

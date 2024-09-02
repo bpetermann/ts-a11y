@@ -119,7 +119,7 @@ suite('TSX Test Suite', () => {
   });
 
   test('A single <div> element', async () => {
-    const content = Div();
+    const content = Div('');
 
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
@@ -128,7 +128,7 @@ suite('TSX Test Suite', () => {
   });
 
   test('<div> tag with "onclick" event', async () => {
-    const content = Div('onclick="click()"');
+    const content = Div(null, 'onclick="click()"');
 
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
@@ -137,7 +137,7 @@ suite('TSX Test Suite', () => {
   });
 
   test('<div> tag with role="button"', async () => {
-    const content = Div('role="button"');
+    const content = Div(null, 'role="button"');
 
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
@@ -146,7 +146,10 @@ suite('TSX Test Suite', () => {
   });
 
   test('<div> used as a button', async () => {
-    const content = fraction(Div('role="button"'), Div('onclick="click()"'));
+    const content = fraction(
+      Div(null, 'role="button"'),
+      Div(null, 'onclick="click()"')
+    );
 
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
@@ -155,12 +158,45 @@ suite('TSX Test Suite', () => {
   });
 
   test('<div> tag with aria-expanded attribute', async () => {
-    const content = Div('aria-expanded="true"');
+    const content = Div(null, 'aria-expanded="true"');
 
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
     assert.strictEqual(message, messages.div.expanded);
+  });
+
+  test('<div> with aria hidden and focusable children', async () => {
+    const content = Div('<a href="/blog"></a>', 'aria-hidden="true"');
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.div['aria-hidden']);
+  });
+
+  test('<div> with aria hidden and <button> child', async () => {
+    const content = Div(
+      Div(Div(Div('<button>click me</button>'))),
+      'aria-hidden="true"'
+    );
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.div['aria-hidden']);
+  });
+
+  test('<div> with aria hidden and <a> child', async () => {
+    const content = Div(
+      Div(Div(fraction(Div(null), '<a href="/contact">contact</a>'))),
+      'aria-hidden="true"'
+    );
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.div['aria-hidden']);
   });
 
   test('<a> tag with a generic description', async () => {

@@ -3,6 +3,7 @@ import { Diagnostic } from '../diagnostic';
 import { Validator } from './validator';
 import { TSXElement } from '../element';
 import { DiagnosticSeverity } from 'vscode';
+import { JSXElement } from '@babel/types';
 
 export class DivValidator implements Validator {
   #tags: string[] = ['div'] as const;
@@ -17,6 +18,7 @@ export class DivValidator implements Validator {
       this.checkSequenceLength(node),
       this.checkButtonRole(node),
       this.checkWrongAttibutes(node),
+      this.checkAriaHidden(node),
     ].filter((error) => error instanceof Diagnostic);
   }
 
@@ -50,6 +52,15 @@ export class DivValidator implements Validator {
         node.loc,
         DiagnosticSeverity.Hint
       );
+    }
+  }
+
+  private checkAriaHidden(node: TSXElement): Diagnostic | undefined {
+    if (
+      node.getAttribute('aria-hidden') === 'true' &&
+      !TSXElement.canHaveAriaHidden(node.element)
+    ) {
+      return new Diagnostic(messages.div['aria-hidden'], node.loc);
     }
   }
 }
