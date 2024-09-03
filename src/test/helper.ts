@@ -23,9 +23,12 @@ export const body = (children?: string) => `<body>${children}</body>`;
 
 export const link = (children?: string) => `<a href="/blog">${children}</a>`;
 
-export const div = (children?: string) => `<div>${children}</div>`;
+export const div = (children: string | null, ...args: string[]) =>
+  `<div ${args}>${children}</div>`;
 
 export const title = '<title>Document</title>';
+
+export const fraction = (...args: string[]) => `<>${args}</>`;
 
 /** Creates an html document based on a string. */
 export const getDocument = (html: string) =>
@@ -49,9 +52,3 @@ export const getDomNodes = (text: string) => {
 export const getOrganizedNodes = (document: vscode.TextDocument) => {
   return new NodeOrganizer(getDomNodes(document.getText()));
 };
-
-/** TSX*/
-
-export const fraction = (...args: string[]) => `<>${args}</>`;
-
-export const Div = (...args: string[]) => `<div ${args}></div>`;

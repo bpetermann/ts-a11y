@@ -180,7 +180,7 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
-  test('<a> tag with a an "onclick" event', async () => {
+  test('<a> tag with an "onclick" event', async () => {
     const content = html(
       head(meta + title) + body(`<a onclick="click()"></a>`)
     );
@@ -191,24 +191,15 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.link.onclick);
   });
 
-  test('<a> tag with a aria-hidden="true"', async () => {
+  test('<a> tag with aria-hidden="true"', async () => {
     const content = html(
-      head(meta + title) + body(`<a aria-hidden="true"></a>`)
+      head(meta + title) + body(`<a href="/blog" aria-hidden="true"></a>`)
     );
 
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
     assert.strictEqual(message, messages.link['aria-hidden']);
-  });
-
-  test('<a> tag with tabindex="-1"', async () => {
-    const content = html(head(meta + title) + body(`<a tabindex="-1"></a>`));
-
-    const document = await getDocument(content);
-    const { message } = generateDiagnostics(document)?.[0];
-
-    assert.strictEqual(message, messages.link.tabindex);
   });
 
   test('<a> tag with "mailto" in the "href"', async () => {
@@ -225,11 +216,11 @@ suite('HTML Test Suite', () => {
   });
 
   test('<a> tag with all checks failing', async () => {
-    const tabindex = `tabindex="-1" `;
     const href = `href="mailto:support@office.com" `;
     const onclick = `onclick="click()" `;
     const text = 'click';
-    const anchor = `<a ${tabindex}${href}${onclick}>${text}</a>`;
+    const hidden = `aria-hidden="true"`;
+    const anchor = `<a ${hidden}${href}${onclick}>${text}</a>`;
 
     const content = html(head(meta + title) + body(anchor));
 
@@ -311,7 +302,9 @@ suite('HTML Test Suite', () => {
   });
 
   test('Long sequence of nested <div> elements', async () => {
-    const content = html(head(meta + title) + body(div(div(div(div(div()))))));
+    const content = html(
+      head(meta + title) + body(div(div(div(div(div(null))))))
+    );
 
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
@@ -320,12 +313,45 @@ suite('HTML Test Suite', () => {
   });
 
   test('A valid <div> element', async () => {
-    const content = html(head(meta + title) + body(div()));
+    const content = html(head(meta + title) + body(div(null)));
 
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
 
     assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('<div> with aria hidden and focusable children', async () => {
+    const divs = div('<a href="/blog"></a>', 'aria-hidden="true"');
+    const content = html(head(meta + title) + body(divs));
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.div['aria-hidden']);
+  });
+
+  test('<div> with aria hidden and <button> child', async () => {
+    const divs = div(
+      div(div(div(`<button>click me</button>`), 'aria-hidden="true"'))
+    );
+    const content = html(head(meta + title) + body(divs));
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.div['aria-hidden']);
+  });
+
+  test('<div> with aria hidden and <a> child', async () => {
+    const link = `<a href="/contact">contact</a>`;
+    const divs = div(div(div(div(link), 'aria-hidden="true"')));
+    const content = html(head(meta + title) + body(divs));
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.div['aria-hidden']);
   });
 
   test('<button> with role="switch" but missing aria-checked', async () => {

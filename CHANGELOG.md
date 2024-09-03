@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 **TSX Validation:**
 
 - Added a check to ensure that `<div>` elements are not improperly used.
+- Added a check to ensure that `aria-hidden` can be applied safely.
+
+**HTML Validation:**
+
+- Added a check to ensure that `aria-hidden` can be applied safely.
 
 ## [0.0.6]- 2024-08-31
 
