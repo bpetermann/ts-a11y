@@ -258,9 +258,9 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.link.list);
   });
 
-  test('<div> tag with "onclick" event', async () => {
+  test('<div> element with "onclick" event', async () => {
     const content = html(
-      head(meta + title) + body(`<div onclick="click()"></div>`)
+      head(meta + title) + body(div(null, 'onclick="click()"'))
     );
 
     const document = await getDocument(content);
@@ -269,10 +269,8 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(message, messages.div.button);
   });
 
-  test('<div> tag with role="button"', async () => {
-    const content = html(
-      head(meta + title) + body(`<div role="button"></div>`)
-    );
+  test('<div> element with role="button"', async () => {
+    const content = html(head(meta + title) + body(div(null, 'role="button"')));
 
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
@@ -281,7 +279,7 @@ suite('HTML Test Suite', () => {
   });
 
   test('<div> used as a button', async () => {
-    const divs = `<div role="button"></div><div onclick="click()"div>`;
+    const divs = `${div(null, 'role="button"')}${div(null, 'onclick="click"')}`;
     const content = html(head(meta + title) + body(divs));
 
     const document = await getDocument(content);
@@ -292,7 +290,7 @@ suite('HTML Test Suite', () => {
 
   test('<div> tag with aria-expanded attribute', async () => {
     const content = html(
-      head(meta + title) + body(`<div aria-expanded="true"></div>`)
+      head(meta + title) + body(div(null, `aria-expanded="true"`))
     );
 
     const document = await getDocument(content);

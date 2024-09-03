@@ -35,7 +35,7 @@ To install the extension:
 
 ## Version
 
-The current version is _v0.0.6_. Expect frequent updates as new features and improvements are implemented.
+The current version is _v0.1.0_. Expect frequent updates as new features and improvements are implemented.
 
 ## Usage Examples
 

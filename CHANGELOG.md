@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0]- 2024-09-03
+
 **TSX Validation:**
 
 - Added a check to ensure that `<div>` elements are not improperly used.
@@ -106,3 +108,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.0.3]: https://github.com/bpetermann/vscode-zugang/releases/tag/v0.0.3
 [0.0.5]: https://github.com/bpetermann/vscode-zugang/releases/tag/v0.0.5
 [0.0.6]: https://github.com/bpetermann/vscode-zugang/releases/tag/v0.0.6
+[0.1.0]: https://github.com/bpetermann/vscode-zugang/releases/tag/v0.1.0
