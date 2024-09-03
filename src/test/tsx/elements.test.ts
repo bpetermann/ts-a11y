@@ -2,7 +2,7 @@ import * as parser from '@babel/parser';
 import traverse from '@babel/traverse';
 import assert from 'assert';
 import { TSXElement } from '../../diagnostics/tsx/element';
-import { Div, fraction } from '../helper';
+import { div, fraction } from '../helper';
 
 const parseText = (text: string) => {
   return parser.parse(text, {
@@ -13,7 +13,7 @@ const parseText = (text: string) => {
 
 suite('Aria-hidden Attribute Test Suite', () => {
   test("Should allow 'aria-hidden' on a plain <div> element", async () => {
-    const content = Div(null);
+    const content = div(null);
 
     traverse(parseText(content), {
       JSXElement: (path) =>
@@ -76,7 +76,7 @@ suite('Aria-hidden Attribute Test Suite', () => {
   });
 
   test("Should not allow 'aria-hidden' on an element with a positive tabindex", async () => {
-    const content = Div(null, 'tabindex="2"');
+    const content = div(null, 'tabindex="2"');
 
     traverse(parseText(content), {
       JSXElement: (path) =>
@@ -85,7 +85,7 @@ suite('Aria-hidden Attribute Test Suite', () => {
   });
 
   test("Should not allow 'aria-hidden' on an element with role='button'", async () => {
-    const content = Div(null, 'role="button"');
+    const content = div(null, 'role="button"');
 
     traverse(parseText(content), {
       JSXElement: (path) =>
@@ -112,8 +112,8 @@ suite('Aria-hidden Attribute Test Suite', () => {
   });
 
   test("Should not allow 'aria-hidden' if a nested element is focusable", async () => {
-    const content = Div(
-      Div(Div(Div(fraction(Div(null), Div(null, 'role="button"')))))
+    const content = div(
+      div(div(div(fraction(div(null), div(null, 'role="button"')))))
     );
 
     let firstElement = false;

@@ -51,6 +51,8 @@ export const messages = {
     expanded:
       '[Zugang] The "aria-expanded" attribute should be applied to the element that controls the expansion, not the element being expanded.',
     soup: '[Zugang] Nesting too many <div>s can create complex, hard-to-navigate structures for screen readers and other assistive technologies. This can make it difficult for users with disabilities to understand the content, reducing accessibility and usability. Keep the HTML structure simple and meaningful by using proper semantic elements instead of excessive <div> nesting.',
+    'aria-hidden':
+      'A focusable element, or an element containing focusable children, should not have the aria-hidden attribute. Doing so can lead to accessibility issues, as it hides content from assistive technologies while still being interactive.',
   },
   button: {
     switchRole:

@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { messages } from '../../diagnostics/tsx/messages';
 import { TSXDiagnosticGenerator } from '../../diagnostics/tsx/generator';
-import { Div, div, fraction } from '../helper';
+import { div, fraction } from '../helper';
 
 /**
  * Generates diagnostics for an tsx document.
@@ -18,7 +18,7 @@ export const getDocument = (tsx: string) =>
 
 suite('TSX Test Suite', () => {
   test('should handle it gracefully if no validator is found', async () => {
-    const tsx = `<div></div>`;
+    const tsx = div(null);
 
     const document = await getDocument(tsx);
     const diagnostics = generateDiagnostics(document);
@@ -110,7 +110,7 @@ suite('TSX Test Suite', () => {
   });
 
   test('Long sequence of nested <div> elements', async () => {
-    const content = div(div(div(div(div(div())))));
+    const content = div(div(div(div(div(div(null))))));
 
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
@@ -119,7 +119,7 @@ suite('TSX Test Suite', () => {
   });
 
   test('A single <div> element', async () => {
-    const content = Div('');
+    const content = div(null);
 
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
@@ -128,7 +128,7 @@ suite('TSX Test Suite', () => {
   });
 
   test('<div> tag with "onclick" event', async () => {
-    const content = Div(null, 'onclick="click()"');
+    const content = div(null, 'onclick="click()"');
 
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
@@ -137,7 +137,7 @@ suite('TSX Test Suite', () => {
   });
 
   test('<div> tag with role="button"', async () => {
-    const content = Div(null, 'role="button"');
+    const content = div(null, 'role="button"');
 
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
@@ -147,8 +147,8 @@ suite('TSX Test Suite', () => {
 
   test('<div> used as a button', async () => {
     const content = fraction(
-      Div(null, 'role="button"'),
-      Div(null, 'onclick="click()"')
+      div(null, 'role="button"'),
+      div(null, 'onclick="click()"')
     );
 
     const document = await getDocument(content);
@@ -158,7 +158,7 @@ suite('TSX Test Suite', () => {
   });
 
   test('<div> tag with aria-expanded attribute', async () => {
-    const content = Div(null, 'aria-expanded="true"');
+    const content = div(null, 'aria-expanded="true"');
 
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
@@ -167,7 +167,7 @@ suite('TSX Test Suite', () => {
   });
 
   test('<div> with aria hidden and focusable children', async () => {
-    const content = Div('<a href="/blog"></a>', 'aria-hidden="true"');
+    const content = div('<a href="/blog"></a>', 'aria-hidden="true"');
 
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
@@ -176,10 +176,8 @@ suite('TSX Test Suite', () => {
   });
 
   test('<div> with aria hidden and <button> child', async () => {
-    const content = Div(
-      Div(Div(Div('<button>click me</button>'))),
-      'aria-hidden="true"'
-    );
+    const button = '<button>click me</button>';
+    const content = div(div(div(div(button))), 'aria-hidden="true"');
 
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
@@ -188,8 +186,9 @@ suite('TSX Test Suite', () => {
   });
 
   test('<div> with aria hidden and <a> child', async () => {
-    const content = Div(
-      Div(Div(fraction(Div(null), '<a href="/contact">contact</a>'))),
+    const link = '<a href="/contact">contact</a>';
+    const content = div(
+      div(div(fraction(div(null), link))),
       'aria-hidden="true"'
     );
 

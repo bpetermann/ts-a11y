@@ -172,14 +172,10 @@ export class TSXElement {
   }
 
   /**
-   * Recursively determines whether a JSX element and all of its child elements
+   * Recursively determines whether an Element and all of its child elements
    * can safely have the `aria-hidden` attribute applied.
    *
-   * This method checks if the element itself is focusable or contains any focusable
-   * child elements. If any element in the hierarchy is focusable, applying `aria-hidden`
-   * would create accessibility issues, so the method returns `false`.
-   * Otherwise, it returns `true`, indicating that `aria-hidden` can be safely applied
-   * to the element and all of its descendants.
+   * This method checks if the element itself is focusable or contains any focusable child elements.
    *
    * @param {jsx.JSXElement} element - The JSX element to check.
    * @returns {boolean} `true` if the element and all its child elements can have `aria-hidden`; otherwise, `false`.

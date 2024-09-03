@@ -161,4 +161,51 @@ export default class ElementList {
     const sibling = this.getFirstSibling(element);
     return !!sibling && sibling.name === tag;
   }
+
+  /**
+   * Recursively determines whether an Element and all of its child elements
+   * can safely have the `aria-hidden` attribute applied.
+   *
+   * This method checks if the element itself is focusable or contains any focusable child elements.
+   *
+   * @param {Element} element - The Element to check.
+   * @returns {boolean} `true` if the element and all its child elements can have `aria-hidden`; otherwise, `false`.
+   */
+  static canHaveAriaHidden(element: Element): boolean {
+    if (!ElementList.isNotFocusable(element)) {
+      return false;
+    }
+
+    const childElements = element.children.filter(
+      (child) => child instanceof Element
+    );
+
+    return childElements.every((child) => ElementList.canHaveAriaHidden(child));
+  }
+
+  static isNotFocusable(node: Element): boolean {
+    const isFormControl = ['input', 'button', 'textarea', 'select'].includes(
+      node.name
+    );
+    const isLink = node.name === 'a';
+
+    const hasTabIndex = node.attribs?.['tabindex'];
+    const tabIndexValue = hasTabIndex !== undefined ? +hasTabIndex : null;
+    const hasNegativeTabIndex = tabIndexValue === -1;
+    const hasPositiveTabIndex = tabIndexValue !== null && tabIndexValue > -1;
+
+    const hasInert = node.attribs?.['inert'] !== undefined;
+    const hasContentEditable = node.attribs?.['contenteditable'] === 'true';
+    const hasButtonRole = node.attribs?.['role'] === 'button';
+    const hasHref = node.attribs?.['href'] !== undefined;
+    const isDisabled = node.attribs?.['disabled'] !== undefined;
+
+    return !(
+      (isFormControl && !hasNegativeTabIndex && !isDisabled && !hasInert) ||
+      (isLink && hasHref && !hasInert) ||
+      hasContentEditable ||
+      hasPositiveTabIndex ||
+      (hasButtonRole && !hasNegativeTabIndex)
+    );
+  }
 }

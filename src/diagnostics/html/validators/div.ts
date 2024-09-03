@@ -1,8 +1,8 @@
 import { AnyNode, Element } from 'domhandler';
-import { messages } from '../messages';
 import { DiagnosticSeverity } from 'vscode';
-import { Validator, ValidatorError } from './validator';
 import ElementList from '../elements';
+import { messages } from '../messages';
+import { Validator, ValidatorError } from './validator';
 
 export class DivValidator implements Validator {
   private maxSequenceLength = 4;
@@ -34,6 +34,7 @@ export class DivValidator implements Validator {
       if (Object.keys(attributes).length) {
         errors.push(this.checkButtonRole(div, attributes));
         errors.push(this.checkWrongAttibutes(div, attributes));
+        errors.push(this.checkAriaHidden(div, attributes));
       }
     });
 
@@ -65,6 +66,15 @@ export class DivValidator implements Validator {
         div,
         DiagnosticSeverity.Hint
       );
+    }
+  }
+
+  private checkAriaHidden(
+    div: Element,
+    attributes: { [name: string]: string }
+  ): ValidatorError | undefined {
+    if ('aria-hidden' in attributes && !ElementList.canHaveAriaHidden(div)) {
+      return new ValidatorError(messages.div['aria-hidden'], div);
     }
   }
 

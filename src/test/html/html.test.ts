@@ -311,7 +311,9 @@ suite('HTML Test Suite', () => {
   });
 
   test('Long sequence of nested <div> elements', async () => {
-    const content = html(head(meta + title) + body(div(div(div(div(div()))))));
+    const content = html(
+      head(meta + title) + body(div(div(div(div(div(null))))))
+    );
 
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
@@ -320,12 +322,45 @@ suite('HTML Test Suite', () => {
   });
 
   test('A valid <div> element', async () => {
-    const content = html(head(meta + title) + body(div()));
+    const content = html(head(meta + title) + body(div(null)));
 
     const document = await getDocument(content);
     const diagnostics = generateDiagnostics(document);
 
     assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('<div> with aria hidden and focusable children', async () => {
+    const divs = div('<a href="/blog"></a>', 'aria-hidden="true"');
+    const content = html(head(meta + title) + body(divs));
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.div['aria-hidden']);
+  });
+
+  test('<div> with aria hidden and <button> child', async () => {
+    const divs = div(
+      div(div(div(`<button>click me</button>`), 'aria-hidden="true"'))
+    );
+    const content = html(head(meta + title) + body(divs));
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.div['aria-hidden']);
+  });
+
+  test('<div> with aria hidden and <a> child', async () => {
+    const link = `<a href="/contact">contact</a>`;
+    const divs = div(div(div(div(link), 'aria-hidden="true"')));
+    const content = html(head(meta + title) + body(divs));
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)?.[0];
+
+    assert.strictEqual(message, messages.div['aria-hidden']);
   });
 
   test('<button> with role="switch" but missing aria-checked', async () => {

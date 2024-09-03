@@ -14,7 +14,7 @@ suite('Node Organizer Test Suite', () => {
   test('Should return the correct number of divs', async () => {
     const divs = Array(100)
       .fill(null)
-      .map((_) => div())
+      .map((_) => div(null))
       .toString();
 
     const content = html(head(meta + title) + body(divs));
