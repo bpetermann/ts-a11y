@@ -18,15 +18,6 @@ export class LinkValidator implements Validator {
     'more',
   ]);
 
-  private readonly faultyAttributes: Record<
-    'onclick' | 'tabindex' | 'aria-hidden',
-    string | null | boolean
-  > = {
-    onclick: null,
-    tabindex: '-1',
-    'aria-hidden': 'true',
-  } as const;
-
   get nodeTags() {
     return this.#nodeTags;
   }
@@ -54,7 +45,8 @@ export class LinkValidator implements Validator {
 
       errors.push(this.checkgenericText(link, textContent));
       errors.push(this.checkMailToLinks(link, attributes, textContent));
-      errors.push(...this.checkWrongAttributes(link, attributes));
+      errors.push(this.checkWrongAttributes(link, attributes));
+      errors.push(this.checkAriaHidden(link, attributes));
     });
 
     errors.push(this.getAriaCurrentError(links));
@@ -77,17 +69,10 @@ export class LinkValidator implements Validator {
   private checkWrongAttributes(
     link: Element,
     attributes: { [name: string]: string }
-  ): ValidatorError[] {
-    return Object.entries(this.faultyAttributes)
-      .map(([attrib, value]) => {
-        if (this.isFaulty(attributes, attrib, value)) {
-          return new ValidatorError(
-            messages.link[attrib as 'onclick' | 'tabindex' | 'aria-hidden'],
-            link
-          );
-        }
-      })
-      .filter((value) => value instanceof ValidatorError);
+  ): ValidatorError | undefined {
+    if ('onclick' in attributes) {
+      return new ValidatorError(messages.link['onclick'], link);
+    }
   }
 
   private checkMailToLinks(
@@ -119,6 +104,15 @@ export class LinkValidator implements Validator {
     }
   }
 
+  private checkAriaHidden(
+    link: Element,
+    attributes: { [name: string]: string }
+  ): ValidatorError | undefined {
+    if ('aria-hidden' in attributes && !ElementList.canHaveAriaHidden(link)) {
+      return new ValidatorError(messages.link['aria-hidden'], link);
+    }
+  }
+
   checkSequenceLength(sequence: Element[]) {
     if (sequence.length > this.maxSequenceLength) {
       return new ValidatorError(
@@ -131,13 +125,5 @@ export class LinkValidator implements Validator {
 
   private isGeneric(text?: string): boolean {
     return !!text && this.genericTexts.has(text.toLowerCase().trim());
-  }
-
-  private isFaulty(
-    attributes: { [name: string]: string },
-    attrib: string,
-    value: string | null | boolean
-  ): boolean {
-    return attrib in attributes && (!value || attributes[attrib] === value);
   }
 }
