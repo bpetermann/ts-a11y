@@ -1,4 +1,4 @@
-import { AnyNode, Element } from 'domhandler';
+import { AnyNode, Element, Text } from 'domhandler';
 
 export default class ElementList {
   public elements: Element[];
@@ -14,10 +14,9 @@ export default class ElementList {
    * @returns {Element[]} Array of elements that match the tag
    */
   findElementsByTag(nodes: AnyNode[], tag?: string): Element[] {
-    const elements = nodes.filter(
-      (node) => 'name' in node && node instanceof Element
-    );
-    return tag ? elements.filter(({ name }) => name === tag) : elements;
+    return nodes.filter(
+      (node) => node instanceof Element && (!tag || node.name === tag)
+    ) as Element[];
   }
 
   /**
@@ -27,7 +26,7 @@ export default class ElementList {
    * @returns {Element | undefined} The first element that matches the tag, or undefined if not found
    */
   static findElementByTag(nodes: Element[], tag: string): Element | undefined {
-    return nodes.find((node) => 'name' in node && node.name === tag);
+    return nodes.find(({ name }) => name === tag);
   }
 
   /**
@@ -36,8 +35,8 @@ export default class ElementList {
    * @returns {boolean} True if all elements have at least one of the specified attributes, false otherwise
    */
   allElementsHaveAttribute(attributes: string[]): boolean {
-    return this.elements.every((element) =>
-      attributes.some((attr) => attr in element.attribs)
+    return this.elements.every(({ attribs }) =>
+      attributes.some((attr) => attr in attribs)
     );
   }
 
@@ -74,12 +73,8 @@ export default class ElementList {
    * @param {Element} element - The element to retrieve data from
    * @returns {string | undefined} The text content of the element, or undefined if not applicable
    */
-  getElementData(element: Element): string | undefined {
-    return 'children' in element &&
-      element.children[0] &&
-      'data' in element.children[0]
-      ? element.children[0].data
-      : undefined;
+  getElementData({ children }: Element): string | undefined {
+    return children[0] instanceof Text ? children[0].data : undefined;
   }
 
   /**
@@ -153,13 +148,11 @@ export default class ElementList {
   }
 
   private nextChildHasTag(element: Element, tag: string): boolean {
-    const child = this.getFirstChild(element);
-    return !!child && child.name === tag;
+    return this.getFirstChild(element)?.name === tag;
   }
 
   private nextSiblingHasTag(element: Element, tag: string): boolean {
-    const sibling = this.getFirstSibling(element);
-    return !!sibling && sibling.name === tag;
+    return this.getFirstSibling(element)?.name === tag;
   }
 
   /**
