@@ -19,6 +19,7 @@ export class DivValidator implements Validator {
       this.checkButtonRole(node),
       this.checkWrongAttibutes(node),
       this.checkAriaHidden(node),
+      this.checkAbsractRole(node),
     ].filter((error) => error instanceof Diagnostic);
   }
 
@@ -61,6 +62,13 @@ export class DivValidator implements Validator {
       !TSXElement.canHaveAriaHidden(node.element)
     ) {
       return new Diagnostic(messages.div['aria-hidden'], node.loc);
+    }
+  }
+
+  private checkAbsractRole(node: TSXElement): Diagnostic | undefined {
+    const abstractRole = node.getAbstractRole();
+    if (abstractRole) {
+      return new Diagnostic(messages.div.abstract + abstractRole, node.loc);
     }
   }
 }

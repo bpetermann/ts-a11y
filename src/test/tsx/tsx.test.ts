@@ -119,21 +119,43 @@ suite('TSX Test Suite', () => {
   });
 
   test('<button> with abstract role "command"', async () => {
-    const content = `<button role="command">command</button>`;
+    const abstract = 'command';
+    const content = `<button role="${abstract}">command</button>`;
 
     const document = await getDocument(content);
-    const diagnostics = generateDiagnostics(document);
+    const { message } = generateDiagnostics(document)[0];
 
-    assert.strictEqual(diagnostics[0].message, messages.button.abstract);
+    assert.strictEqual(message, messages.button.abstract + abstract);
   });
 
   test('<button> with abstract role "widget"', async () => {
-    const content = `<button role="widget">widget</button>`;
+    const abstract = 'widget';
+    const content = `<button role="${abstract}">widget</button>`;
 
     const document = await getDocument(content);
-    const diagnostics = generateDiagnostics(document);
+    const { message } = generateDiagnostics(document)[0];
 
-    assert.strictEqual(diagnostics[0].message, messages.button.abstract);
+    assert.strictEqual(message, messages.button.abstract + abstract);
+  });
+
+  test('<div> with abstract role "command"', async () => {
+    const abstract = 'command';
+    const content = div(null, `role="${abstract}"`);
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)[0];
+
+    assert.strictEqual(message, messages.div.abstract + abstract);
+  });
+
+  test('<div> with abstract role "widget"', async () => {
+    const abstract = 'widget';
+    const content = div(null, `role="${abstract}"`);
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)[0];
+
+    assert.strictEqual(message, messages.div.abstract + abstract);
   });
 
   test('Long sequence of nested <div> elements', async () => {

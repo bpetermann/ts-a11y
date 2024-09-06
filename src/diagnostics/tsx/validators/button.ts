@@ -42,8 +42,9 @@ export class ButtonValidator implements Validator {
   }
 
   private checkAbsractRole(node: TSXElement): Diagnostic | undefined {
-    if (node.getAbstractRole()) {
-      return new Diagnostic(messages.button.abstract, node.loc);
+    const abstractRole = node.getAbstractRole();
+    if (abstractRole) {
+      return new Diagnostic(messages.button.abstract + abstractRole, node.loc);
     }
   }
 }

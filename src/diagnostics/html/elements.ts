@@ -155,6 +155,11 @@ export default class ElementList {
     return this.getFirstSibling(element)?.name === tag;
   }
 
+  /**
+   * Checks if the given element has an abstract role attached.
+   * @param {Element} element - The element to check.
+   * @returns {string | undefined} The role of the element, if it is abstract.
+   */
   static getAbsractRole(element: Element): string | undefined {
     return [
       'command',

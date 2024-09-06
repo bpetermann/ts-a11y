@@ -122,6 +122,11 @@ export class TSXElement {
     }
   }
 
+  /**
+   * Checks if the given element has an abstract role attached.
+   * @param {Element} element - The element to check.
+   * @returns {string | undefined} The role of the element, if it is abstract.
+   */
   getAbstractRole() {
     return [
       'command',
