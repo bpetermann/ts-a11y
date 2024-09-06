@@ -122,6 +122,23 @@ export class TSXElement {
     }
   }
 
+  getAbstractRole() {
+    return [
+      'command',
+      'composite',
+      'input',
+      'landmark',
+      'range',
+      'roletype',
+      'section',
+      'sectionhead',
+      'select',
+      'structure',
+      'widget',
+      'window',
+    ].find((role) => role === this.getAttribute('role'));
+  }
+
   /**
    * Checks if the next child element has the same tag name as the current element.
    * @private

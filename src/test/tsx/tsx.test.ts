@@ -72,6 +72,15 @@ suite('TSX Test Suite', () => {
     assert.strictEqual(diagnostics[0].message, messages.button.text);
   });
 
+  test('<button> with text content', async () => {
+    const content = `<button>open cart</button>`;
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics.length, 0);
+  });
+
   test('<button> with no text but <img> as child', async () => {
     const img = '<img src="/me.jpg" alt="Sunrise"></img>';
     const content = `<button>${img}</button>`;
@@ -107,6 +116,24 @@ suite('TSX Test Suite', () => {
     const diagnostics = generateDiagnostics(document);
 
     assert.strictEqual(diagnostics.length, 0);
+  });
+
+  test('<button> with abstract role "command"', async () => {
+    const content = `<button role="command">command</button>`;
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics[0].message, messages.button.abstract);
+  });
+
+  test('<button> with abstract role "widget"', async () => {
+    const content = `<button role="widget">widget</button>`;
+
+    const document = await getDocument(content);
+    const diagnostics = generateDiagnostics(document);
+
+    assert.strictEqual(diagnostics[0].message, messages.button.abstract);
   });
 
   test('Long sequence of nested <div> elements', async () => {

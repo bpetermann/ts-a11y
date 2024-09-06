@@ -11,9 +11,11 @@ export class ButtonValidator implements Validator {
   }
 
   validate(node: TSXElement): Diagnostic[] {
-    return [this.checkSwitchRole(node), this.checkTextContent(node)].filter(
-      (error) => error instanceof Diagnostic
-    );
+    return [
+      this.checkSwitchRole(node),
+      this.checkTextContent(node),
+      this.checkAbsractRole(node),
+    ].filter((error) => error instanceof Diagnostic);
   }
 
   checkSwitchRole(node: TSXElement): Diagnostic | undefined {
@@ -36,6 +38,12 @@ export class ButtonValidator implements Validator {
       !attributes.includes('title')
     ) {
       return new Diagnostic(messages.button.text, node.loc);
+    }
+  }
+
+  private checkAbsractRole(node: TSXElement): Diagnostic | undefined {
+    if (node.getAbstractRole()) {
+      return new Diagnostic(messages.button.abstract, node.loc);
     }
   }
 }

@@ -2,6 +2,8 @@ export const messages = {
   button: {
     'aria-label':
       '[Zugang] Button elements should have an aria-label for accessibility.',
+    abstract:
+      "[Zugang] Don't use abstract roles in your sites and applications. They are for use by browsers.",
     switch:
       '[Zugang] A button that toggles a setting must indicate its active state using the "aria-checked" attribute, which reflects the widget’s current state.',
     text: '[Zugang] A button without visible text or an image child must include aria-label, aria-labelledby, or visible text for accessibility.',
