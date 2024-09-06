@@ -155,6 +155,23 @@ export default class ElementList {
     return this.getFirstSibling(element)?.name === tag;
   }
 
+  static getAbsractRole(element: Element): string | undefined {
+    return [
+      'command',
+      'composite',
+      'input',
+      'landmark',
+      'range',
+      'roletype',
+      'section',
+      'sectionhead',
+      'select',
+      'structure',
+      'widget',
+      'window',
+    ].find((role) => role === element.attribs?.['role']);
+  }
+
   /**
    * Recursively determines whether an Element and all of its child elements
    * can safely have the `aria-hidden` attribute applied.

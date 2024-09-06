@@ -37,6 +37,7 @@ export class ButtonValidator implements Validator {
       errors.push(this.checkDeactivation(button, attributes));
       errors.push(this.checkSwitchRole(button, attributes));
       errors.push(this.checkTextContent(button, attributes));
+      errors.push(this.checkAbsractRole(button, attributes));
     });
 
     return errors.filter((error) => error instanceof ValidatorError);
@@ -99,6 +100,15 @@ export class ButtonValidator implements Validator {
       !('title' in attributes)
     ) {
       return new ValidatorError(messages.button.text, button);
+    }
+  }
+
+  private checkAbsractRole(
+    button: Element,
+    attributes: { [name: string]: string }
+  ) {
+    if ('role' in attributes && ElementList.getAbsractRole(button)) {
+      return new ValidatorError(messages.button.abstract, button);
     }
   }
 }

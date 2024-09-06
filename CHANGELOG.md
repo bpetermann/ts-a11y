@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+**HTML Validation:**
+
+- Added a check to ensure that `<button>` elements don't use abstract roles.
+
 ## [0.1.0]- 2024-09-03
 
 **TSX Validation:**

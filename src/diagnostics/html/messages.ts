@@ -62,6 +62,8 @@ export const messages = {
     tabindex:
       '[Zugang] Avoid using positive tabindex values, as they can make it difficult to maintain a meaningful focus order.',
     text: '[Zugang] A button without visible text or an image child must include aria-label, aria-labelledby, or visible text for accessibility.',
+    abstract:
+      "[Zugang] Don't use abstract roles in your sites and applications. They are for use by browsers.",
   },
   input: {
     label:

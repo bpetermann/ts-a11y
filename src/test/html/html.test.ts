@@ -435,8 +435,28 @@ suite('HTML Test Suite', () => {
     assert.strictEqual(diagnostics.length, 0);
   });
 
+  test('<button> with abstract role "command"', async () => {
+    const button = `<button role="command">command</button>`;
+    const content = html(head(meta + title) + body(button));
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)[0];
+
+    assert.strictEqual(message, messages.button.abstract);
+  });
+
+  test('<button> with abstract role "widget"', async () => {
+    const button = `<button role="widget">widget</button>`;
+    const content = html(head(meta + title) + body(button));
+
+    const document = await getDocument(content);
+    const { message } = generateDiagnostics(document)[0];
+
+    assert.strictEqual(message, messages.button.abstract);
+  });
+
   test('<input> field nested inside a <label> element', async () => {
-    const input = '<label>Username<input type="text"></label>';
+    const input = '<label>Username<input type="text">command</label>';
     const content = html(head(meta + title) + body(input));
 
     const document = await getDocument(content);
