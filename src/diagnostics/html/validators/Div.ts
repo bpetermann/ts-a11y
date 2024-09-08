@@ -1,8 +1,9 @@
 import { AnyNode, Element } from 'domhandler';
 import { DiagnosticSeverity } from 'vscode';
-import ElementList from '../elements';
-import { messages } from '../messages';
-import { Validator, ValidatorError } from './validator';
+import ElementList from '../ElementList';
+import { messages } from '../../utils/messages';
+import { Validator, ValidatorError } from './Validator';
+import { HTMLElement } from '../Element';
 
 export class DivValidator implements Validator {
   private maxSequenceLength = 4;
@@ -12,24 +13,20 @@ export class DivValidator implements Validator {
     return this.#nodeTags;
   }
   validate(nodes: AnyNode[]): ValidatorError[] {
-    const elementList = new ElementList(nodes);
-    const { elements: divs } = elementList;
+    const { elements: divs } = new ElementList(nodes);
 
     if (!divs.length) {
       return [];
     }
 
-    return this.runChecks(divs, elementList);
+    return this.runChecks(divs);
   }
 
-  private runChecks(
-    divs: Element[],
-    elementList: ElementList
-  ): ValidatorError[] {
+  private runChecks(divs: Element[]): ValidatorError[] {
     const errors: (ValidatorError | undefined)[] = [];
 
     divs.forEach((div) => {
-      const attributes = elementList.getElementAttributes(div);
+      const attributes = div.attribs;
 
       if (Object.keys(attributes).length) {
         errors.push(this.checkButtonRole(div, attributes));
@@ -38,7 +35,7 @@ export class DivValidator implements Validator {
       }
     });
 
-    errors.push(this.checkSequenceLength(elementList.getLongestSequence(divs)));
+    errors.push(this.checkSequenceLength(ElementList.getLongestSequence(divs)));
 
     return errors.filter((error) => error instanceof ValidatorError);
   }
@@ -73,7 +70,7 @@ export class DivValidator implements Validator {
     div: Element,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
-    if ('aria-hidden' in attributes && !ElementList.canHaveAriaHidden(div)) {
+    if ('aria-hidden' in attributes && !HTMLElement.canHaveAriaHidden(div)) {
       return new ValidatorError(messages.div['aria-hidden'], div);
     }
   }

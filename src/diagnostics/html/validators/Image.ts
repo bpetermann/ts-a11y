@@ -1,7 +1,7 @@
 import { Element } from 'domhandler';
-import ElementList from '../elements';
-import { messages } from '../messages';
-import { Validator, ValidatorError } from './validator';
+import ElementList from '../ElementList';
+import { messages } from '../../utils/messages';
+import { Validator, ValidatorError } from './Validator';
 
 export class ImageValidator implements Validator {
   readonly #nodeTags = ['img'] as const;
@@ -12,25 +12,21 @@ export class ImageValidator implements Validator {
   }
 
   validate(domNodes: Element[]): ValidatorError[] {
-    const { elements: images, getElementAttribute } = new ElementList(domNodes);
+    const { elements: images } = new ElementList(domNodes);
 
     if (!images.length) {
       return [];
     }
 
-    return this.runChecks(images, getElementAttribute);
+    return this.runChecks(images);
   }
 
-  private runChecks(
-    images: Element[],
-    getElementAttribute: (element: Element, attr: string) => string | undefined
-  ): ValidatorError[] {
+  private runChecks(images: Element[]): ValidatorError[] {
     const errors: ValidatorError[] = [];
     const altTexts: Record<string, number> = {};
 
     images.forEach((img) => {
-      const altText = getElementAttribute(img, 'alt');
-
+      const altText = img.attribs?.['alt'];
       if (altText === undefined) {
         errors.push(new ValidatorError(messages.img.alt, img));
       } else {
@@ -38,24 +34,19 @@ export class ImageValidator implements Validator {
       }
     });
 
-    errors.push(
-      ...this.checkAltUniqueness(images, altTexts, getElementAttribute)
-    );
+    errors.push(...this.checkAltUniqueness(images, altTexts));
 
     return errors;
   }
 
   private checkAltUniqueness(
     images: Element[],
-    altTexts: Record<string, number>,
-    getElementAttribute: (element: Element, attr: string) => string | undefined
+    altTexts: Record<string, number>
   ): ValidatorError[] {
     return Object.keys(altTexts)
       .filter((alt) => altTexts[alt] > this.maxSameAltText)
       .map((alt) => {
-        const image = images.find(
-          (img) => getElementAttribute(img, 'alt') === alt
-        );
+        const image = images.find((img) => img.attribs?.['alt'] === alt);
         return image
           ? new ValidatorError(messages.img.repeated, image)
           : undefined;

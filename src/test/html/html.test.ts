@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { HTMLDiagnosticGenerator } from '../../diagnostics/html/generator';
-import { messages } from '../../diagnostics/html/messages';
+import { HTMLDiagnosticGenerator } from '../../diagnostics/html/DiagnosticGenerator';
+import { messages } from '../../diagnostics/utils/messages';
 import {
   body,
   div,
@@ -167,7 +167,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, `${messages.link.avoid}"${linktext}"`);
+    assert.strictEqual(message, `${messages.link.generic}"${linktext}"`);
   });
 
   test('<a> tag with a good description', async () => {
@@ -360,7 +360,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, messages.button.switchRole);
+    assert.strictEqual(message, messages.button.switch);
   });
 
   test('<button> with disabled role', async () => {

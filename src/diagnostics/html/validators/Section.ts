@@ -1,7 +1,7 @@
 import { Element } from 'domhandler';
-import { messages } from '../messages';
-import { Validator, ValidatorError } from './validator';
-import ElementList from '../elements';
+import { messages } from '../../utils/messages';
+import { Validator, ValidatorError } from './Validator';
+import ElementList from '../ElementList';
 
 export class SectionValidator implements Validator {
   readonly #nodeTags = ['section'] as const;
@@ -18,7 +18,7 @@ export class SectionValidator implements Validator {
 
     if (sections.length > 1) {
       sections.forEach((nav) => {
-        const navAttributes = el.getElementAttributes(nav);
+        const navAttributes = nav.attribs;
         const hasAriaAttribute =
           navAttributes &&
           ('aria-labelledby' in navAttributes || 'aria-label' in navAttributes);

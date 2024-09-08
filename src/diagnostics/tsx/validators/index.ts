@@ -1,4 +1,4 @@
-export { ButtonValidator } from './button';
-export { DivValidator } from './div';
-export { ImageValidator } from './image';
-export { LinkValidator } from './link';
+export { ButtonValidator } from './Button';
+export { DivValidator } from './Div';
+export { ImageValidator } from './Image';
+export { LinkValidator } from './Link';

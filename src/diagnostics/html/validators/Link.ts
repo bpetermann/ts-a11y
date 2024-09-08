@@ -1,8 +1,9 @@
-import { Element } from 'domhandler';
-import { messages } from '../messages';
-import { Validator, ValidatorError } from './validator';
+import { Element, Text } from 'domhandler';
+import { messages } from '../../utils/messages';
+import { Validator, ValidatorError } from './Validator';
 import { DiagnosticSeverity } from 'vscode';
-import ElementList from '../elements';
+import ElementList from '../ElementList';
+import { HTMLElement } from '../Element';
 
 export class LinkValidator implements Validator {
   #nodeTags: string[] = ['a'];
@@ -23,25 +24,22 @@ export class LinkValidator implements Validator {
   }
 
   validate(domNodes: Element[]): ValidatorError[] {
-    const elementList = new ElementList(domNodes);
-    const { elements: links } = elementList;
+    const { elements: links } = new ElementList(domNodes);
 
     if (!links.length) {
       return [];
     }
 
-    return this.runChecks(links, elementList);
+    return this.runChecks(links);
   }
 
-  private runChecks(
-    links: Element[],
-    elementList: ElementList
-  ): ValidatorError[] {
+  private runChecks(links: Element[]): ValidatorError[] {
     const errors: (ValidatorError | undefined)[] = [];
 
     links.forEach((link) => {
-      const attributes = elementList.getElementAttributes(link);
-      const textContent = elementList.getElementData(link);
+      const attributes = link.attribs;
+      const textContent =
+        link.children[0] instanceof Text ? link.children[0].data : undefined;
 
       errors.push(this.checkgenericText(link, textContent));
       errors.push(this.checkMailToLinks(link, attributes, textContent));
@@ -51,7 +49,7 @@ export class LinkValidator implements Validator {
 
     errors.push(this.getAriaCurrentError(links));
     errors.push(
-      this.checkSequenceLength(elementList.getLongestSequence(links, 'sibling'))
+      this.checkSequenceLength(ElementList.getLongestSequence(links, 'sibling'))
     );
 
     return errors.filter((error) => error instanceof ValidatorError);
@@ -62,7 +60,10 @@ export class LinkValidator implements Validator {
     textContent: string | undefined
   ): ValidatorError | undefined {
     if (this.isGeneric(textContent)) {
-      return new ValidatorError(`${messages.link.avoid}"${textContent}"`, link);
+      return new ValidatorError(
+        `${messages.link.generic}"${textContent}"`,
+        link
+      );
     }
   }
 
@@ -108,7 +109,7 @@ export class LinkValidator implements Validator {
     link: Element,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
-    if ('aria-hidden' in attributes && !ElementList.canHaveAriaHidden(link)) {
+    if ('aria-hidden' in attributes && !HTMLElement.canHaveAriaHidden(link)) {
       return new ValidatorError(messages.link['aria-hidden'], link);
     }
   }

@@ -1,5 +1,5 @@
-import { Diagnostic } from '../diagnostic';
-import { TSXElement } from '../element';
+import { Diagnostic } from '../Diagnostic';
+import { TSXElement } from '../Element';
 
 export interface Validator {
   readonly tags: readonly string[];

@@ -1,7 +1,7 @@
 import * as parser from '@babel/parser';
 import traverse from '@babel/traverse';
 import assert from 'assert';
-import { TSXElement } from '../../diagnostics/tsx/element';
+import { TSXElement } from '../../diagnostics/tsx/Element';
 import { div, fraction } from '../helper';
 
 const parseText = (text: string) => {

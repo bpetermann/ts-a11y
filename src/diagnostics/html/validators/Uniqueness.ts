@@ -1,7 +1,7 @@
 import { Element } from 'domhandler';
-import { messages } from '../messages';
-import { Validator, ValidatorError } from './validator';
-import ElementList from '../elements';
+import { messages } from '../../utils/messages';
+import { Validator, ValidatorError } from './Validator';
+import ElementList from '../ElementList';
 
 export class UniquenessValidator implements Validator {
   readonly #nodeTags = ['html', 'h1', 'main', 'title'] as const;

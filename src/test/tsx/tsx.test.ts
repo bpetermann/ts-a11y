@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { messages } from '../../diagnostics/tsx/messages';
-import { TSXDiagnosticGenerator } from '../../diagnostics/tsx/generator';
+import { messages } from '../../diagnostics/utils/messages';
+import { TSXDiagnosticGenerator } from '../../diagnostics/tsx/DiagnosticGenerator';
 import { div, fraction } from '../helper';
 
 /**

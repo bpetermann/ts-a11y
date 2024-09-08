@@ -1,5 +1,5 @@
 import { DomUtils, parseDocument } from 'htmlparser2';
-import NodeOrganizer from '../diagnostics/html/organizer';
+import NodeOrganizer from '../diagnostics/html/NodeOrganizer';
 import * as vscode from 'vscode';
 
 /** Logs all diagnostics messages */
