@@ -2,6 +2,7 @@ import { Element } from 'domhandler';
 import { Validator, ValidatorError } from './validator';
 import { messages } from '../messages';
 import ElementList from '../elements';
+import { getPrevSibling } from '../element';
 
 export class InputValidator implements Validator {
   readonly #nodeTags = ['input'] as const;
@@ -25,8 +26,8 @@ export class InputValidator implements Validator {
     const errors: (ValidatorError | undefined)[] = [];
 
     inputs.forEach((input) => {
-      const attributes = el.getElementAttributes(input);
-      const sibling = el.getPrevSibling(input);
+      const attributes = input.attribs;
+      const sibling = getPrevSibling(input);
       errors.push(this.checkLabel(input, attributes, sibling));
     });
 
