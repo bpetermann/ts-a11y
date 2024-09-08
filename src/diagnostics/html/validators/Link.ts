@@ -1,9 +1,9 @@
 import { Element, Text } from 'domhandler';
-import { messages } from '../messages';
-import { Validator, ValidatorError } from './validator';
+import { messages } from '../../utils/messages';
+import { Validator, ValidatorError } from './Validator';
 import { DiagnosticSeverity } from 'vscode';
-import ElementList from '../elements';
-import { canHaveAriaHidden } from '../element';
+import ElementList from '../ElementList';
+import { HTMLElement } from '../Element';
 
 export class LinkValidator implements Validator {
   #nodeTags: string[] = ['a'];
@@ -60,7 +60,10 @@ export class LinkValidator implements Validator {
     textContent: string | undefined
   ): ValidatorError | undefined {
     if (this.isGeneric(textContent)) {
-      return new ValidatorError(`${messages.link.avoid}"${textContent}"`, link);
+      return new ValidatorError(
+        `${messages.link.generic}"${textContent}"`,
+        link
+      );
     }
   }
 
@@ -106,7 +109,7 @@ export class LinkValidator implements Validator {
     link: Element,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
-    if ('aria-hidden' in attributes && !canHaveAriaHidden(link)) {
+    if ('aria-hidden' in attributes && !HTMLElement.canHaveAriaHidden(link)) {
       return new ValidatorError(messages.link['aria-hidden'], link);
     }
   }

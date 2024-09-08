@@ -1,9 +1,9 @@
 import { AnyNode, Element, Text } from 'domhandler';
-import { messages } from '../messages';
+import { messages } from '../../utils/messages';
 import { DiagnosticSeverity } from 'vscode';
-import { Validator, ValidatorError } from './validator';
-import ElementList from '../elements';
-import { getAbsractRole } from '../element';
+import { Validator, ValidatorError } from './Validator';
+import ElementList from '../ElementList';
+import { HTMLElement } from '../Element';
 
 export class ButtonValidator implements Validator {
   readonly #nodeTags = ['button'] as const;
@@ -71,7 +71,7 @@ export class ButtonValidator implements Validator {
   ): ValidatorError | undefined {
     if (attributes?.['role'] === 'switch' && !('aria-checked' in attributes)) {
       return new ValidatorError(
-        messages.button.switchRole,
+        messages.button.switch,
         button,
         DiagnosticSeverity.Hint
       );
@@ -102,7 +102,7 @@ export class ButtonValidator implements Validator {
     button: Element,
     attributes: { [name: string]: string }
   ) {
-    if ('role' in attributes && getAbsractRole(button)) {
+    if ('role' in attributes && HTMLElement.getAbsractRole(button)) {
       return new ValidatorError(messages.button.abstract, button);
     }
   }

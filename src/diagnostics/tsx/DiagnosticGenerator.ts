@@ -8,8 +8,8 @@ import {
   DivValidator,
   LinkValidator,
 } from './validators';
-import { Validator } from './validators/validator';
-import { TSXElement } from './element';
+import { Validator } from './validators/Validator';
+import { TSXElement } from './Element';
 
 export class TSXDiagnosticGenerator {
   private diagnostics: vscode.Diagnostic[] = [];

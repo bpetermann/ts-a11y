@@ -1,7 +1,7 @@
 import { Element } from 'domhandler';
-import { messages } from '../messages';
-import { Validator, ValidatorError } from './validator';
-import ElementList from '../elements';
+import { messages } from '../../utils/messages';
+import { Validator, ValidatorError } from './Validator';
+import ElementList from '../ElementList';
 
 export class NavigationValidator implements Validator {
   readonly #nodeTags = ['nav'] as const;

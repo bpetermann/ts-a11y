@@ -1,9 +1,9 @@
 import { AnyNode, Element } from 'domhandler';
 import { DiagnosticSeverity } from 'vscode';
-import ElementList from '../elements';
-import { messages } from '../messages';
-import { Validator, ValidatorError } from './validator';
-import { canHaveAriaHidden } from '../element';
+import ElementList from '../ElementList';
+import { messages } from '../../utils/messages';
+import { Validator, ValidatorError } from './Validator';
+import { HTMLElement } from '../Element';
 
 export class DivValidator implements Validator {
   private maxSequenceLength = 4;
@@ -70,7 +70,7 @@ export class DivValidator implements Validator {
     div: Element,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
-    if ('aria-hidden' in attributes && !canHaveAriaHidden(div)) {
+    if ('aria-hidden' in attributes && !HTMLElement.canHaveAriaHidden(div)) {
       return new ValidatorError(messages.div['aria-hidden'], div);
     }
   }

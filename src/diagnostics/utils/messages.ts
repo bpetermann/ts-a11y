@@ -33,12 +33,12 @@ export const messages = {
       '[Zugang] When using more than one <nav> element on a page, label them with aria-labelledby or aria-label to differentiate them for assistive technology users.',
   },
   link: {
-    avoid:
-      '[Zugang] Avoid using generic link text, as it can be unclear to users what the link leads to. Link text: ',
     onclick: '[Zugang] Avoid assigning click events directly to links.',
     tabindex:
       '[Zugang] Avoid using negative tabindex values on elements like links or buttons that require direct keyboard navigation.',
     mail: '[Zugang] Include the email address in the link text to help users who may find switching between applications difficult.',
+    generic:
+      '[Zugang] Avoid using generic link text, as it can be unclear to users what the link leads to. Link text: ',
     current:
       '[Zugang] If a link points to the current page, mark it with aria-current="page" to enhance navigation for users, particularly those using assistive technologies.',
     list: '[Zugang] Wrap long lists of links in a <ul> element to provide semantic information that aids screen reader users in navigating complex menus.',
@@ -53,9 +53,11 @@ export const messages = {
     soup: '[Zugang] Nesting too many <div>s can create complex, hard-to-navigate structures for screen readers and other assistive technologies. This can make it difficult for users with disabilities to understand the content, reducing accessibility and usability. Keep the HTML structure simple and meaningful by using proper semantic elements instead of excessive <div> nesting.',
     'aria-hidden':
       'A focusable element, or an element containing focusable children, should not have the aria-hidden attribute. Doing so can lead to accessibility issues, as it hides content from assistive technologies while still being interactive.',
+    abstract:
+      "[Zugang] Don't use abstract roles in your sites and applications. They are for use by browsers. Abstract role found: ",
   },
   button: {
-    switchRole:
+    switch:
       '[Zugang] A button that toggles a setting must indicate its active state using the "aria-checked" attribute, which reflects the widget’s current state.',
     disabled:
       '[Zugang] Avoid disabling buttons, as they do not provide useful feedback. Users should always be able to interact with a button.',
@@ -64,6 +66,8 @@ export const messages = {
     text: '[Zugang] A button without visible text or an image child must include aria-label, aria-labelledby, or visible text for accessibility.',
     abstract:
       "[Zugang] Don't use abstract roles in your sites and applications. They are for use by browsers.",
+    'aria-label':
+      '[Zugang] Button elements should have an aria-label for accessibility.',
   },
   input: {
     label:
@@ -77,6 +81,8 @@ export const messages = {
     alt: '[Zugang] Use the alt attribute to provide a text description for images. For decorative images, use an empty alt attribute to indicate they should be ignored by assistive technologies.',
     repeated:
       '[Zugang] The same alt attribute is being used on multiple images. Screen readers rely on unique and descriptive alt text to convey the content of each image. Please ensure that each image has a distinct alt attribute.',
+    generic:
+      '[Zugang] Provide meaningful alternative text that accurately describes the image content, rather than simple details like file types (e.g., .png, .jpg) or the fact that it is an image. For decorative images, use an empty alt attribute to indicate they should be ignored by assistive technologies. Text: ',
   },
   section: {
     label:

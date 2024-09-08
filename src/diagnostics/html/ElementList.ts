@@ -1,5 +1,5 @@
-import { AnyNode, Element, Text } from 'domhandler';
-import { getFirstChild, getFirstSibling } from './element';
+import { AnyNode, Element } from 'domhandler';
+import { HTMLElement } from './Element';
 
 export default class ElementList {
   public elements: Element[];
@@ -61,7 +61,10 @@ export default class ElementList {
     relationship: 'child' | 'sibling' = 'child'
   ): Element[] {
     const relation = relationship === 'child' ? 'Child' : 'Sibling';
-    const getRelationFn = { Child: getFirstChild, Sibling: getFirstSibling };
+    const getRelationFn = {
+      Child: HTMLElement.getFirstChild,
+      Sibling: HTMLElement.getFirstSibling,
+    };
     let longestSequence: Element[] = [];
 
     for (let index = 0; index < elements.length; index++) {

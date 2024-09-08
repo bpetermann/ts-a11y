@@ -1,9 +1,8 @@
-import { messages } from '../messages';
-import { Diagnostic } from '../diagnostic';
-import { Validator } from './validator';
-import { TSXElement } from '../element';
+import { messages } from '../../utils/messages';
+import { Diagnostic } from '../Diagnostic';
+import { Validator } from './Validator';
+import { TSXElement } from '../Element';
 import { DiagnosticSeverity } from 'vscode';
-import { JSXElement } from '@babel/types';
 
 export class DivValidator implements Validator {
   #tags: string[] = ['div'] as const;

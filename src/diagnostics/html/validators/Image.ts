@@ -1,7 +1,7 @@
 import { Element } from 'domhandler';
-import ElementList from '../elements';
-import { messages } from '../messages';
-import { Validator, ValidatorError } from './validator';
+import ElementList from '../ElementList';
+import { messages } from '../../utils/messages';
+import { Validator, ValidatorError } from './Validator';
 
 export class ImageValidator implements Validator {
   readonly #nodeTags = ['img'] as const;
