@@ -16,6 +16,7 @@ import {
   UniquenessValidator,
   Validator,
   SectionValidator,
+  AriaValidator,
 } from './validators';
 import { Diagnostic } from './Diagnostic';
 
@@ -38,6 +39,7 @@ export class HTMLDiagnosticGenerator {
       new FieldsetValidator(),
       new ImageValidator(),
       new SectionValidator(),
+      new AriaValidator(),
     ]
   ) {}
 

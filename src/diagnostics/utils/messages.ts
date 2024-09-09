@@ -88,4 +88,8 @@ export const messages = {
     label:
       '[Zugang] When using more than one <section> element on a page, label them with aria-labelledby or aria-label to differentiate them for assistive technology users.',
   },
+  aria: {
+    hidden:
+      'A focusable element, or an element containing focusable children, should not have the aria-hidden attribute. Doing so can lead to accessibility issues, as it hides content from assistive technologies while still being interactive.',
+  },
 };

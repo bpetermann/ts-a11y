@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
 **TSX Validation:**
 
 - Added a check to ensure that `<button>` elements don't use abstract roles.
@@ -25,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **HTML Validation:**
 
-- Added a check to ensure that `aria-hidden` can be applied safely.
+- Validation of `aria-hidden` attribute.
 
 ## [0.0.6]- 2024-08-31
 

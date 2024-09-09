@@ -199,7 +199,7 @@ suite('HTML Test Suite', () => {
     const document = await getDocument(content);
     const { message } = generateDiagnostics(document)?.[0];
 
-    assert.strictEqual(message, messages.link['aria-hidden']);
+    assert.strictEqual(message, messages.aria.hidden);
   });
 
   test('<a> tag with "mailto" in the "href"', async () => {
@@ -331,7 +331,7 @@ suite('HTML Test Suite', () => {
 
   test('<div> with aria hidden and <button> child', async () => {
     const divs = div(
-      div(div(div(`<button>click me</button>`), 'aria-hidden="true"'))
+      div(div(`<button>click me</button>`), 'aria-hidden="true"')
     );
     const content = html(head(meta + title) + body(divs));
 
@@ -343,7 +343,7 @@ suite('HTML Test Suite', () => {
 
   test('<div> with aria hidden and <a> child', async () => {
     const link = `<a href="/contact">contact</a>`;
-    const divs = div(div(div(div(link), 'aria-hidden="true"')));
+    const divs = div(div(div(link), 'aria-hidden="true"'));
     const content = html(head(meta + title) + body(divs));
 
     const document = await getDocument(content);
