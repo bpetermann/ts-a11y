@@ -3,7 +3,6 @@ import { DiagnosticSeverity } from 'vscode';
 import ElementList from '../ElementList';
 import { messages } from '../../utils/messages';
 import { Validator, ValidatorError } from './Validator';
-import { HTMLElement } from '../Element';
 
 export class DivValidator implements Validator {
   private maxSequenceLength = 4;
@@ -31,7 +30,6 @@ export class DivValidator implements Validator {
       if (Object.keys(attributes).length) {
         errors.push(this.checkButtonRole(div, attributes));
         errors.push(this.checkWrongAttibutes(div, attributes));
-        errors.push(this.checkAriaHidden(div, attributes));
       }
     });
 
@@ -63,15 +61,6 @@ export class DivValidator implements Validator {
         div,
         DiagnosticSeverity.Hint
       );
-    }
-  }
-
-  private checkAriaHidden(
-    div: Element,
-    attributes: { [name: string]: string }
-  ): ValidatorError | undefined {
-    if ('aria-hidden' in attributes && !HTMLElement.canHaveAriaHidden(div)) {
-      return new ValidatorError(messages.div['aria-hidden'], div);
     }
   }
 

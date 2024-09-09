@@ -3,7 +3,6 @@ import { messages } from '../../utils/messages';
 import { Validator, ValidatorError } from './Validator';
 import { DiagnosticSeverity } from 'vscode';
 import ElementList from '../ElementList';
-import { HTMLElement } from '../Element';
 
 export class LinkValidator implements Validator {
   #nodeTags: string[] = ['a'];
@@ -44,7 +43,6 @@ export class LinkValidator implements Validator {
       errors.push(this.checkgenericText(link, textContent));
       errors.push(this.checkMailToLinks(link, attributes, textContent));
       errors.push(this.checkWrongAttributes(link, attributes));
-      errors.push(this.checkAriaHidden(link, attributes));
     });
 
     errors.push(this.getAriaCurrentError(links));
@@ -102,15 +100,6 @@ export class LinkValidator implements Validator {
         links[0],
         DiagnosticSeverity.Hint
       );
-    }
-  }
-
-  private checkAriaHidden(
-    link: Element,
-    attributes: { [name: string]: string }
-  ): ValidatorError | undefined {
-    if ('aria-hidden' in attributes && !HTMLElement.canHaveAriaHidden(link)) {
-      return new ValidatorError(messages.link['aria-hidden'], link);
     }
   }
 

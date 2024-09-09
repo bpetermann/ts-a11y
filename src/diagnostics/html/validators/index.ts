@@ -1,3 +1,4 @@
+export { AriaValidator } from './Aria';
 export { AttributesValidator } from './Attributes';
 export { ButtonValidator } from './Button';
 export { DivValidator } from './Div';
