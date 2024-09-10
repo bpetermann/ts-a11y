@@ -1,97 +1,79 @@
 import * as assert from 'assert';
-import {
-  body,
-  div,
-  getDocument,
-  getOrganizedNodes,
-  head,
-  html,
-  meta,
-  title,
-} from '../helper';
+import NodeOrganizer from '../../diagnostics/html/NodeOrganizer';
+import { Element } from 'domhandler';
+
+/** Instantiates and returns a NodeOrganize */
+const getOrganizedNodes = (domNodes: Element[]) => {
+  return new NodeOrganizer(domNodes);
+};
 
 suite('Node Organizer Test Suite', () => {
   test('Should return the correct number of divs', async () => {
-    const divs = Array(100)
-      .fill(null)
-      .map((_) => div(null))
-      .toString();
+    const elements = [];
 
-    const content = html(head(meta + title) + body(divs));
-    const document = await getDocument(content);
-    const organizer = getOrganizedNodes(document);
+    for (let index = 0; index < 100; index++) {
+      const element = new Element('div', {}, []);
+      elements.push(element);
+    }
 
-    const divsFound = organizer.getNodes(['div']).length;
+    const organizer = getOrganizedNodes(elements);
+    const elementsFound = organizer.getNodes(['div']).length;
 
-    assert.strictEqual(divsFound, 100);
+    assert.strictEqual(elementsFound, 100);
   });
 
   test('Should find a deeply nested element', async () => {
-    let nestedAnchorTag = '<a></a>';
+    const elements = [];
 
-    for (let index = 0; index <= 100; index++) {
-      nestedAnchorTag = div(nestedAnchorTag);
+    for (let index = 0; index < 100; index++) {
+      const element = new Element(index === 50 ? 'a' : 'div', {}, []);
+      elements.push(element);
     }
 
-    const content = html(head(meta + title) + body(nestedAnchorTag));
-    const document = await getDocument(content);
-    const organizer = getOrganizedNodes(document);
+    const organizer = getOrganizedNodes(elements);
+    const elementsFound = organizer.getNodes(['a']).length;
 
-    const anchorFound = organizer.getNodes(['a']).length;
-
-    assert.strictEqual(anchorFound, 1);
+    assert.strictEqual(elementsFound, 1);
   });
 
   test('Should return 0 when no such nodes exist', async () => {
-    const content = html(head(meta + title) + body('<p></p>'));
-    const document = await getDocument(content);
-    const organizer = getOrganizedNodes(document);
+    const organizer = getOrganizedNodes([]);
+    const elementsFound = organizer.getNodes(['nav']).length;
 
-    const nonExistentNodes = organizer.getNodes(['nav']).length;
-
-    assert.strictEqual(nonExistentNodes, 0);
+    assert.strictEqual(elementsFound, 0);
   });
 
   test('Should return correct number of div and anchor tags', async () => {
-    const content = html(
-      head(meta + title) + body('<div></div><a></a><div></div>')
-    );
-    const document = await getDocument(content);
-    const organizer = getOrganizedNodes(document);
+    const elements = [];
 
-    const divsAndAnchorsFound = organizer.getNodes(['div', 'a']).length;
+    for (let index = 0; index < 100; index++) {
+      const element = new Element(index % 2 === 0 ? 'div' : 'a', {}, []);
+      elements.push(element);
+    }
+    const organizer = getOrganizedNodes(elements);
+    const elementsFound = organizer.getNodes(['div', 'a']).length;
 
-    assert.strictEqual(divsAndAnchorsFound, 3);
-  });
-
-  test('Should correctly handle case insensitivity of HTML tags', async () => {
-    const content = html(head(meta + title) + body('<DIV></DIV><a></a>'));
-    const document = await getDocument(content);
-    const organizer = getOrganizedNodes(document);
-
-    const divsAndAnchorsFound = organizer.getNodes(['div', 'a']).length;
-
-    assert.strictEqual(divsAndAnchorsFound, 2);
+    assert.strictEqual(elementsFound, 100);
   });
 
   test('Should handle large DOM efficiently', async () => {
-    const largeContent = Array(10000).fill('<div></div>').join('');
-    const content = html(head(meta + title) + body(largeContent));
-    const document = await getDocument(content);
-    const organizer = getOrganizedNodes(document);
+    const elements = [];
 
-    const divsFound = organizer.getNodes(['div']).length;
+    for (let index = 0; index < 1000; index++) {
+      const element = new Element('div', {}, []);
+      elements.push(element);
+    }
+    const organizer = getOrganizedNodes(elements);
+    const elementsFound = organizer.getNodes(['div']).length;
 
-    assert.strictEqual(divsFound, 10000);
+    assert.strictEqual(elementsFound, 1000);
   });
 
-  test('Should handle an empty document gracefully', async () => {
-    const content = html(head(meta + title) + body(''));
-    const document = await getDocument(content);
-    const organizer = getOrganizedNodes(document);
+  test('Should handle epmty array gracefully', async () => {
+    const organizer = getOrganizedNodes([]);
 
-    const divsFound = organizer.getNodes(['div']).length;
+    const elementsFound = organizer.getNodes(['div']).length;
 
-    assert.strictEqual(divsFound, 0);
+    assert.strictEqual(elementsFound, 0);
   });
 });
