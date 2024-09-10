@@ -13,6 +13,7 @@ import {
   FieldsetValidator,
   ImageValidator,
   SectionValidator,
+  AriaValidator,
 } from '../../diagnostics/html/validators';
 import { Element, Text } from 'domhandler';
 
@@ -135,14 +136,6 @@ suite('Validator Test Suite', () => {
     assert.strictEqual(message, messages.link.onclick);
   });
 
-  test('<a> tag with aria-hidden="true"', async () => {
-    const a = new Element('a', { href: '/blog', 'aria-hidden': 'true' });
-
-    const { message } = new LinkValidator().validate([a])?.[0];
-
-    assert.strictEqual(message, messages.link['aria-hidden']);
-  });
-
   test('<a> tag with "mailto" in the "href"', async () => {
     const linktext = 'If you want to learn more about our products, contact us';
     const a = new Element('a', { href: 'mailto:support@office.com' }, [
@@ -160,7 +153,6 @@ suite('Validator Test Suite', () => {
       'a',
       {
         onclick: 'click()',
-        'aria-hidden': 'true',
         href: 'mailto:support@office.com',
       },
       [new Text(linktext)]
@@ -168,7 +160,7 @@ suite('Validator Test Suite', () => {
 
     const errors = new LinkValidator().validate([a]);
 
-    assert.strictEqual(errors.length, 4);
+    assert.strictEqual(errors.length, 3);
   });
 
   test('<a> tag missing the aria-current attribute', async () => {
@@ -271,41 +263,6 @@ suite('Validator Test Suite', () => {
   test('A valid <div> element', async () => {
     const errors = new DivValidator().validate([new Element('div', {})]);
     assert.strictEqual(errors.length, 0);
-  });
-
-  test('<div> with aria hidden and focusable children', async () => {
-    const div = new Element('div', { 'aria-hidden': 'true' }, [
-      new Element('a', { href: '/blog' }),
-    ]);
-
-    const { message } = new DivValidator().validate([div])?.[0];
-
-    assert.strictEqual(message, messages.div['aria-hidden']);
-  });
-
-  test('<div> with aria hidden and <button> child', async () => {
-    const div = new Element('div', { 'aria-hidden': 'true' }, [
-      new Element('button', {}, [new Text('click me')]),
-    ]);
-
-    const { message } = new DivValidator().validate([div])?.[0];
-
-    assert.strictEqual(message, messages.div['aria-hidden']);
-  });
-
-  test('<div> with aria hidden and <button> child', async () => {
-    const link = new Element('a', { href: '/contact' });
-    let div = new Element('div', {}, [link]);
-
-    for (let index = 0; index < 2; index++) {
-      div = new Element('div', {}, [div]);
-    }
-
-    const { message } = new DivValidator().validate([
-      new Element('div', { 'aria-hidden': 'true' }, [div]),
-    ])?.[0];
-
-    assert.strictEqual(message, messages.div['aria-hidden']);
   });
 
   test('<button> with role="switch" but missing aria-checked', async () => {
@@ -521,5 +478,48 @@ suite('Validator Test Suite', () => {
     const errors = new SectionValidator().validate([section1, section2]);
 
     assert.strictEqual(errors.length, 0);
+  });
+
+  test('<a> tag with aria-hidden="true"', async () => {
+    const a = new Element('a', { href: '/blog', 'aria-hidden': 'true' });
+
+    const { message } = new AriaValidator().validate([a])?.[0];
+
+    assert.strictEqual(message, messages.aria.hidden);
+  });
+
+  test('<div> with aria hidden and focusable children', async () => {
+    const div = new Element('div', { 'aria-hidden': 'true' }, [
+      new Element('a', { href: '/blog' }),
+    ]);
+
+    const { message } = new AriaValidator().validate([div])?.[0];
+
+    assert.strictEqual(message, messages.aria.hidden);
+  });
+
+  test('<div> with aria hidden and <button> child', async () => {
+    const div = new Element('div', { 'aria-hidden': 'true' }, [
+      new Element('button', {}, [new Text('click me')]),
+    ]);
+
+    const { message } = new AriaValidator().validate([div])?.[0];
+
+    assert.strictEqual(message, messages.aria.hidden);
+  });
+
+  test('<div> with aria hidden and <button> child', async () => {
+    const link = new Element('a', { href: '/contact' });
+    let div = new Element('div', {}, [link]);
+
+    for (let index = 0; index < 2; index++) {
+      div = new Element('div', {}, [div]);
+    }
+
+    const { message } = new AriaValidator().validate([
+      new Element('div', { 'aria-hidden': 'true' }, [div]),
+    ])?.[0];
+
+    assert.strictEqual(message, messages.aria.hidden);
   });
 });
