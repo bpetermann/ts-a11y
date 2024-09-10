@@ -1,21 +1,21 @@
 import * as assert from 'assert';
-import { messages } from '../../diagnostics/utils/messages';
+import { Element, Text } from 'domhandler';
 import {
+  AriaValidator,
   AttributesValidator,
+  ButtonValidator,
+  DivValidator,
+  FieldsetValidator,
   HeadingValidator,
+  ImageValidator,
+  InputValidator,
   LinkValidator,
   NavigationValidator,
   RequiredValidator,
-  UniquenessValidator,
-  DivValidator,
-  ButtonValidator,
-  InputValidator,
-  FieldsetValidator,
-  ImageValidator,
   SectionValidator,
-  AriaValidator,
+  UniquenessValidator,
 } from '../../diagnostics/html/validators';
-import { Element, Text } from 'domhandler';
+import { messages } from '../../diagnostics/utils/messages';
 
 suite('Validator Test Suite', () => {
   test('Missing lang attribute in <html> tag', async () => {
