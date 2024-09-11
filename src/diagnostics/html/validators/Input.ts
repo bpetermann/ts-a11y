@@ -1,8 +1,8 @@
 import { Element } from 'domhandler';
-import { Validator, ValidatorError } from './Validator';
 import { messages } from '../../utils/messages';
-import ElementList from '../ElementList';
 import { HTMLElement } from '../Element';
+import ElementList from '../ElementList';
+import { Validator, ValidatorError } from './Validator';
 
 export class InputValidator implements Validator {
   readonly #nodeTags = ['input'] as const;

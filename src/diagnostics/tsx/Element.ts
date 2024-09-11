@@ -5,9 +5,8 @@ export class TSXElement {
 
   /**
    * Retrieves the source location of the JSX element.
-   * @returns {jsx.SourceLocation | null} The location information.
    */
-  get loc() {
+  get loc(): jsx.SourceLocation | null | undefined {
     return this.node.loc;
   }
 
@@ -124,10 +123,9 @@ export class TSXElement {
 
   /**
    * Checks if the given element has an abstract role attached.
-   * @param {Element} element - The element to check.
-   * @returns {string | undefined} The role of the element, if it is abstract.
+   * @returns {string | undefined} The role of the element, if it is abstract, or undefined.
    */
-  getAbstractRole() {
+  getAbstractRole(): string | undefined {
     return [
       'command',
       'composite',
@@ -194,10 +192,8 @@ export class TSXElement {
   }
 
   /**
-   * Recursively determines whether an Element and all of its child elements
+   * Determines whether an Element and all of its child elements
    * can safely have the `aria-hidden` attribute applied.
-   *
-   * This method checks if the element itself is focusable or contains any focusable child elements.
    *
    * @param {jsx.JSXElement} element - The JSX element to check.
    * @returns {boolean} `true` if the element and all its child elements can have `aria-hidden`; otherwise, `false`.

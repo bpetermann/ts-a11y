@@ -1,7 +1,7 @@
 import { Element } from 'domhandler';
-import { Validator, ValidatorError } from './Validator';
-import { HTMLElement } from '../Element';
 import { messages } from '../../utils/messages';
+import { HTMLElement } from '../Element';
+import { Validator, ValidatorError } from './Validator';
 
 export class AriaValidator implements Validator {
   readonly #nodeTags = [

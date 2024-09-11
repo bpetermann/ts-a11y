@@ -1,7 +1,7 @@
 import { Element } from 'domhandler';
 import { messages } from '../../utils/messages';
-import { Validator, ValidatorError } from './Validator';
 import ElementList from '../ElementList';
+import { Validator, ValidatorError } from './Validator';
 
 export class SectionValidator implements Validator {
   readonly #nodeTags = ['section'] as const;

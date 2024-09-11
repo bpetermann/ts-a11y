@@ -9,10 +9,10 @@ export default class ElementList {
   }
 
   /**
-   * Filter an array of nodes by tag
-   * @param {AnyNode[]} nodes - Array of nodes to filter
-   * @param {string} tag - The tag name to filter by
-   * @returns {Element[]} Array of elements that match the tag
+   * Filter an array of nodes by tag.
+   * @param {AnyNode[]} nodes - Array of nodes to filter.
+   * @param {string} tag - The tag name to filter by.
+   * @returns {Element[]} Array of elements that match the tag.
    */
   findElementsByTag(nodes: AnyNode[], tag?: string): Element[] {
     return nodes.filter(
@@ -21,9 +21,9 @@ export default class ElementList {
   }
 
   /**
-   * Check if all elements have at least one of the specified attributes
-   * @param {string[]} attributes - Array of attribute names to check for
-   * @returns {boolean} True if all elements have at least one of the specified attributes, false otherwise
+   * Check if all elements have at least one of the specified attributes.
+   * @param {string[]} attributes - Array of attribute names to check for.
+   * @returns {boolean} True if all elements have at least one of the specified attributes, false otherwise.
    */
   allElementsHaveAttribute(attributes: string[]): boolean {
     return this.elements.every(({ attribs }) =>
@@ -32,19 +32,19 @@ export default class ElementList {
   }
 
   /**
-   * Check if any element in an array has a specific attribute
-   * @param {string} attribute - The attribute name to check for
-   * @returns {boolean} True if at least one element has the attribute, false otherwise
+   * Check if any element in an array has a specific attribute.
+   * @param {string} attribute - The attribute name to check for.
+   * @returns {boolean} True if at least one element has the attribute, false otherwise.
    */
   anyElementHasAttribute(attribute: string): boolean {
     return this.elements.some((element) => element.attribs[attribute]);
   }
 
   /**
-   * Find a element in an array of nodes by tag
-   * @param {Element[]} nodes - Array of element to search within
-   * @param {string} tag - The tag name to search for
-   * @returns {Element | undefined} The first element that matches the tag, or undefined if not found
+   * Find a element in an array of nodes by tag.
+   * @param {Element[]} nodes - Array of element to search within.
+   * @param {string} tag - The tag name to search for.
+   * @returns {Element | undefined} The first element that matches the tag, or undefined if not found.
    */
   static findElementByTag(nodes: Element[], tag: string): Element | undefined {
     return nodes.find(({ name }) => name === tag);

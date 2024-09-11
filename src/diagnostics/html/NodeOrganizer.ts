@@ -5,8 +5,8 @@ export default class NodeOrganizer {
 
   constructor(nodes: AnyNode[]) {
     nodes.forEach((node) => {
-      if ('name' in node && node instanceof Element) {
-        const tagName = node.name as string;
+      if (node instanceof Element) {
+        const tagName = node.name;
         if (!this.domNodes.has(tagName)) {
           this.domNodes.set(tagName, []);
         }

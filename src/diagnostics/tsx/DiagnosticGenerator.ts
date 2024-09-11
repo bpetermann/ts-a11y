@@ -1,15 +1,15 @@
-import * as vscode from 'vscode';
 import * as parser from '@babel/parser';
 import traverse from '@babel/traverse';
 import * as jsx from '@babel/types';
+import * as vscode from 'vscode';
+import { TSXElement } from './Element';
 import {
   ButtonValidator,
-  ImageValidator,
   DivValidator,
+  ImageValidator,
   LinkValidator,
 } from './validators';
 import { Validator } from './validators/Validator';
-import { TSXElement } from './Element';
 
 export class TSXDiagnosticGenerator {
   private diagnostics: vscode.Diagnostic[] = [];

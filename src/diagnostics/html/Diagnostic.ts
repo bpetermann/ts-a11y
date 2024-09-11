@@ -1,5 +1,5 @@
-import * as vscode from 'vscode';
 import { Element } from 'domhandler';
+import * as vscode from 'vscode';
 import { DiagnosticSeverity } from 'vscode';
 import { ValidatorError } from './validators/Validator';
 
@@ -25,7 +25,7 @@ export class Diagnostic {
   }
 
   /**
-   * Creates a diagnostic object with a specific range, message, and severity
+   * Creates a diagnostic object with a specific range, message, and severity.
    */
   private createDiagnostic(): vscode.Diagnostic {
     return new vscode.Diagnostic(
@@ -36,7 +36,7 @@ export class Diagnostic {
   }
 
   /**
-   * Gets the range of a node
+   * Gets the range of a node.
    */
   private getNodeRange(): vscode.Range {
     return this.node &&

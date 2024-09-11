@@ -1,6 +1,6 @@
 import { Element } from 'domhandler';
-import ElementList from '../ElementList';
 import { messages } from '../../utils/messages';
+import ElementList from '../ElementList';
 import { Validator, ValidatorError } from './Validator';
 
 export class ImageValidator implements Validator {

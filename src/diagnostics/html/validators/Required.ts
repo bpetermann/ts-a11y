@@ -1,8 +1,8 @@
 import { Element } from 'domhandler';
-import { messages } from '../../utils/messages';
-import { Validator, ValidatorError } from './Validator';
 import { DiagnosticSeverity } from 'vscode';
+import { messages } from '../../utils/messages';
 import ElementList from '../ElementList';
+import { Validator, ValidatorError } from './Validator';
 
 export class RequiredValidator implements Validator {
   readonly #nodeTags = ['meta', 'title'] as const;

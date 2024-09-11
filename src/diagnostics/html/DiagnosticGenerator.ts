@@ -1,8 +1,10 @@
-import * as vscode from 'vscode';
 import { Document } from 'domhandler';
 import { DomUtils, parseDocument } from 'htmlparser2';
+import * as vscode from 'vscode';
+import { Diagnostic } from './Diagnostic';
 import NodeOrganizer from './NodeOrganizer';
 import {
+  AriaValidator,
   AttributesValidator,
   ButtonValidator,
   DivValidator,
@@ -13,12 +15,10 @@ import {
   LinkValidator,
   NavigationValidator,
   RequiredValidator,
+  SectionValidator,
   UniquenessValidator,
   Validator,
-  SectionValidator,
-  AriaValidator,
 } from './validators';
-import { Diagnostic } from './Diagnostic';
 
 export class HTMLDiagnosticGenerator {
   private diagnostics: vscode.Diagnostic[] = [];
@@ -44,7 +44,7 @@ export class HTMLDiagnosticGenerator {
   ) {}
 
   /**
-   * Generates and returns all diagnostics after running the validation process
+   * Generates and returns all diagnostics after running the validation process.
    */
   generateDiagnostics() {
     try {
@@ -59,7 +59,7 @@ export class HTMLDiagnosticGenerator {
   }
 
   /**
-   * Runs the validators against the organized nodes and collects diagnostics
+   * Runs the validators against the organized nodes and collects diagnostics.
    */
   private runValidators(nodeOrganizer: NodeOrganizer) {
     this.validators.forEach((validator) => {
@@ -73,7 +73,7 @@ export class HTMLDiagnosticGenerator {
   }
 
   /**
-   * Parses the HTML content into a document object
+   * Parses the HTML content into a document object.
    */
   private parseHtmlDocument() {
     return parseDocument(this.htmlContent, {
@@ -83,14 +83,14 @@ export class HTMLDiagnosticGenerator {
   }
 
   /**
-   * Organizes the nodes into a structure accessible by tag name
+   * Organizes the nodes into a structure accessible by tag name.
    */
   private organizeNodes(parsedHtml: Document) {
     return new NodeOrganizer(this.getNodes(parsedHtml));
   }
 
   /**
-   * Search a node and its children for nodes with the type "tag"
+   * Search a node and its children for nodes with the type "tag".
    */
   private getNodes(parsedHtml: Document) {
     return DomUtils.filter((node) => node.type === 'tag', parsedHtml.children);

@@ -1,7 +1,7 @@
 import { AnyNode, Element } from 'domhandler';
 import { DiagnosticSeverity } from 'vscode';
-import ElementList from '../ElementList';
 import { messages } from '../../utils/messages';
+import ElementList from '../ElementList';
 import { Validator, ValidatorError } from './Validator';
 
 export class DivValidator implements Validator {

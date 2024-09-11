@@ -1,6 +1,6 @@
+import * as jsx from '@babel/types';
 import * as vscode from 'vscode';
 import { DiagnosticSeverity } from 'vscode';
-import * as jsx from '@babel/types';
 
 export class Diagnostic {
   #diagnostic: vscode.Diagnostic;
@@ -18,14 +18,14 @@ export class Diagnostic {
   }
 
   /**
-   * Creates a diagnostic object with a specific range, message, and severity
+   * Creates a diagnostic object with a specific range, message, and severity.
    */
   private createDiagnostic(): vscode.Diagnostic {
     return new vscode.Diagnostic(this.getRange(), this.message, this.severity);
   }
 
   /**
-   * Gets the range of a location
+   * Gets the range of a location.
    */
   private getRange(): vscode.Range {
     return this.location?.start && this.location?.end

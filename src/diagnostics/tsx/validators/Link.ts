@@ -1,7 +1,7 @@
 import { messages } from '../../utils/messages';
 import { Diagnostic } from '../Diagnostic';
-import { Validator } from './Validator';
 import { TSXElement } from '../Element';
+import { Validator } from './Validator';
 
 const genericTexts = [
   'click me',

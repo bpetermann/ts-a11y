@@ -1,9 +1,9 @@
 import { AnyNode, Element, Text } from 'domhandler';
-import { messages } from '../../utils/messages';
 import { DiagnosticSeverity } from 'vscode';
-import { Validator, ValidatorError } from './Validator';
-import ElementList from '../ElementList';
+import { messages } from '../../utils/messages';
 import { HTMLElement } from '../Element';
+import ElementList from '../ElementList';
+import { Validator, ValidatorError } from './Validator';
 
 export class ButtonValidator implements Validator {
   readonly #nodeTags = ['button'] as const;

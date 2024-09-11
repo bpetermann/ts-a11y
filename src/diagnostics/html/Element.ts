@@ -2,21 +2,21 @@ import { Element } from 'domhandler';
 
 export class HTMLElement {
   /**
-   * Returns the first child element of the given element
+   * Returns the first child element of the given element.
    * @param {Element} element - The parent element from which to retrieve the first child.
-   * @returns {Element | undefined} - The first child element with a `name` property, or `undefined` if none exists.
+   * @returns {Element | undefined} - The first child element, or `undefined` if none exists.
    */
   static getFirstChild(element: Element): Element | undefined {
     return element.children.find((childNode) => childNode instanceof Element);
   }
 
   /**
-   * Returns the first sibling after before the given element
+   * Returns the first sibling after before the given element.
    * @param {Element} element - The element whose next sibling is being sought.
-   * @returns {Element | null} The next sibling element, or `null` if none exists.
+   * @returns {Element | undefined} The next sibling element, or `undefined` if none exists.
    */
   static getFirstSibling(element: Element): Element | undefined {
-    let nextNode = element?.next;
+    let nextNode = element.next;
 
     while (nextNode && !(nextNode instanceof Element)) {
       nextNode = nextNode.next;
@@ -26,14 +26,14 @@ export class HTMLElement {
   }
 
   /**
-   * Returns the first sibling element before the given element
+   * Returns the first sibling element before the given element.
    * @param {Element} element - The element whose previous sibling is being sought.
-   * @returns {Element | null} The first sibling element, or `null` if none exists.
+   * @returns {Element | undefined} The first sibling element, or `undefined` if none exists.
    */
   static getPrevSibling(element: Element): Element | undefined {
-    let prevNode = element?.prev;
+    let prevNode = element.prev;
 
-    while (prevNode && !(prevNode instanceof Element) && 'prev' in prevNode) {
+    while (prevNode && !(prevNode instanceof Element)) {
       prevNode = prevNode.prev;
     }
 
@@ -59,14 +59,12 @@ export class HTMLElement {
       'structure',
       'widget',
       'window',
-    ].find((role) => role === element.attribs?.['role']);
+    ].find((role) => role === element.attribs['role']);
   }
 
   /**
-   * Recursively determines whether an Element and all of its child elements
+   * Determines whether an Element and all of its child elements.
    * can safely have the `aria-hidden` attribute applied.
-   *
-   * This method checks if the element itself is focusable or contains any focusable child elements.
    *
    * @param {Element} element - The Element to check.
    * @returns {boolean} `true` if the element and all its child elements can have `aria-hidden`; otherwise, `false`.
