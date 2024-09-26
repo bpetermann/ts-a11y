@@ -1,11 +1,11 @@
 import { Element } from 'domhandler';
-import { ARIA_LABEL, ARIA_LABELLEDBY } from '../../utils/constants';
+import { ARIA_LABEL, ARIA_LABELLEDBY, NAV } from '../../utils/constants';
 import { messages } from '../../utils/messages';
 import ElementList from '../ElementList';
 import { Validator, ValidatorError } from './Validator';
 
 export class NavigationValidator implements Validator {
-  readonly #nodeTags = ['nav'] as const;
+  readonly #nodeTags = [NAV];
 
   get nodeTags() {
     return this.#nodeTags;

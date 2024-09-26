@@ -5,7 +5,7 @@ import { TSXElement } from '../Element';
 import { Validator } from './Validator';
 
 export class LinkValidator implements Validator {
-  #tags: string[] = [LINK] as const;
+  #tags: string[] = [LINK];
 
   get tags() {
     return this.#tags;

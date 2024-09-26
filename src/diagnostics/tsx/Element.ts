@@ -11,6 +11,8 @@ import {
   JSX_ELEMENT,
   JSX_FRAGMENT,
   JSX_IDENTIFIER,
+  JSX_MEMBER_EXPRESSION,
+  JSX_TEXT,
   LINK,
   NAME,
   ROLE,
@@ -41,7 +43,7 @@ export class TSXElement {
     switch (node.name.type) {
       case JSX_IDENTIFIER:
         return node.name.name;
-      case 'JSXMemberExpression':
+      case JSX_MEMBER_EXPRESSION:
         return this.getMemberExpressionName(node.name);
       default:
         return `${node.name?.namespace?.name}:${node.name?.name?.name}`;
@@ -54,7 +56,7 @@ export class TSXElement {
    */
   get text(): string {
     return (
-      (this.node.children.find(({ type }) => type === 'JSXText') as jsx.JSXText)
+      (this.node.children.find(({ type }) => type === JSX_TEXT) as jsx.JSXText)
         ?.value ?? ''
     );
   }
@@ -91,8 +93,8 @@ export class TSXElement {
   getChild(tag: string): jsx.JSXElement | undefined {
     return this.node.children.find(
       (child) =>
-        child.type === 'JSXElement' &&
-        'name' in child.openingElement.name &&
+        child.type === JSX_ELEMENT &&
+        NAME in child.openingElement.name &&
         child.openingElement.name.name === tag
     ) as jsx.JSXElement;
   }

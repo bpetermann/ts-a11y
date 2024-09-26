@@ -73,6 +73,8 @@ export const JSX_FRAGMENT = 'JSXFragment' as const;
 export const VALUE = 'value' as const;
 export const STRING_LITERAL = 'StringLiteral' as const;
 export const TYPESCRIPT_REACT = 'typescriptreact' as const;
+export const JSX_TEXT = 'JSXText' as const;
+export const JSX_MEMBER_EXPRESSION = 'JSXMemberExpression' as const;
 
 // GENERIC
 export const GENERIC_TEXTS: readonly string[] = [

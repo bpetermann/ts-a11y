@@ -14,7 +14,7 @@ import { TSXElement } from '../Element';
 import { Validator } from './Validator';
 
 export class ButtonValidator implements Validator {
-  #tags: string[] = [BUTTON] as const;
+  #tags: string[] = [BUTTON];
 
   get tags() {
     return this.#tags;

@@ -6,6 +6,7 @@ import {
   HREF,
   LINK,
   ONCLICK,
+  SIBLING,
 } from '../../utils/constants';
 import { messages } from '../../utils/messages';
 import ElementList from '../ElementList';
@@ -46,7 +47,7 @@ export class LinkValidator implements Validator {
 
     errors.push(this.getAriaCurrentError(links));
     errors.push(
-      this.checkSequenceLength(ElementList.getLongestSequence(links, 'sibling'))
+      this.checkSequenceLength(ElementList.getLongestSequence(links, SIBLING))
     );
 
     return errors.filter((error) => error instanceof ValidatorError);
