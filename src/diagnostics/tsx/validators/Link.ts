@@ -1,20 +1,11 @@
+import { GENERIC_TEXTS, HREF, LINK, ONCLICK } from '../../utils/constants';
 import { messages } from '../../utils/messages';
 import { Diagnostic } from '../Diagnostic';
 import { TSXElement } from '../Element';
 import { Validator } from './Validator';
 
-const genericTexts = [
-  'click me',
-  'download',
-  'here',
-  'read more',
-  'learn more',
-  'click',
-  'more',
-];
-
 export class LinkValidator implements Validator {
-  #tags: string[] = ['a'] as const;
+  #tags: string[] = [LINK] as const;
 
   get tags() {
     return this.#tags;
@@ -29,19 +20,19 @@ export class LinkValidator implements Validator {
   }
 
   checkGenericText(link: TSXElement): Diagnostic | undefined {
-    if (genericTexts.includes(link.text.trim().toLowerCase())) {
+    if (GENERIC_TEXTS.includes(link.text.trim().toLowerCase())) {
       return new Diagnostic(messages.link.generic + link.text, link.loc);
     }
   }
 
   checkWrongAttributes(link: TSXElement): Diagnostic | undefined {
-    if (link.getAttributes().includes('onclick')) {
+    if (link.getAttributes().includes(ONCLICK)) {
       return new Diagnostic(messages.link.onclick, link.loc);
     }
   }
 
   private checkMailToLinks(link: TSXElement): Diagnostic | undefined {
-    const urlFragment = link.getAttribute('href');
+    const urlFragment = link.getAttribute(HREF);
     if (
       urlFragment &&
       urlFragment.startsWith('mailto:') &&

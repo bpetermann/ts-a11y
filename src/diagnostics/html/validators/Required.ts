@@ -1,11 +1,12 @@
 import { Element } from 'domhandler';
 import { DiagnosticSeverity } from 'vscode';
+import { META, TITLE } from '../../utils/constants';
 import { messages } from '../../utils/messages';
 import ElementList from '../ElementList';
 import { Validator, ValidatorError } from './Validator';
 
 export class RequiredValidator implements Validator {
-  readonly #nodeTags = ['meta', 'title'] as const;
+  readonly #nodeTags = [META, TITLE];
 
   get nodeTags() {
     return this.#nodeTags;

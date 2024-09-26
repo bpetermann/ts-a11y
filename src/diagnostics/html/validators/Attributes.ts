@@ -1,18 +1,19 @@
 import { Element } from 'domhandler';
+import { HTML, LANG, META, NAME } from '../../utils/constants';
 import { messages } from '../../utils/messages';
 import ElementList from '../ElementList';
 import { Validator, ValidatorError } from './Validator';
 
 export class AttributesValidator implements Validator {
-  readonly #nodeTags = ['html', 'meta'] as const;
+  readonly #nodeTags = [HTML, META];
 
   get nodeTags() {
     return this.#nodeTags;
   }
 
   readonly attributes = {
-    html: ['lang'],
-    meta: ['name'],
+    html: [LANG],
+    meta: [NAME],
   };
 
   validate(domNodes: Element[]): ValidatorError[] {

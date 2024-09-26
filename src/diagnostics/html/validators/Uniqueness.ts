@@ -1,10 +1,11 @@
 import { Element } from 'domhandler';
+import { H1, HTML, MAIN, TITLE } from '../../utils/constants';
 import { messages } from '../../utils/messages';
 import ElementList from '../ElementList';
 import { Validator, ValidatorError } from './Validator';
 
 export class UniquenessValidator implements Validator {
-  readonly #nodeTags = ['html', 'h1', 'main', 'title'] as const;
+  readonly #nodeTags = [HTML, H1, MAIN, TITLE];
 
   get nodeTags() {
     return this.#nodeTags;

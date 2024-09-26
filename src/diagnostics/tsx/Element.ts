@@ -1,4 +1,26 @@
 import * as jsx from '@babel/types';
+import {
+  ABSTRACT_ROLES,
+  BUTTON,
+  CONTENT_EDITABLE,
+  DISABLED,
+  HREF,
+  INERT,
+  INPUT,
+  JSX_ATTRIBUTE,
+  JSX_ELEMENT,
+  JSX_FRAGMENT,
+  JSX_IDENTIFIER,
+  LINK,
+  NAME,
+  ROLE,
+  SELECT,
+  STRING_LITERAL,
+  TABINDEX,
+  TEXTAREA,
+  TRUE,
+  VALUE,
+} from '../utils/constants';
 
 export class TSXElement {
   constructor(private node: jsx.JSXElement) {}
@@ -17,7 +39,7 @@ export class TSXElement {
   get name(): string | undefined {
     const node = this.node.openingElement;
     switch (node.name.type) {
-      case 'JSXIdentifier':
+      case JSX_IDENTIFIER:
         return node.name.name;
       case 'JSXMemberExpression':
         return this.getMemberExpressionName(node.name);
@@ -82,7 +104,7 @@ export class TSXElement {
    */
   hasAttribute(attribute: string | jsx.JSXIdentifier): boolean {
     return this.node.openingElement.attributes.some(
-      (attr) => attr.type === 'JSXAttribute' && attr.name.name === attribute
+      (attr) => attr.type === JSX_ATTRIBUTE && attr.name.name === attribute
     );
   }
 
@@ -93,10 +115,7 @@ export class TSXElement {
   getAttributes(): string[] {
     return this.node.openingElement.attributes
       .map((attr) => {
-        if (
-          attr.type === 'JSXAttribute' &&
-          attr.name.type === 'JSXIdentifier'
-        ) {
+        if (attr.type === JSX_ATTRIBUTE && attr.name.type === JSX_IDENTIFIER) {
           return attr.name.name;
         }
       })
@@ -110,12 +129,12 @@ export class TSXElement {
    */
   getAttribute(attribute: string | jsx.JSXIdentifier): string | undefined {
     const jsxAttribute = this.node.openingElement.attributes.find(
-      (attr) => attr.type === 'JSXAttribute' && attr.name.name === attribute
+      (attr) => attr.type === JSX_ATTRIBUTE && attr.name.name === attribute
     );
     if (
       jsxAttribute &&
-      'value' in jsxAttribute &&
-      jsxAttribute['value']?.type === 'StringLiteral'
+      VALUE in jsxAttribute &&
+      jsxAttribute[VALUE]?.type === STRING_LITERAL
     ) {
       return jsxAttribute.value.value;
     }
@@ -126,20 +145,7 @@ export class TSXElement {
    * @returns {string | undefined} The role of the element, if it is abstract, or undefined.
    */
   getAbstractRole(): string | undefined {
-    return [
-      'command',
-      'composite',
-      'input',
-      'landmark',
-      'range',
-      'roletype',
-      'section',
-      'sectionhead',
-      'select',
-      'structure',
-      'widget',
-      'window',
-    ].find((role) => role === this.getAttribute('role'));
+    return ABSTRACT_ROLES.find((role) => role === this.getAttribute(ROLE));
   }
 
   /**
@@ -160,7 +166,7 @@ export class TSXElement {
     const child = this.getFirstChild(element);
     return (
       !!child &&
-      'name' in child.openingElement.name &&
+      NAME in child.openingElement.name &&
       child.openingElement.name.name === tag
     );
   }
@@ -175,7 +181,7 @@ export class TSXElement {
     elementName: jsx.JSXMemberExpression
   ): string | undefined {
     const { object, property } = elementName;
-    if (object.type !== 'JSXIdentifier' || property.type !== 'JSXIdentifier') {
+    if (object.type !== JSX_IDENTIFIER || property.type !== JSX_IDENTIFIER) {
       return undefined;
     }
     return `${object.name}.${property.name}`;
@@ -188,7 +194,7 @@ export class TSXElement {
    * @returns {jsx.JSXElement | undefined} The first child JSX element, or undefined if not found.
    */
   private getFirstChild(element: jsx.JSXElement): jsx.JSXElement | undefined {
-    return element.children.find((child) => child.type === 'JSXElement');
+    return element.children.find((child) => child.type === JSX_ELEMENT);
   }
 
   /**
@@ -207,9 +213,9 @@ export class TSXElement {
       element: jsx.JSXElement | jsx.JSXFragment
     ): jsx.JSXElement[] => {
       return element.children.flatMap((child) => {
-        if (child.type === 'JSXElement') {
+        if (child.type === JSX_ELEMENT) {
           return child;
-        } else if (child.type === 'JSXFragment') {
+        } else if (child.type === JSX_FRAGMENT) {
           return getChildElements(child);
         } else {
           return [];
@@ -222,37 +228,37 @@ export class TSXElement {
   }
 
   static isNotFocusable(node: jsx.JSXElement): boolean {
-    const isIdentifier = node.openingElement.name.type === 'JSXIdentifier';
+    const isIdentifier = node.openingElement.name.type === JSX_IDENTIFIER;
     const asIdentifier = node.openingElement.name as jsx.JSXIdentifier;
 
-    const formElements = ['input', 'button', 'textarea', 'select'];
+    const formElements: string[] = [INPUT, BUTTON, TEXTAREA, SELECT];
     const isFormControl =
       isIdentifier && formElements.includes(asIdentifier.name);
 
-    const isLink = isIdentifier && asIdentifier.name === 'a';
+    const isLink = isIdentifier && asIdentifier.name === LINK;
 
     const allAttributes = node.openingElement.attributes.filter(
-      (attr) => attr.type === 'JSXAttribute'
+      (attr) => attr.type === JSX_ATTRIBUTE
     );
 
     const getAttributeValue = (attrName: string): string | undefined =>
       (
         allAttributes.find(
           ({ name, value }) =>
-            name.name === attrName && value?.type === 'StringLiteral'
+            name.name === attrName && value?.type === STRING_LITERAL
         )?.value as jsx.StringLiteral
       )?.value;
 
-    const hasTabIndex = getAttributeValue('tabindex');
+    const hasTabIndex = getAttributeValue(TABINDEX);
     const tabIndexValue = hasTabIndex !== undefined ? +hasTabIndex : null;
     const hasNegativeTabIndex = tabIndexValue === -1;
     const hasPositiveTabIndex = tabIndexValue !== null && tabIndexValue > -1;
 
-    const hasInert = getAttributeValue('inert') !== undefined;
-    const hasContentEditable = getAttributeValue('contenteditable') === 'true';
-    const hasButtonRole = getAttributeValue('role') === 'button';
-    const hasHref = getAttributeValue('href') !== undefined;
-    const isDisabled = getAttributeValue('disabled') !== undefined;
+    const hasInert = getAttributeValue(INERT) !== undefined;
+    const hasContentEditable = getAttributeValue(CONTENT_EDITABLE) === TRUE;
+    const hasButtonRole = getAttributeValue(ROLE) === BUTTON;
+    const hasHref = getAttributeValue(HREF) !== undefined;
+    const isDisabled = getAttributeValue(DISABLED) !== undefined;
 
     return !(
       (isFormControl && !hasNegativeTabIndex && !isDisabled && !hasInert) ||

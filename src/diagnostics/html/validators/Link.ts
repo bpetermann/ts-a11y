@@ -1,22 +1,21 @@
 import { Element, Text } from 'domhandler';
 import { DiagnosticSeverity } from 'vscode';
+import {
+  ARIA_CURRENT,
+  GENERIC_TEXTS,
+  HREF,
+  LINK,
+  ONCLICK,
+} from '../../utils/constants';
 import { messages } from '../../utils/messages';
 import ElementList from '../ElementList';
 import { Validator, ValidatorError } from './Validator';
 
 export class LinkValidator implements Validator {
-  #nodeTags: string[] = ['a'];
+  #nodeTags: string[] = [LINK];
   private maxSequenceLength = 5;
 
-  private readonly genericTexts = new Set([
-    'click me',
-    'download',
-    'here',
-    'read more',
-    'learn more',
-    'click',
-    'more',
-  ]);
+  private readonly genericTexts = new Set(GENERIC_TEXTS);
 
   get nodeTags() {
     return this.#nodeTags;
@@ -69,8 +68,8 @@ export class LinkValidator implements Validator {
     link: Element,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
-    if ('onclick' in attributes) {
-      return new ValidatorError(messages.link['onclick'], link);
+    if (ONCLICK in attributes) {
+      return new ValidatorError(messages.link[ONCLICK], link);
     }
   }
 
@@ -80,8 +79,8 @@ export class LinkValidator implements Validator {
     textContent: string | undefined
   ): ValidatorError | undefined {
     if (
-      'href' in attributes &&
-      attributes['href'].startsWith('mailto:') &&
+      HREF in attributes &&
+      attributes[HREF].startsWith('mailto:') &&
       !textContent?.includes('@')
     ) {
       return new ValidatorError(messages.link.mail, link);
@@ -92,7 +91,7 @@ export class LinkValidator implements Validator {
     if (
       links.length > 1 &&
       !links.find(
-        (link) => 'attribs' in link && 'aria-current' in link['attribs']
+        (link) => 'attribs' in link && ARIA_CURRENT in link['attribs']
       )
     ) {
       return new ValidatorError(

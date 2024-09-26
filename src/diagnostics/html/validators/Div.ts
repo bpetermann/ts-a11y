@@ -1,12 +1,19 @@
 import { AnyNode, Element } from 'domhandler';
 import { DiagnosticSeverity } from 'vscode';
+import {
+  ARIA_EXPANDED,
+  BUTTON,
+  DIV,
+  ONCLICK,
+  ROLE,
+} from '../../utils/constants';
 import { messages } from '../../utils/messages';
 import ElementList from '../ElementList';
 import { Validator, ValidatorError } from './Validator';
 
 export class DivValidator implements Validator {
   private maxSequenceLength = 4;
-  readonly #nodeTags = ['div'] as const;
+  readonly #nodeTags = [DIV];
 
   get nodeTags() {
     return this.#nodeTags;
@@ -42,7 +49,7 @@ export class DivValidator implements Validator {
     div: Element,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
-    if ('onclick' in attributes || attributes?.['role'] === 'button') {
+    if (ONCLICK in attributes || attributes?.[ROLE] === BUTTON) {
       return new ValidatorError(
         messages.div.button,
         div,
@@ -55,7 +62,7 @@ export class DivValidator implements Validator {
     div: Element,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
-    if ('aria-expanded' in attributes) {
+    if (ARIA_EXPANDED in attributes) {
       return new ValidatorError(
         messages.div.expanded,
         div,

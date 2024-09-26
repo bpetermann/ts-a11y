@@ -1,11 +1,11 @@
+import { ALT, GENERIC_ALT, IMG } from '../../utils/constants';
 import { messages } from '../../utils/messages';
 import { Diagnostic } from '../Diagnostic';
 import { TSXElement } from '../Element';
 import { Validator } from './Validator';
 
 export class ImageValidator implements Validator {
-  #tags: string[] = ['img'] as const;
-  genericTexts: string[] = ['.jpg', '.png', '.webp', 'image', 'picture', 'img'];
+  #tags = [IMG];
 
   get tags() {
     return this.#tags;
@@ -18,16 +18,16 @@ export class ImageValidator implements Validator {
   }
 
   checkAltExists(node: TSXElement) {
-    if (!node.hasAttribute('alt')) {
+    if (!node.hasAttribute(ALT)) {
       return new Diagnostic(messages.img.alt, node.loc);
     }
   }
 
   checkAltText(node: TSXElement) {
-    const altText = node.getAttribute('alt');
+    const altText = node.getAttribute(ALT);
     const hasGenericAlt = altText
       ?.split(' ')
-      .some((text) => this.genericTexts.includes(text));
+      .some((text) => GENERIC_ALT.includes(text));
     if (altText && hasGenericAlt) {
       return new Diagnostic(messages.img.generic + altText, node.loc);
     }

@@ -1,6 +1,7 @@
 import { Document } from 'domhandler';
 import { DomUtils, parseDocument } from 'htmlparser2';
 import * as vscode from 'vscode';
+import { TAG } from '../utils/constants';
 import { Diagnostic } from './Diagnostic';
 import NodeOrganizer from './NodeOrganizer';
 import {
@@ -93,6 +94,6 @@ export class HTMLDiagnosticGenerator {
    * Search a node and its children for nodes with the type "tag".
    */
   private getNodes(parsedHtml: Document) {
-    return DomUtils.filter((node) => node.type === 'tag', parsedHtml.children);
+    return DomUtils.filter((node) => node.type === TAG, parsedHtml.children);
   }
 }

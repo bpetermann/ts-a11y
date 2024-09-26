@@ -1,10 +1,11 @@
 import { Element } from 'domhandler';
+import { ALT, IMG } from '../../utils/constants';
 import { messages } from '../../utils/messages';
 import ElementList from '../ElementList';
 import { Validator, ValidatorError } from './Validator';
 
 export class ImageValidator implements Validator {
-  readonly #nodeTags = ['img'] as const;
+  readonly #nodeTags = [IMG];
   readonly maxSameAltText = 3;
 
   get nodeTags() {
@@ -26,7 +27,7 @@ export class ImageValidator implements Validator {
     const altTexts: Record<string, number> = {};
 
     images.forEach((img) => {
-      const altText = img.attribs?.['alt'];
+      const altText = img.attribs?.[ALT];
       if (altText === undefined) {
         errors.push(new ValidatorError(messages.img.alt, img));
       } else {
@@ -46,7 +47,7 @@ export class ImageValidator implements Validator {
     return Object.keys(altTexts)
       .filter((alt) => altTexts[alt] > this.maxSameAltText)
       .map((alt) => {
-        const image = images.find((img) => img.attribs?.['alt'] === alt);
+        const image = images.find((img) => img.attribs?.[ALT] === alt);
         return image
           ? new ValidatorError(messages.img.repeated, image)
           : undefined;

@@ -1,10 +1,11 @@
 import { Element } from 'domhandler';
+import { H1, H2, H3, H4, H5, H6 } from '../../utils/constants';
 import { messages } from '../../utils/messages';
 import ElementList from '../ElementList';
 import { Validator, ValidatorError } from './Validator';
 
 export class HeadingValidator implements Validator {
-  readonly #nodeTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const;
+  readonly #nodeTags = [H1, H2, H3, H4, H5, H6];
 
   get nodeTags() {
     return this.#nodeTags;

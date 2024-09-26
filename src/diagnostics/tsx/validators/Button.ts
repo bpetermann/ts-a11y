@@ -1,10 +1,20 @@
+import {
+  ARIA_CHECKED,
+  ARIA_LABEL,
+  ARIA_LABELLEDBY,
+  BUTTON,
+  IMG,
+  ROLE,
+  SWITCH,
+  TITLE,
+} from '../../utils/constants';
 import { messages } from '../../utils/messages';
 import { Diagnostic } from '../Diagnostic';
 import { TSXElement } from '../Element';
 import { Validator } from './Validator';
 
 export class ButtonValidator implements Validator {
-  #tags: string[] = ['button'] as const;
+  #tags: string[] = [BUTTON] as const;
 
   get tags() {
     return this.#tags;
@@ -20,8 +30,8 @@ export class ButtonValidator implements Validator {
 
   checkSwitchRole(node: TSXElement): Diagnostic | undefined {
     if (
-      node.getAttribute('role') === 'switch' &&
-      !node.hasAttribute('aria-checked')
+      node.getAttribute(ROLE) === SWITCH &&
+      !node.hasAttribute(ARIA_CHECKED)
     ) {
       return new Diagnostic(messages.button.switch, node.loc);
     }
@@ -32,10 +42,10 @@ export class ButtonValidator implements Validator {
 
     if (
       !node.text &&
-      !node.getChild('img') &&
-      !attributes.includes('aria-label') &&
-      !attributes.includes('aria-labelledby') &&
-      !attributes.includes('title')
+      !node.getChild(IMG) &&
+      !attributes.includes(ARIA_LABEL) &&
+      !attributes.includes(ARIA_LABELLEDBY) &&
+      !attributes.includes(TITLE)
     ) {
       return new Diagnostic(messages.button.text, node.loc);
     }

@@ -1,11 +1,20 @@
 import { DiagnosticSeverity } from 'vscode';
+import {
+  ARIA_EXPANDED,
+  ARIA_HIDDEN,
+  BUTTON,
+  DIV,
+  ONCLICK,
+  ROLE,
+  TRUE,
+} from '../../utils/constants';
 import { messages } from '../../utils/messages';
 import { Diagnostic } from '../Diagnostic';
 import { TSXElement } from '../Element';
 import { Validator } from './Validator';
 
 export class DivValidator implements Validator {
-  #tags: string[] = ['div'] as const;
+  #tags: string[] = [DIV];
   private maxSequenceLength: number = 5;
 
   get tags() {
@@ -34,8 +43,8 @@ export class DivValidator implements Validator {
 
   private checkButtonRole(node: TSXElement): Diagnostic | undefined {
     if (
-      node.getAttributes().includes('onclick') ||
-      node.getAttribute('role') === 'button'
+      node.getAttributes().includes(ONCLICK) ||
+      node.getAttribute(ROLE) === BUTTON
     ) {
       return new Diagnostic(
         messages.div.button,
@@ -46,7 +55,7 @@ export class DivValidator implements Validator {
   }
 
   private checkWrongAttibutes(node: TSXElement): Diagnostic | undefined {
-    if (node.getAttribute('aria-expanded') !== undefined) {
+    if (node.getAttribute(ARIA_EXPANDED) !== undefined) {
       return new Diagnostic(
         messages.div.expanded,
         node.loc,
@@ -57,10 +66,10 @@ export class DivValidator implements Validator {
 
   private checkAriaHidden(node: TSXElement): Diagnostic | undefined {
     if (
-      node.getAttribute('aria-hidden') === 'true' &&
+      node.getAttribute(ARIA_HIDDEN) === TRUE &&
       !TSXElement.canHaveAriaHidden(node.element)
     ) {
-      return new Diagnostic(messages.div['aria-hidden'], node.loc);
+      return new Diagnostic(messages.div[ARIA_HIDDEN], node.loc);
     }
   }
 

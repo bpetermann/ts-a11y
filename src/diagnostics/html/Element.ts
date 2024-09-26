@@ -1,4 +1,19 @@
 import { Element } from 'domhandler';
+import {
+  ABSTRACT_ROLES,
+  BUTTON,
+  CONTENT_EDITABLE,
+  DISABLED,
+  HREF,
+  INERT,
+  INPUT,
+  LINK,
+  ROLE,
+  SELECT,
+  TABINDEX,
+  TEXTAREA,
+  TRUE,
+} from '../utils/constants';
 
 export class HTMLElement {
   /**
@@ -46,20 +61,7 @@ export class HTMLElement {
    * @returns {string | undefined} The role of the element, if it is abstract.
    */
   static getAbsractRole(element: Element): string | undefined {
-    return [
-      'command',
-      'composite',
-      'input',
-      'landmark',
-      'range',
-      'roletype',
-      'section',
-      'sectionhead',
-      'select',
-      'structure',
-      'widget',
-      'window',
-    ].find((role) => role === element.attribs['role']);
+    return ABSTRACT_ROLES.find((role) => role === element.attribs[ROLE]);
   }
 
   /**
@@ -82,21 +84,21 @@ export class HTMLElement {
   }
 
   static isNotFocusable(node: Element): boolean {
-    const isFormControl = ['input', 'button', 'textarea', 'select'].includes(
-      node.name
-    );
-    const isLink = node.name === 'a';
+    const isFormControl = (
+      [INPUT, BUTTON, TEXTAREA, SELECT] as string[]
+    ).includes(node.name);
+    const isLink = node.name === LINK;
 
-    const hasTabIndex = node.attribs?.['tabindex'];
+    const hasTabIndex = node.attribs?.[TABINDEX];
     const tabIndexValue = hasTabIndex !== undefined ? +hasTabIndex : null;
     const hasNegativeTabIndex = tabIndexValue === -1;
     const hasPositiveTabIndex = tabIndexValue !== null && tabIndexValue > -1;
 
-    const hasInert = node.attribs?.['inert'] !== undefined;
-    const hasContentEditable = node.attribs?.['contenteditable'] === 'true';
-    const hasButtonRole = node.attribs?.['role'] === 'button';
-    const hasHref = node.attribs?.['href'] !== undefined;
-    const isDisabled = node.attribs?.['disabled'] !== undefined;
+    const hasInert = node.attribs?.[INERT] !== undefined;
+    const hasContentEditable = node.attribs?.[CONTENT_EDITABLE] === TRUE;
+    const hasButtonRole = node.attribs?.[ROLE] === BUTTON;
+    const hasHref = node.attribs?.[HREF] !== undefined;
+    const isDisabled = node.attribs?.[DISABLED] !== undefined;
 
     return !(
       (isFormControl && !hasNegativeTabIndex && !isDisabled && !hasInert) ||

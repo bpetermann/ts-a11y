@@ -1,4 +1,5 @@
 import { Element } from 'domhandler';
+import { ARIA_LABEL, ARIA_LABELLEDBY } from '../../utils/constants';
 import { messages } from '../../utils/messages';
 import ElementList from '../ElementList';
 import { Validator, ValidatorError } from './Validator';
@@ -21,7 +22,7 @@ export class NavigationValidator implements Validator {
         const navAttributes = nav.attribs;
         const hasAriaAttribute =
           navAttributes &&
-          ('aria-labelledby' in navAttributes || 'aria-label' in navAttributes);
+          (ARIA_LABELLEDBY in navAttributes || ARIA_LABEL in navAttributes);
 
         if (!hasAriaAttribute) {
           errors.push(new ValidatorError(messages.nav.label, nav));

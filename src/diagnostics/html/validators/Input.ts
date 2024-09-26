@@ -1,11 +1,12 @@
 import { Element } from 'domhandler';
+import { ARIA_LABELLEDBY, ID, INPUT, LABEL, NAME } from '../../utils/constants';
 import { messages } from '../../utils/messages';
 import { HTMLElement } from '../Element';
 import ElementList from '../ElementList';
 import { Validator, ValidatorError } from './Validator';
 
 export class InputValidator implements Validator {
-  readonly #nodeTags = ['input'] as const;
+  readonly #nodeTags = [INPUT];
 
   get nodeTags() {
     return this.#nodeTags;
@@ -39,20 +40,18 @@ export class InputValidator implements Validator {
     attributes: {} | { [name: string]: string },
     sibling?: Element
   ): ValidatorError | undefined {
-    const isSiblingLabel = sibling?.['name'] === 'label';
+    const isSiblingLabel = sibling?.[NAME] === LABEL;
 
     if (
       !this.isParentLabel(input) &&
-      !(isSiblingLabel && 'id' in attributes) &&
-      !('aria-labelledby' in attributes)
+      !(isSiblingLabel && ID in attributes) &&
+      !(ARIA_LABELLEDBY in attributes)
     ) {
       return new ValidatorError(messages.input.label, input);
     }
   }
 
   private isParentLabel(input: Element) {
-    return (
-      input.parent && 'name' in input.parent && input.parent['name'] === 'label'
-    );
+    return input.parent && NAME in input.parent && input.parent[NAME] === LABEL;
   }
 }

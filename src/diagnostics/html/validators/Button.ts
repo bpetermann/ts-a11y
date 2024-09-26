@@ -1,19 +1,31 @@
 import { AnyNode, Element, Text } from 'domhandler';
 import { DiagnosticSeverity } from 'vscode';
+import {
+  ARIA_CHECKED,
+  ARIA_LABEL,
+  ARIA_LABELLEDBY,
+  BUTTON,
+  DISABLED,
+  IMG,
+  ROLE,
+  SWITCH,
+  TABINDEX,
+  TITLE,
+} from '../../utils/constants';
 import { messages } from '../../utils/messages';
 import { HTMLElement } from '../Element';
 import ElementList from '../ElementList';
 import { Validator, ValidatorError } from './Validator';
 
 export class ButtonValidator implements Validator {
-  readonly #nodeTags = ['button'] as const;
+  readonly #nodeTags = [BUTTON];
 
   get nodeTags() {
     return this.#nodeTags;
   }
 
   validate(nodes: AnyNode[]): ValidatorError[] {
-    const { elements: buttons } = new ElementList(nodes, 'button');
+    const { elements: buttons } = new ElementList(nodes, BUTTON);
 
     if (!buttons.length) {
       return [];
@@ -42,10 +54,9 @@ export class ButtonValidator implements Validator {
     button: Element,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
-    const tab = 'tabindex' as const;
-    if (tab in attributes && +attributes[tab] > 0) {
+    if (TABINDEX in attributes && +attributes[TABINDEX] > 0) {
       return new ValidatorError(
-        messages.button[tab],
+        messages.button[TABINDEX],
         button,
         DiagnosticSeverity.Hint
       );
@@ -56,7 +67,7 @@ export class ButtonValidator implements Validator {
     button: Element,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
-    if ('disabled' in attributes) {
+    if (DISABLED in attributes) {
       return new ValidatorError(
         messages.button.disabled,
         button,
@@ -69,7 +80,7 @@ export class ButtonValidator implements Validator {
     button: Element,
     attributes: { [name: string]: string }
   ): ValidatorError | undefined {
-    if (attributes?.['role'] === 'switch' && !('aria-checked' in attributes)) {
+    if (attributes?.[ROLE] === SWITCH && !(ARIA_CHECKED in attributes)) {
       return new ValidatorError(
         messages.button.switch,
         button,
@@ -84,15 +95,15 @@ export class ButtonValidator implements Validator {
   ) {
     const hasTextChild = button.children.find((child) => child instanceof Text);
     const hasImgChild = button.children.find(
-      (child) => child instanceof Element && child.name === 'img'
+      (child) => child instanceof Element && child.name === IMG
     );
 
     if (
       !hasTextChild &&
       !hasImgChild &&
-      !('aria-label' in attributes) &&
-      !('aria-labelledby' in attributes) &&
-      !('title' in attributes)
+      !(ARIA_LABEL in attributes) &&
+      !(ARIA_LABELLEDBY in attributes) &&
+      !(TITLE in attributes)
     ) {
       return new ValidatorError(messages.button.text, button);
     }
@@ -102,7 +113,7 @@ export class ButtonValidator implements Validator {
     button: Element,
     attributes: { [name: string]: string }
   ) {
-    if ('role' in attributes && HTMLElement.getAbsractRole(button)) {
+    if (ROLE in attributes && HTMLElement.getAbsractRole(button)) {
       return new ValidatorError(messages.button.abstract, button);
     }
   }
